@@ -1,10 +1,13 @@
-# Clean ABAP
+> Translated from [English original on 14.11.2019](https://github.com/SAP/styleguides/tree/72ecf7fd7d41151d5bbca29020d4ec9de953db8c).
+> Latest version [in English](CleanABAP.md).
 
-> [**English**](CleanABAP.md)
+# Coder proprement avec ABAP
+
+> [**Français**](CleanABAP_fr.md)
+> &nbsp;·&nbsp;
+> [English](CleanABAP.md)
 > &nbsp;·&nbsp;
 > [中文](CleanABAP_zh.md)
-> &nbsp;·&nbsp;
-> [Français](CleanABAP_fr.md)
 > &nbsp;·&nbsp;
 > [Deutsch](CleanABAP_de.md)
 > &nbsp;·&nbsp;
@@ -12,378 +15,322 @@
 > &nbsp;·&nbsp;
 > [Español](CleanABAP_es.md)
 
-This guide is an adoption of
-[Robert C. Martin's _Clean Code_]
-for [ABAP](https://en.wikipedia.org/wiki/ABAP).
+Ce guide est une adaptation de l'ouvrage de 
+[Robert C. Martin_ Coder proprement (Clean Code)_] 
+pour [ABAP](https://fr.wikipedia.org/wiki/ABAP).
 
-The [Cheat Sheet](cheat-sheet/CheatSheet.md) is a print-optimized version.
+L'[antisèche](cheat-sheet/CheatSheet.md) est une version optimisée pour l'impression.
 
-[Robert C. Martin's _Clean Code_]: https://www.oreilly.com/library/view/clean-code/9780136083238/
+[Robert C. Martin_ Coder proprement (Clean Code)_]: https://www.oreilly.com/library/view/clean-code/9780136083238/
 
-## Content
+## Table des matières
 
-- [How to](#how-to)
-  - [How to Get Started with Clean Code](#how-to-get-started-with-clean-code)
-  - [How to Refactor Legacy Code](#how-to-refactor-legacy-code)
-  - [How to Check Automatically](#how-to-check-automatically)
-  - [How to Relate to Other Guides](#how-to-relate-to-other-guides)
-  - [How to Disagree](#how-to-disagree)
-- [Names](#names)
-  - [Use descriptive names](#use-descriptive-names)
-  - [Prefer solution domain and problem domain terms](#prefer-solution-domain-and-problem-domain-terms)
-  - [Use plural](#use-plural)
-  - [Use pronounceable names](#use-pronounceable-names)
-  - [Avoid abbreviations](#avoid-abbreviations)
-  - [Use same abbreviations everywhere](#use-same-abbreviations-everywhere)
-  - [Use nouns for classes and verbs for methods](#use-nouns-for-classes-and-verbs-for-methods)
-  - [Avoid noise words such as "data", "info", "object"](#avoid-noise-words-such-as-data-info-object)
-  - [Pick one word per concept](#pick-one-word-per-concept)
-  - [Use pattern names only if you mean them](#use-pattern-names-only-if-you-mean-them)
-  - [Avoid encodings, esp. Hungarian notation and prefixes](#avoid-encodings-esp-hungarian-notation-and-prefixes)
-- [Language](#language)
-  - [Mind the legacy](#mind-the-legacy)
-  - [Mind the performance](#mind-the-performance)
-  - [Prefer object orientation to procedural programming](#prefer-object-orientation-to-procedural-programming)
-  - [Prefer functional to procedural language constructs](#prefer-functional-to-procedural-language-constructs)
-  - [Avoid obsolete language elements](#avoid-obsolete-language-elements)
-  - [Use design patterns wisely](#use-design-patterns-wisely)
-- [Constants](#constants)
-  - [Use constants instead of magic numbers](#use-constants-instead-of-magic-numbers)
-  - [Prefer enumeration classes to constants interfaces](#prefer-enumeration-classes-to-constants-interfaces)
-  - [If you don't use enumeration classes, group your constants](#if-you-dont-use-enumeration-classes-group-your-constants)
+- [Comment faire pour](#comment-faire-pour)
+   - [Démarrer avec la méthodologie Clean Code](#démarrer-avec-la-méthodologie-clean-code)
+   - [Refactoriser du code existant](#refactoriser-du-code-existant)
+   - [Effectuer une vérification automatique](#effectuer-une-vérification-automatique)
+   - [Faire le lien avec d'autres guides](#faire-le-lien-avec-dautres-guides)
+   - [Exprimer un désaccord](#exprimer-un-désaccord)
+- [Noms](#noms)
+   - [Utilisez des noms descriptifs](#utilisez-des-noms-descriptifs)
+   - [Préférez des termes du domaine de la solution et du domaine du problème](#préférez-des-termes-du-domaine-de-la-solution-et-du-domaine-du-problème)
+   - [Utilisez le pluriel](#utilisez-le-pluriel)
+   - [Utilisez des noms prononçables](#utilisez-des-noms-prononçables)
+   - [Évitez les abréviations](#évitez-les-abréviations)
+   - [Utilisez les mêmes abréviations partout](#utilisez-les-mêmes-abréviations-partout)
+   - [Utilisez des noms pour les classes, et des verbes pour les méthodes](#utilisez-des-noms-pour-les-classes-et-des-verbes-pour-les-méthodes)
+   - [Évitez les mots parasites, comme "données", "info", "objet"](#évitez-les-mots-parasites-comme-données-info-objet)
+   - [Sélectionnez un mot par concept](#sélectionnez-un-mot-par-concept)
+   - [Utilisez des noms de modèle uniquement s'ils ont du sens](#utilisez-des-noms-de-modèle-uniquement-sils-ont-du-sens)
+   - [Évitez les codifications, en particulier la notation hongroise et les préfixes](#évitez-les-codifications-en-particulier-la-notation-hongroise-et-les-préfixes)
+- [Langage](#langage)
+   - [Tenez compte des éléments existants](#tenez-compte-des-éléments-existants)
+   - [Tenez compte des performances](#tenez-compte-des-performances)
+   - [Préférez la programmation orientée objet à la programmation procédurale](#préférez-la-programmation-orientée-objet-à-la-programmation-procédurale)
+   - [Préférez des constructs de langage fonctionnel plutôt que procédural](#préférez-des-constructs-de-langage-fonctionnel-plutôt-que-procédural)
+   - [Évitez les éléments de langage obsolètes](#évitez-les-éléments-de-langage-obsolètes)
+   - [Utilisez les modèles de conception de manière avisée](#utilisez-les-modèles-de-conception-de-manière-avisée)
+- [Constantes](#constantes)
+   - [Utilisez des constantes et non des nombres magiques](#utilisez-des-constantes-et-non-des-nombres-magiques)
+   - [Préférez les classes d'énumération aux interfaces de constantes](#préférez-les-classes-dénumération-aux-interfaces-de-constantes)
+   - [Si vous n'utilisez pas de classes d'énumération, regroupez vos constantes](#si-vous-nutilisez-pas-de-classes-dénumération-regroupez-vos-constantes)
 - [Variables](#variables)
-  - [Prefer inline to up-front declarations](#prefer-inline-to-up-front-declarations)
-  - [Don't declare inline in optional branches](#dont-declare-inline-in-optional-branches)
-  - [Do not chain up-front declarations](#do-not-chain-up-front-declarations)
-  - [Prefer REF TO to FIELD-SYMBOL](#prefer-ref-to-to-field-symbol)
+   - [Préférez les déclarations en ligne aux déclarations initiales](#préférez-les-déclarations-en-ligne-aux-déclarations-initiales)
+   - [N'effectuez pas de déclarations en ligne dans les branchements facultatifs](#neffectuez-pas-de-déclarations-en-ligne-dans-les-branchements-facultatifs)
+   - [Ne créez pas des chaînes de déclarations initiales](#ne-créez-pas-des-chaînes-de-déclarations-initiales)
+   - [Préférez REF TO à FIELD-SYMBOL](#préférez-ref-to-à-field-symbol)
 - [Tables](#tables)
-  - [Use the right table type](#use-the-right-table-type)
-  - [Avoid DEFAULT KEY](#avoid-default-key)
-  - [Prefer INSERT INTO TABLE to APPEND TO](#prefer-insert-into-table-to-append-to)
-  - [Prefer LINE_EXISTS to READ TABLE or LOOP AT](#prefer-line_exists-to-read-table-or-loop-at)
-  - [Prefer READ TABLE to LOOP AT](#prefer-read-table-to-loop-at)
-  - [Prefer LOOP AT WHERE to nested IF](#prefer-loop-at-where-to-nested-if)
-  - [Avoid unnecessary table reads](#avoid-unnecessary-table-reads)
-- [Strings](#strings)
-  - [Use ` to define literals](#use--to-define-literals)
-  - [Use | to assemble text](#use--to-assemble-text)
-- [Booleans](#booleans)
-  - [Use Booleans wisely](#use-booleans-wisely)
-  - [Use ABAP_BOOL for Booleans](#use-abap_bool-for-booleans)
-  - [Use ABAP_TRUE and ABAP_FALSE for comparisons](#use-abap_true-and-abap_false-for-comparisons)
-  - [Use XSDBOOL to set Boolean variables](#use-xsdbool-to-set-boolean-variables)
+   - [Utilisez le bon type de table](#utilisez-le-bon-type-de-table)
+   - [Évitez DEFAULT KEY](#évitez-default-key)
+   - [Préférez INSERT INTO TABLE à APPEND TO](#préférez-insert-into-table-à-append-to)
+   - [Préférez LINE_EXISTS à READ TABLE ou LOOP AT](#préférez-line_exists-à-read-table-ou-loop-at)
+   - [Préférez READ TABLE à LOOP AT](#préférez-read-table-à-loop-at)
+   - [Préférez LOOP AT WHERE à un IF imbriqué](#préférez-loop-at-where-à-un-if-imbriqué)
+   - [Évitez les lectures de table superflues](#évitez-les-lectures-de-table-superflues)
+- [Chaînes de caractères](#chaînes-de-caractères)
+   - [Utilisez \` pour définir des littéraux](#utilisez--pour-définir-des-littéraux)
+   - [Utilisez | pour assembler du texte](#utilisez--pour-assembler-du-texte)
+- [Booléens](#booléens)
+   - [Utilisez les booléens de manière avisée](#utilisez-les-booléens-de-manière-avisée)
+   - [Utilisez ABAP_BOOL pour les booléens](#utilisez-abap_bool-pour-les-booléens)
+   - [Utilisez ABAP_TRUE et ABAP_FALSE pour les comparaisons](#utilisez-abap_true-et-abap_false-pour-les-comparaisons)
+   - [Utilisez XSDBOOL pour définir des variables booléennes](#utilisez-xsdbool-pour-définir-des-variables-booléennes)
 - [Conditions](#conditions)
-  - [Try to make conditions positive](#try-to-make-conditions-positive)
-  - [Prefer IS NOT to NOT IS](#prefer-is-not-to-not-is)
-  - [Consider decomposing complex conditions](#consider-decomposing-complex-conditions)
-  - [Consider extracting complex conditions](#consider-extracting-complex-conditions)
-- [Ifs](#ifs)
-  - [No empty IF branches](#no-empty-if-branches)
-  - [Prefer CASE to ELSE IF for multiple alternative conditions](#prefer-case-to-else-if-for-multiple-alternative-conditions)
-  - [Keep the nesting depth low](#keep-the-nesting-depth-low)
-- [Regular expressions](#regular-expressions)
-  - [Prefer simpler methods to regular expressions](#prefer-simpler-methods-to-regular-expressions)
-  - [Prefer basis checks to regular expressions](#prefer-basis-checks-to-regular-expressions)
-  - [Consider assembling complex regular expressions](#consider-assembling-complex-regular-expressions)
-- [Classes](#classes)
-  - [Classes: Object orientation](#classes-object-orientation)
-    - [Prefer objects to static classes](#prefer-objects-to-static-classes)
-    - [Prefer composition to inheritance](#prefer-composition-to-inheritance)
-    - [Don't mix stateful and stateless in the same class](#dont-mix-stateful-and-stateless-in-the-same-class)
-  - [Scope](#scope)
-    - [Global by default, local only where appropriate](#global-by-default-local-only-where-appropriate)
-    - [FINAL if not designed for inheritance](#final-if-not-designed-for-inheritance)
-    - [Members PRIVATE by default, PROTECTED only if needed](#members-private-by-default-protected-only-if-needed)
-    - [Consider using immutable instead of getter](#consider-using-immutable-instead-of-getter)
-    - [Use READ-ONLY sparingly](#use-read-only-sparingly)
-  - [Constructors](#constructors)
-    - [Prefer NEW to CREATE OBJECT](#prefer-new-to-create-object)
-    - [If your global class is CREATE PRIVATE, leave the CONSTRUCTOR public](#if-your-global-class-is-create-private-leave-the-constructor-public)
-    - [Prefer multiple static creation methods to optional parameters](#prefer-multiple-static-creation-methods-to-optional-parameters)
-    - [Use descriptive names for multiple creation methods](#use-descriptive-names-for-multiple-creation-methods)
-    - [Make singletons only where multiple instances don't make sense](#make-singletons-only-where-multiple-instances-dont-make-sense)
-- [Methods](#methods)
-  - [Calls](#calls)
-    - [Don't call static methods through instance variables](#dont-call-static-methods-through-instance-variables)
-    - [Prefer functional to procedural calls](#prefer-functional-to-procedural-calls)
-    - [Omit RECEIVING](#omit-receiving)
-    - [Omit the optional keyword EXPORTING](#omit-the-optional-keyword-exporting)
-    - [Omit the parameter name in single parameter calls](#omit-the-parameter-name-in-single-parameter-calls)
-    - [Omit the self-reference me when calling an instance method](#omit-the-self-reference-me-when-calling-an-instance-method)
-  - [Methods: Object orientation](#methods-object-orientation)
-    - [Prefer instance to static methods](#prefer-instance-to-static-methods)
-    - [Public instance methods should be part of an interface](#public-instance-methods-should-be-part-of-an-interface)
-  - [Parameter Number](#parameter-number)
-    - [Aim for few IMPORTING parameters, at best less than three](#aim-for-few-importing-parameters-at-best-less-than-three)
-    - [Split methods instead of adding OPTIONAL parameters](#split-methods-instead-of-adding-optional-parameters)
-    - [Use PREFERRED PARAMETER sparingly](#use-preferred-parameter-sparingly)
-    - [RETURN, EXPORT, or CHANGE exactly one parameter](#return-export-or-change-exactly-one-parameter)
-  - [Parameter Types](#parameter-types)
-    - [Prefer RETURNING to EXPORTING](#prefer-returning-to-exporting)
-    - [RETURNING large tables is usually okay](#returning-large-tables-is-usually-okay)
-    - [Use either RETURNING or EXPORTING or CHANGING, but not a combination](#use-either-returning-or-exporting-or-changing-but-not-a-combination)
-    - [Use CHANGING sparingly, where suited](#use-changing-sparingly-where-suited)
-    - [Split method instead of Boolean input parameter](#split-method-instead-of-boolean-input-parameter)
-  - [Parameter Names](#parameter-names)
-    - [Consider calling the RETURNING parameter RESULT](#consider-calling-the-returning-parameter-result)
-  - [Parameter Initialization](#parameter-initialization)
-    - [Clear or overwrite EXPORTING reference parameters](#clear-or-overwrite-exporting-reference-parameters)
-      - [Take care if input and output could be the same](#take-care-if-input-and-output-could-be-the-same)
-    - [Don't clear VALUE parameters](#dont-clear-value-parameters)
-  - [Method Body](#method-body)
-    - [Do one thing, do it well, do it only](#do-one-thing-do-it-well-do-it-only)
-    - [Focus on the happy path or error handling, but not both](#focus-on-the-happy-path-or-error-handling-but-not-both)
-    - [Descend one level of abstraction](#descend-one-level-of-abstraction)
-    - [Keep methods small](#keep-methods-small)
-  - [Control flow](#control-flow)
-    - [Fail fast](#fail-fast)
-    - [CHECK vs. RETURN](#check-vs-return)
-    - [Avoid CHECK in other positions](#avoid-check-in-other-positions)
-- [Error Handling](#error-handling)
-  - [Messages](#messages)
-    - [Make messages easy to find](#make-messages-easy-to-find)
-  - [Return Codes](#return-codes)
-    - [Prefer exceptions to return codes](#prefer-exceptions-to-return-codes)
-    - [Don't let failures slip through](#dont-let-failures-slip-through)
-  - [Exceptions](#exceptions)
-    - [Exceptions are for errors, not for regular cases](#exceptions-are-for-errors-not-for-regular-cases)
-    - [Use class-based exceptions](#use-class-based-exceptions)
-  - [Throwing](#throwing)
-    - [Use own super classes](#use-own-super-classes)
-    - [Throw one type of exception](#throw-one-type-of-exception)
-    - [Use sub-classes to enable callers to distinguish error situations](#use-sub-classes-to-enable-callers-to-distinguish-error-situations)
-    - [Throw CX_STATIC_CHECK for manageable exceptions](#throw-cx_static_check-for-manageable-exceptions)
-    - [Throw CX_NO_CHECK for usually unrecoverable situations](#throw-cx_no_check-for-usually-unrecoverable-situations)
-    - [Consider CX_DYNAMIC_CHECK for avoidable exceptions](#consider-cx_dynamic_check-for-avoidable-exceptions)
-    - [Dump for totally unrecoverable situations](#dump-for-totally-unrecoverable-situations)
-    - [Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE](#prefer-raise-exception-new-to-raise-exception-type)
-  - [Catching](#catching)
-    - [Wrap foreign exceptions instead of letting them invade your code](#wrap-foreign-exceptions-instead-of-letting-them-invade-your-code)
-- [Comments](#comments)
-  - [Express yourself in code, not in comments](#express-yourself-in-code-not-in-comments)
-  - [Comments are no excuse for bad names](#comments-are-no-excuse-for-bad-names)
-  - [Use methods instead of comments to segment your code](#use-methods-instead-of-comments-to-segment-your-code)
-  - [Write comments to explain the why, not the what](#write-comments-to-explain-the-why-not-the-what)
-  - [Design goes into the design documents, not the code](#design-goes-into-the-design-documents-not-the-code)
-  - [Comment with ", not with *](#comment-with--not-with-)
-  - [Put comments before the statement they relate to](#put-comments-before-the-statement-they-relate-to)
-  - [Delete code instead of commenting it](#delete-code-instead-of-commenting-it)
-  - [Use FIXME, TODO, and XXX and add your ID](#use-fixme-todo-and-xxx-and-add-your-id)
-  - [Don't add method signature and end-of comments](#dont-add-method-signature-and-end-of-comments)
-  - [Don't duplicate message texts as comments](#dont-duplicate-message-texts-as-comments)
-  - [ABAP Doc only for public APIs](#abap-doc-only-for-public-apis)
-  - [Prefer pragmas to pseudo comments](#prefer-pragmas-to-pseudo-comments)
-- [Formatting](#formatting)
-  - [Be consistent](#be-consistent)
-  - [Optimize for reading, not for writing](#optimize-for-reading-not-for-writing)
-  - [Use the Pretty Printer before activating](#use-the-pretty-printer-before-activating)
-  - [Use your Pretty Printer team settings](#use-your-pretty-printer-team-settings)
-  - [No more than one statement per line](#no-more-than-one-statement-per-line)
-  - [Stick to a reasonable line length](#stick-to-a-reasonable-line-length)
-  - [Condense your code](#condense-your-code)
-  - [Add a single blank line to separate things, but not more](#add-a-single-blank-line-to-separate-things-but-not-more)
-  - [Don't obsess with separating blank lines](#dont-obsess-with-separating-blank-lines)
-  - [Align assignments to the same object, but not to different ones](#align-assignments-to-the-same-object-but-not-to-different-ones)
-  - [Close brackets at line end](#close-brackets-at-line-end)
-  - [Keep single parameter calls on one line](#keep-single-parameter-calls-on-one-line)
-  - [Keep parameters behind the call](#keep-parameters-behind-the-call)
-  - [If you break, indent parameters under the call](#if-you-break-indent-parameters-under-the-call)
-  - [Line-break multiple parameters](#line-break-multiple-parameters)
-  - [Align parameters](#align-parameters)
-  - [Break the call to a new line if the line gets too long](#break-the-call-to-a-new-line-if-the-line-gets-too-long)
-  - [Indent and snap to tab](#indent-and-snap-to-tab)
-  - [Indent in-line declarations like method calls](#indent-in-line-declarations-like-method-calls)
-  - [Don't align type clauses](#dont-align-type-clauses)
-  - [Don't chain assignments](#dont-chain-assignments)
-- [Testing](#testing)
-  - [Principles](#principles)
-    - [Write testable code](#write-testable-code)
-    - [Enable others to mock you](#enable-others-to-mock-you)
-    - [Readability rules](#readability-rules)
-    - [Don't make copies or write test reports](#dont-make-copies-or-write-test-reports)
-    - [Test publics, not private internals](#test-publics-not-private-internals)
-    - [Don't obsess about coverage](#dont-obsess-about-coverage)
-  - [Test Classes](#test-classes)
-    - [Call local test classes by their purpose](#call-local-test-classes-by-their-purpose)
-    - [Put tests in local classes](#put-tests-in-local-classes)
-    - [Put help methods in help classes](#put-help-methods-in-help-classes)
-    - [How to execute test classes](#how-to-execute-test-classes)
-  - [Code Under Test](#code-under-test)
-    - [Name the code under test meaningfully, or default to CUT](#name-the-code-under-test-meaningfully-or-default-to-cut)
-    - [Test against interfaces, not implementations](#test-against-interfaces-not-implementations)
-    - [Extract the call to the code under test to its own method](#extract-the-call-to-the-code-under-test-to-its-own-method)
-  - [Injection](#injection)
-    - [Use dependency inversion to inject test doubles](#use-dependency-inversion-to-inject-test-doubles)
-    - [Consider to use the tool ABAP test double](#consider-to-use-the-tool-abap-test-double)
-    - [Exploit the test tools](#exploit-the-test-tools)
-    - [Use test seams as temporary workaround](#use-test-seams-as-temporary-workaround)
-    - [Use LOCAL FRIENDS to access the dependency-inverting constructor](#use-local-friends-to-access-the-dependency-inverting-constructor)
-    - [Don't misuse LOCAL FRIENDS to invade the tested code](#dont-misuse-local-friends-to-invade-the-tested-code)
-    - [Don't change the productive code to make the code testable](#dont-change-the-productive-code-to-make-the-code-testable)
-    - [Don't sub-class to mock methods](#dont-sub-class-to-mock-methods)
-    - [Don't mock stuff that's not needed](#dont-mock-stuff-thats-not-needed)
-    - [Don't build test frameworks](#dont-build-test-frameworks)
-  - [Test Methods](#test-methods)
-    - [Test method names: reflect what's given and expected](#test-method-names-reflect-whats-given-and-expected)
-    - [Use given-when-then](#use-given-when-then)
-    - ["When" is exactly one call](#when-is-exactly-one-call)
-    - [Don't add a TEARDOWN unless you really need it](#dont-add-a-teardown-unless-you-really-need-it)
-  - [Test Data](#test-data)
-    - [Make it easy to spot meaning](#make-it-easy-to-spot-meaning)
-    - [Make it easy to spot differences](#make-it-easy-to-spot-differences)
-    - [Use constants to describe purpose and importance of test data](#use-constants-to-describe-purpose-and-importance-of-test-data)
-  - [Assertions](#assertions)
-    - [Few, focused assertions](#few-focused-assertions)
-    - [Use the right assert type](#use-the-right-assert-type)
-    - [Assert content, not quantity](#assert-content-not-quantity)
-    - [Assert quality, not content](#assert-quality-not-content)
-    - [Use FAIL to check for expected exceptions](#use-fail-to-check-for-expected-exceptions)
-    - [Forward unexpected exceptions instead of catching and failing](#forward-unexpected-exceptions-instead-of-catching-and-failing)
-    - [Write custom asserts to shorten code and avoid duplication](#write-custom-asserts-to-shorten-code-and-avoid-duplication)
+   - [Essayez de rendre les conditions positives](#essayez-de-rendre-les-conditions-positives)
+   - [Préférez IS NOT à NOT IS](#préférez-is-not-à-not-is)
+   - [Efforcez-vous de décomposer les conditions complexes](#efforcez-vous-de-décomposer-les-conditions-complexes)
+   - [Efforcez-vous d'extraire les conditions complexes](#efforcez-vous-dextraire-les-conditions-complexes)
+- [If](#if)
+   - [Aucun branchement IF vide](#aucun-branchement-if-vide)
+   - [Préférez CASE à ELSE IF pour des conditions alternatives multiples](#préférez-case-à-else-if-pour-des-conditions-alternatives-multiples)
+   - [Gardez un niveau d'imbrication bas](#gardez-un-niveau-dimbrication-bas)
+- [Expressions régulières](#expressions-régulières)
+   - [Préférez des méthodes plus simples aux expressions régulières](#préférez-des-méthodes-plus-simples-aux-expressions-régulières)
+   - [Préférez les vérifications de base aux expressions régulières](#préférez-les-vérifications-de-base-aux-expressions-régulières)
+   - [Efforcez-vous d'assembler des expressions régulières complexes](#efforcez-vous-dassembler-des-expressions-régulières-complexes)
+- [Classes](#constructeurs)
+   - [Classes : orientation objet](#classes--orientation-objet)
+      - [Préférez les objets aux classes statiques](#préférez-les-objets-aux-classes-statiques)
+      - [Préférez la composition à l'héritage](#préférez-la-composition-à-lhéritage)
+      - [Ne mélangez pas des paradigmes avec statut et sans statut dans la même classe](#ne-mélangez-pas-des-paradigmes-avec-statut-et-sans-statut-dans-la-même-classe)
+   - [Portée](#portée)
+      - [Globale par défaut, locale uniquement le cas échéant](#globale-par-défaut-locale-uniquement-le-cas-échéant)
+      - [FINAL si non conçue pour l'héritage](#final-si-non-conçue-pour-lhéritage)
+      - [Membres PRIVATE par défaut, PROTECTED seulement si besoin](#membres-private-par-défaut-protected-seulement-si-besoin)
+      - [Efforcez-vous d'utiliser un immuable au lieu d'un getter](#efforcez-vous-dutiliser-un-immuable-au-lieu-dun-getter)
+      - [Utilisez READ-ONLY avec parcimonie](#utilisez-read-only-avec-parcimonie)
+   - [Constructeurs](#constructeurs)
+      - [Préférez NEW à CREATE OBJECT](#préférez-new-à-create-object)
+      - [Si votre classe globale est CREATE PRIVATE, laissez CONSTRUCTOR public](#si-votre-classe-globale-est-create-private-laissez-constructor-public)
+      - [Préférez les méthodes de création statiques multiples aux paramètres facultatifs](#préférez-les-méthodes-de-création-statiques-multiples-aux-paramètres-facultatifs)
+      - [Utilisez des noms descriptifs pour les méthodes de création multiples](#utilisez-des-noms-descriptifs-pour-les-méthodes-de-création-multiples)
+      - [Codez des singletons uniquement là où les instances multiples n'ont pas de sens](#codez-des-singletons-uniquement-là-où-les-instances-multiples-nont-pas-de-sens)
+- [Méthodes](#méthodes)
+   - [Appels](#appels)
+      - [N'appelez pas de méthode static dans une instance] (#nappelez-pas-de-methode-static-dans-une-instance)
+      - [Préférez les appels fonctionnels aux appels procéduraux](#préférez-les-appels-fonctionnels-aux-appels-procéduraux)
+      - [Omettez RECEIVING](#omettez-receiving)
+      - [Omettez le mot-clé facultatif EXPORTING](#omettez-le-mot-clé-facultatif-exporting)
+      - [Omettez le nom du paramètre dans les appels de paramètre unique](#omettez-le-nom-du-paramètre-dans-les-appels-de-paramètre-unique)
+      - [Omettez l'autoréférence me lorsque vous appelez une méthode d'instance](#omettez-lautoréférence-me-lorsque-vous-appelez-une-méthode-dinstance)
+   - [Méthodes : orientation objet](#méthodes--orientation-objet)
+      - [Préférez les méthodes d'instance aux méthodes statiques](#préférez-les-méthodes-dinstance-aux-méthodes-statiques)
+      - [Les méthodes d'instance publiques doivent faire partie d'une interface](#les-méthodes-dinstance-publiques-doivent-faire-partie-dune-interface)
+   - [Nombre de paramètres](#nombre-de-paramètres)
+      - [Visez un petit nombre de paramètres IMPORTING, dans l'idéal moins de trois](#visez-un-petit-nombre-de-paramètres-importing-dans-lidéal-moins-de-trois)
+      - [Fractionnez les méthodes au lieu d'ajouter des paramètres OPTIONAL](#fractionnez-les-méthodes-au-lieu-dajouter-des-paramètres-optional)
+      - [Utilisez PREFERRED PARAMETER avec parcimonie](#utilisez-preferred-parameter-avec-parcimonie)
+      - [Utilisez RETURN, EXPORT ou CHANGE pour un seul et unique paramètre](#utilisez-return-export-ou-change-pour-un-seul-et-unique-paramètre)
+   - [Types de paramètre](#types-de-paramètre)
+      - [Préférez RETURNING à EXPORTING](#préférez-returning-à-exporting)
+      - [N'hésitez pas à utiliser RETURNING avec de grandes tables](#nhésitez-pas-à-utiliser-returning-avec-de-grandes-tables)
+      - [Utilisez soit RETURNING, soit EXPORTING, soit CHANGING, mais ne les utilisez pas en combinaison](#utilisez-soit-returning-soit-exporting-soit-changing-mais-ne-les-utilisez-pas-en-combinaison)
+      - [Utilisez CHANGING avec parcimonie, lorsque cela est adapté](#utilisez-changing-avec-parcimonie-lorsque-cela-est-adapté)
+      - [Fractionnez la méthode au lieu d'utiliser un paramètre d'entrée booléen](#fractionnez-la-méthode-au-lieu-dutiliser-un-paramètre-dentrée-booléen)
+   - [Noms de paramètres](#noms-de-paramètres)
+      - [Efforcez-vous d'appeler "RESULT" le paramètre RETURNING](#efforcez-vous-dappeler-result-le-paramètre-returning)
+   - [Initialisation de paramètres](#initialisation-de-paramètres)
+      - [Réinitialisez ou écrasez les paramètres de référence EXPORTING](#réinitialisez-ou-écrasez-les-paramètres-de-référence-exporting)
+         - [Soyez vigilant si l'entrée et la sortie peuvent être identiques](#soyez-vigilant-si-lentrée-et-la-sortie-peuvent-être-identiques)
+      - [Ne réinitialisez pas les paramètres VALUE](#ne-réinitialisez-pas-les-paramètres-value)
+   - [Corps de la méthode](#corps-de-la-méthode)
+      - [Faites une chose, faites-la bien et ne faites que cela](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela)
+      - [Activez les cas d'utilisation correcte ou la gestion des erreurs, mais pas les deux](#activez-les-cas-dutilisation-correcte-ou-la-gestion-des-erreurs-mais-pas-les-deux)
+      - [Descendez d'un niveau d'abstraction](#descendez-dun-niveau-dabstraction)
+      - [Privilégiez les méthodes courtes](#privilégiez-les-méthodes-courtes)
+   - [Flux de contrôle](#flux-de-contrôle)
+      - [Échec accéléré](#échec-accéléré)
+      - [CHECK contre RETURN](#check-contre-return)
+      - [Évitez d'utiliser CHECK dans d'autres positions](#évitez-dutiliser-check-dans-dautres-positions)
+- [Gestion des erreurs](#gestion-des-erreurs)
+   - [Messages](#messages)
+      - [Facilitez la recherche des messages](#facilitez-la-recherche-des-messages)
+   - [Codes retour](#codes-retour)
+      - [Préférez les exceptions aux codes retour](#préférez-les-exceptions-aux-codes-retour)
+      - [Ne laissez pas passer des erreurs](#ne-laissez-pas-passer-des-erreurs)
+   - [Exceptions](#exceptions)
+      - [Les exceptions sont pour les erreurs, et non pour les cas normaux](#les-exceptions-sont-pour-les-erreurs-et-non-pour-les-cas-normaux)
+      - [Utilisez des exceptions basées sur une classe](#utilisez-des-exceptions-basées-sur-une-classe)
+   - [Levée d'exceptions](#levée-dexceptions)
+      - [Utilisez vos propres surclasses](#utilisez-vos-propres-surclasses)
+      - [Levez un seul type d'exception](#levez-un-seul-type-dexception)
+      - [Utilisez des surclasses pour permettre aux programmes appelant d'identifier les situations d'erreur](#utilisez-des-surclasses-pour-permettre-aux-programmes-appelant-didentifier-les-situations-derreur)
+      - [Levez CX_STATIC_CHECK pour les exceptions gérables](#levez-cx_static_check-pour-les-exceptions-gérables)
+      - [Levez CX_NO_CHECK pour les situations généralement irrécupérables](#levez-cx_no_check-pour-les-situations-généralement-irrécupérables)
+      - [Pensez à CX_DYNAMIC_CHECK pour les exceptions évitables](#pensez-à-cx_dynamic_check-pour-les-exceptions-évitables)
+      - [Procédez à un vidage de la mémoire pour les situations totalement irrécupérables](#procédez-à-un-vidage-de-la-mémoire-pour-les-situations-totalement-irrécupérables)
+      - [Préférez RAISE EXCEPTION NEW à RAISE EXCEPTION TYPE](#préférez-raise-exception-new-à-raise-exception-type)
+   - [Interception](#interception)
+      - [Enveloppez les exceptions externes pour éviter qu'elles n'envahissent votre code](#enveloppez-les-exceptions-externes-pour-éviter-quelles-nenvahissent-votre-code)
+- [Commentaires](#commentaires)
+   - [Exprimez-vous via le code, et non via des commentaires](#exprimez-vous-via-le-code-et-non-via-des-commentaires)
+   - [Les commentaires ne sont pas une excuse devant justifier les noms inappropriés](#les-commentaires-ne-sont-pas-une-excuse-devant-justifier-les-noms-inappropriés)
+   - [Utilisez les méthodes plutôt que les commentaires pour segmenter votre code](#utilisez-les-méthodes-plutôt-que-les-commentaires-pour-segmenter-votre-code)
+   - [Écrivez des commentaires pour répondre à la question "pourquoi ?", et non à la question "quoi ?"](#écrivez-des-commentaires-pour-répondre-à-la-question-pourquoi--et-non-à-la-question-quoi-)
+   - [La conception doit être traitée dans les documents de conception, et non dans le code](#la-conception-doit-être-traitée-dans-les-documents-de-conception-et-non-dans-le-code)
+   - [Commentez avec \", et non avec \*](#commentez-avec--et-non-avec-)
+   - [Mettez des commentaires avant l'instruction à laquelle ils font référence](#mettez-des-commentaires-avant-linstruction-à-laquelle-ils-font-référence)
+   - [Supprimez le code au lieu de le commenter](#supprimez-le-code-au-lieu-de-le-commenter)
+   - [Utilisez FIXME, TODO et XXX, et ajoutez votre ID](#utilisez-fixme-todo-et-xxx-et-ajoutez-votre-id)
+   - [N'ajoutez pas de commentaires de type signature de méthode et end-of](#najoutez-pas-de-commentaires-de-type-signature-de-méthode-et-end-of)
+   - [N'ajoutez pas des commentaires qui font doublons avec les textes de messages](#najoutez-pas-des-commentaires-qui-font-doublons-avec-les-textes-de-messages)
+   - [Utilisez ABAP Doc uniquement pour les API publiques](#utilisez-abap-doc-uniquement-pour-les-api-publiques)
+   - [Préférez les pragmas aux pseudo-commentaires](#préférez-les-pragmas-aux-pseudo-commentaires)
+- [Mise en forme](#mise-en-forme)
+   - [Soyez cohérent](#soyez-cohérent)
+   - [Optimisez votre code pour la lecture, et non l'écriture](#optimisez-votre-code-pour-la-lecture-et-non-lécriture)
+   - [Utilisez la fonction Pretty Printer avant l'activation](#utilisez-la-fonction-pretty-printer-avant-lactivation)
+   - [Utilisez les options Pretty Printer paramétrées pour votre équipe](#utilisez-les-options-pretty-printer-paramétrées-pour-votre-équipe)
+   - [Pas plus d'une instruction par ligne](#pas-plus-dune-instruction-par-ligne)
+   - [Gardez une longueur de ligne raisonnable](#gardez-une-longueur-de-ligne-raisonnable)
+   - [Condensez votre code](#condensez-votre-code)
+   - [Ajoutez juste une ligne vierge pour séparer les différentes parties, pas plus](#ajoutez-juste-une-ligne-vierge-pour-séparer-les-différentes-parties-pas-plus)
+   - [N'abusez pas des lignes vierges de séparation](#nabusez-pas-des-lignes-vierges-de-séparation)
+   - [Alignez les affectations sur le même objet, et non sur des objets différents](#alignez-les-affectations-sur-le-même-objet-et-non-sur-des-objets-différents)
+   - [Fermez les guillemets à la fin de la ligne](#fermez-les-guillemets-à-la-fin-de-la-ligne)
+   - [Faites en sorte que les appels de paramètre unique soient sur une seule ligne](#faites-en-sorte-que-les-appels-de-paramètre-unique-soient-sur-une-seule-ligne)
+   - [Faites en sorte que les paramètres apparaissent derrière l'appel](#faites-en-sorte-que-les-paramètres-apparaissent-derrière-lappel)
+   - [Si vous revenez à la ligne, mettez les paramètres en retrait sous l'appel](#si-vous-revenez-à-la-ligne-mettez-les-paramètres-en-retrait-sous-lappel)
+   - [En cas de multiples paramètres, revenez à la ligne](#en-cas-de-multiples-paramètres-revenez-à-la-ligne)
+   - [Alignez les paramètres](#alignez-les-paramètres)
+   - [Mettez l'appel sur deux lignes si la ligne initiale est trop longue](#mettez-lappel-sur-deux-lignes-si-la-ligne-initiale-est-trop-longue)
+   - [Ajoutez un retrait et passez-le en tabulation](#ajoutez-un-retrait-et-passez-le-en-tabulation)
+   - [Mettez les déclarations en ligne en retrait comme les appels de méthode](#mettez-les-déclarations-en-ligne-en-retrait-comme-les-appels-de-méthode)
+   - [N'alignez pas les clauses type](#nalignez-pas-les-clauses-type)
+   - [Ne multipliez pas les égalités](#ne-multipliez-pas-les-égalités)
+- [Test](#test)
+   - [Principes](#principes)
+      - [Écrivez des codes testables](#écrivez-des-codes-testables)
+      - [Laissez les autres faire des simulations de votre code](#laissez-les-autres-faire-des-simulations-de-votre-code)
+      - [Règles relatives à la lisibilité](#règles-relatives-à-la-lisibilité)
+      - [Ne faites pas de copies et n'écrivez pas de programmes de test](#ne-faites-pas-de-copies-et-nécrivez-pas-de-programmes-de-test)
+      - [Testez les parties publiques, et non les parties internes privées](#testez-les-parties-publiques-et-non-les-parties-internes-privées)
+      - [Ne soyez pas obsédé par la couverture du code](#ne-soyez-pas-obsédé-par-la-couverture-du-code)
+   - [Classes de test](#classes-de-test)
+      - [Appelez les classes de test locales en fonction de leur objectif](#appelez-les-classes-de-test-locales-en-fonction-de-leur-objectif)
+      - [Mettez les tests dans les classes locales](#mettez-les-tests-dans-les-classes-locales)
+      - [Mettez les méthodes d'aide dans les classes d'aide](#mettez-les-méthodes-daide-dans-les-classes-daide)
+      - [Comment exécuter des classes de test](#comment-exécuter-des-classes-de-test)
+   - [Membre testé](#membre-testé)
+      - [Donnez un nom explicite au membre testé ou dénommez-le CUT par défaut](#donnez-un-nom-explicite-au-membre-testé-ou-dénommez-le-cut-par-défaut)
+      - [Testez des interfaces, pas des implémentations](#testez-des-interfaces-pas-des-implémentations)
+      - [Extrayez l'appel au membre testé dans sa propre méthode](#extrayez-lappel-au-membre-testé-dans-sa-propre-méthode)
+   - [Injection](#injection)
+      - [Utilisez l'inversion des dépendances pour injecter des simulations test](#utilisez-linversion-des-dépendances-pour-injecter-des-simulations-test)
+      - [Pensez à utiliser l'outil simulation test ABAP](#pensez-à-utiliser-loutil-simulation-test-abap)
+      - [Exploitez les outils de test](#exploitez-les-outils-de-test)
+      - [Utilisez les test seams comme solution de contournement temporaire](#utilisez-les-test-seams-comme-solution-de-contournement-temporaire)
+      - [Utilisez LOCAL FRIENDS pour accéder au constructeur d'inversion des dépendances](#utilisez-local-friends-pour-accéder-au-constructeur-dinversion-des-dépendances)
+      - [N'utilisez pas LOCAL FRIENDS à mauvais escient pour envahir le code testé](#nutilisez-pas-local-friends-à-mauvais-escient-pour-envahir-le-code-testé)
+      - [Ne modifiez pas le code productif pour rendre le code testable](#ne-modifiez-pas-le-code-productif-pour-rendre-le-code-testable)
+      - [Ne créez pas des sous-classes pour simuler des méthodes](#ne-créez-pas-des-sous-classes-pour-simuler-des-méthodes)
+      - [Ne simulez pas ce dont vous n'avez pas besoin](#ne-simulez-pas-ce-dont-vous-navez-pas-besoin)
+      - [Ne créez pas de framework de test](#ne-créez-pas-de-framework-de-test)
+   - [Méthodes de test](#méthodes-de-test)
+      - [Noms de méthode de test : reflètent ce qui est donné et attendu](#noms-de-méthode-de-test--reflètent-ce-qui-est-donné-et-attendu)
+      - [Utilisez le format given-when-then](#utilisez-le-format-given-when-then)
+      - ["When" est un appel et un seul](#when-est-un-appel-et-un-seul)
+      - [N'ajoutez pas un TEARDOWN à moins d'en avoir vraiment besoin](#najoutez-pas-un-teardown-à-moins-den-avoir-vraiment-besoin)
+   - [Données de test](#données-de-test)
+      - [Facilitez la lecture et la compréhension](#facilitez-la-lecture-et-la-compréhension)
+      - [Faites ressortir les différences](#faites-ressortir-les-différences)
+      - [Utilisez des constantes pour décrire l'objectif et l'importance des données de test](#utilisez-des-constantes-pour-décrire-lobjectif-et-limportance-des-données-de-test)
+   - [Assertions](#assertions)
+      - [Des assertions en faible nombre, ciblées](#des-assertions-en-faible-nombre-ciblées)
+      - [Utilisez le bon type d'assert](#utilisez-le-bon-type-dassert)
+      - [Utilisez les asserts pour du contenu, pas pour de la quantité](#utilisez-les-asserts-pour-du-contenu-pas-pour-de-la-quantité)
+      - [Utilisez les asserts pour de la qualité, pas pour du contenu](#utilisez-les-asserts-pour-de-la-qualité-pas-pour-du-contenu)
+      - [Utilisez FAIL pour rechercher les exceptions attendues](#utilisez-fail-pour-rechercher-les-exceptions-attendues)
+      - [Transmettez les exceptions inattendues au lieu d'utiliser catch et fail](#transmettez-les-exceptions-inattendues-au-lieu-dutiliser-catch-et-fail)
+      - [Écrivez des asserts personnalisés pour raccourcir le code et éviter la double saisie](#écrivez-des-asserts-personnalisés-pour-raccourcir-le-code-et-éviter-la-double-saisie)
 
-## How to
+## Comment faire pour
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#how-to)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#comment-faire-pour)
 
-### How to Get Started with Clean Code
+### Démarrer avec la méthodologie Clean Code
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [How to](#how-to) > [This section](#how-to-get-started-with-clean-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Comment faire pour](#comment-faire-pour) > [Cette section](#démarrer-avec-la-méthodologie-clean-code)
 
-If you are new to Clean Code, you should first
-read [Robert C. Martin's _Clean Code_].
-The [Clean Code Developer initiative](https://clean-code-developer.com/)
-may help you getting started with a didactically smooth stepwise introduction to the topic in general.
+Si vous découvrez la méthodologie Clean Code, vous devriez commencer par lire l'ouvrage de [Robert C. Martin_ Coder proprement (Clean Code)_]. L'[initiative Clean Code Developer](https://clean-code-developer.com/) peut vous aider à démarrer avec une présentation générale, qui se veut didactique en abordant le sujet pas à pas.
 
-We recommend you to start with things that are easily understood and broadly accepted,
-such as [Booleans](#booleans), [Conditions](#conditions), and [Ifs](#ifs).
+Nous vous recommandons de démarrer avec des choses faciles à comprendre et largement acceptées, comme les [booléens](#booléens), les [conditions](#conditions), et les [If](#if).
 
-You will probably benefit most from the section [Methods](#methods),
-especially [Do one thing, do it well, do it only](#do-one-thing-do-it-well-do-it-only) and [Small](#keep-methods-small),
-because these tremendously improve the overall structure of your code.
+Vous tirerez probablement le plus grand profit de la section [Méthodes](#méthodes), plus particulièrement [Faites une chose, faites-la bien et ne faites que cela](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela) et [Court](#privilégiez-les-méthodes-courtes), car cela améliore considérablement la structure générale de votre code.
 
-Some topics in here can spark difficult discussions in teams
-that are experienced in what they do but new to Clean Code;
-these topics are perfectly "healthy", but people may have problems
-making themselves comfortable with them in the beginning.
+Certains sujets ici peuvent déclencher des discussions ardues dans les équipes professionnelles qui sont expérimentées, mais novices en Clean Code ; ces sujets sont parfaitement "sains" mais il se peut que les collaborateurs aient des difficultés à s'y faire au début.
 
-Continue to these more controversial topics later;
-especially [Comments](#comments), [Names](#names), and [Formatting](#formatting)
-can lead to near-religious disputes
-and should only be addressed by teams that already saw proof of Clean Code's positive effects.
+Passez à ces sujets plus controversés plus tard ; en particulier, [Commentaires](#commentaires), [Noms](#noms) et [Mise en forme](#mise-en-forme) peuvent entraîner des quasi-guerres de religion et devraient s'adresser uniquement aux équipes qui ont déjà éprouvé les effets positifs du Clean Code.
 
-### How to Refactor Legacy Code
+### Refactoriser du code existant
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [How to](#how-to) > [This section](#how-to-refactor-legacy-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Comment faire pour](#comment-faire-pour) > [Cette section](#refactoriser-du-code-existant)
 
-The topics [Booleans](#booleans), [Conditions](#conditions), [Ifs](#ifs),
-and [Methods](#methods) are most rewarding if you are working on a legacy project
-with tons of code that you cannot or do not want to change
-because they can be applied to new code without conflicts.
+Les sujets [Booléens](#booléens), [Conditions](#conditions), [If](#if), et [Méthodes](#méthodes) sont les plus bénéfiques si vous travaillez sur un projet existant, avec pléthore de code que vous ne pouvez pas ou que vous ne souhaitez pas modifier, car ils peuvent s'appliquer à du nouveau code sans créer de conflits.
 
-The topic [Names](#names) is very demanding for legacy projects,
-as it may introduce a breach between old and new code,
-up to a degree where sections like
-[Avoid encodings, esp. Hungarian notation and prefixes](#avoid-encodings-esp-hungarian-notation-and-prefixes)
-are better ignored.
+Le sujet [Noms](#noms) est très exigeant pour les projets existants, car il peut introduire une brèche entre l'ancien code et le nouveau, à un tel point qu'il vaut mieux ignorer les sections telles que [Évitez les codifications, en particulier la notation hongroise et les préfixes](#évitez-les-codifications-en-particulier-la-notation-hongroise-et-les-préfixes).
 
-Try not to mix different development styles within the same
-development object when carrying out a refactoring. If the
-legacy code contains only up-front declarations, and a complete
-refactoring into using inline declarations is not feasible, it
-is probably better to stick with the legacy style rather than
-mixing the two styles. There are several similar situations
-where mixing styles could cause confusion, for example:
+N'essayez pas de mélanger plusieurs styles de coding dans un même objet refactorisé. Si l'originale contient des déclarations de variable en début de routine,
+refactorisé pour une déclaration en liggne n'est pas faisable. Il est sûrement mieux de garder la méthodologie originale.
+Il y a d'autres cas où mélanger les style peut être confusant :
 
-- Mixing `REF TO` and `FIELD-SYMBOL` when looping.
-- Mixing `NEW` and `CREATE OBJECT` when calling a `CONSTRUCTOR`.
-- Mixing `RETURNING` and `EXPORTING` in the method signatures of
-methods only returning / exporting one parameter.
+-Mélanger 'REF TO' et 'FIELD-SYMBOL' dans une boucle.
+-Mélanger 'NEW' et 'CREATE OBJECT' en appelant le 'CONSTRUCTOR'.
+-Mélanger 'RETURNING' et 'EXPORTING' en signature de méthodes d'une classe pour les méthodes qui renvoient qu'un seul paramètre.
 
-We observed good results with a four-step plan for refactoring:
+Nous avons constaté de bons résultats avec un plan de refactoring en quatre étapes :
 
-1. Get the team aboard. Communicate and explain the new style,
-and get everybody on the project team to agree to it.
-You don't need to commit all guidelines at once, just start
-with an undisputed small subset and evolve from there.
+1. Embarquez l'équipe avec vous. Communiquez et expliquez le nouveau style, et amenez tout le monde dans l'équipe projet à y adhérer. Vous n'avez pas besoin de suivre toutes les directives d'un seul coup, commencez par un petit sous-ensemble incontesté, puis évoluez à partir de là.
 
-2. Follow the _boy scout rule_ to your daily work routine:
-_always leave the code you edit a little cleaner than you found it_.
-Don't obsess with this by sinking hours into "cleaning the campsite",
-just spend a couple of minutes extra and observe how the
-improvements accumulate over time.
+2. Suivez la _règle du boy-scout_ pour votre travail quotidien : _laissez toujours le code que vous traitez un peu plus propre que vous l'avez trouvé_. Ne vous obsédez pas à passer des heures et des heures à "nettoyer le camp", passez seulement quelques minutes à observer comment les progrès se cumulent dans le temps.
 
-3. Build _clean islands_: from time to time, pick a small object or component and
-try to make it clean in all aspects. These islands demonstrate the benefit
-of what you're doing and form solidly tested home bases for further refactoring.
+3. Créez des _îlots propres_ : de temps en temps, prenez un petit objet ou composant et essayez de le rendre propre dans tous ses aspects. Ces îlots montrent le bienfait de ce que vous faites et constituent des bases solidement testées pour un refactoring ultérieur.
 
-4. Talk about it. No matter whether you set up old-school [Fagan code reviews](https://en.wikipedia.org/wiki/Fagan_inspection),
-hold info sessions, or form discussion boards in your favorite chat tool:
-you will need to talk about your experiences and learnings, to enable the
-team to grow a common understanding.
+4. Parlez-en. Que vous mettiez en place une [revue de code Fagan](https://en.wikipedia.org/wiki/Fagan_inspection) à l'ancienne, que vous teniez des sessions d'information ou que vous créiez un forum de discussion dans votre outil de discussion instantanée favori, vous aurez besoin de parler de vos expériences et de vos découvertes pour permettre à l'équipe d'acquérir une vision commune.
 
-### How to Check Automatically
+### Effectuer une vérification automatique
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [How to](#how-to) > [This section](#how-to-check-automatically)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Comment faire pour](#comment-faire-pour) > [Cette section](#effectuer-une-vérification-automatique)
 
-[code pal for ABAP](https://github.com/SAP/code-pal-for-abap)
-provides a comprehensive suite of automatic checks for Clean ABAP.
+Il n'existe pas de suite complète de contrôles de code statiques qui détecte automatiquement les contre-modèles que nous décrivons ici.
 
-ABAP Test Cockpit, Code Inspector, Extended Check, and Checkman provide
-some checks that may help you find certain issues.
+ABAP Test Cockpit, Code Inspector, Extended Check et CheckMan fournissent des contrôles qui peuvent vous aider à trouver certains problèmes.
 
-[abapOpenChecks](https://github.com/larshp/abapOpenChecks),
-an Open Source collection of Code Inspector checks,
-also covers some of the described anti-patterns.
+[abapOpenChecks](https://github.com/larshp/abapOpenChecks), une collection Open Source de contrôles Code Inspector, couvent également certains des contre-modèles décrits.
 
-[abaplint](https://github.com/abaplint/abaplint) is an open source reimplementation of the ABAP parser. It works without a SAP system and is meant to be used on code serialized using abapGit. It offers multiple integrations (GitHub Actions, Jenkins, text editors...), covers some of the antipatterns and can also be used to check formatting and code conventions.
+[abaplint](https://github.com/abaplint/abaplint) est une réimplémentation Open Source de l'analyseur ABAP. Il fonctionne sans système SAP et il est conçu pour être utilisé sur du code sérialisé avec abapGit. Il propose de multiples intégrations (actions GitHub, Jenkins, éditeurs de texte...), couvre certains contre-modèles et peut également être utilisé pour contrôler la mise en forme et les conventions de code.
 
-### How to Relate to Other Guides
+### Faire le lien avec d'autres guides
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [How to](#how-to) > [This section](#how-to-relate-to-other-guides)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Comment faire pour](#comment-faire-pour) > [Cette section](#faire-le-lien-avec-dautres-guides)
 
-Our guide follows the _spirit_ of Clean Code,
-meaning we adjusted some things to the ABAP programming language
-e.g. [Throw CX_STATIC_CHECK for manageable exceptions](#throw-cx_static_check-for-manageable-exceptions).
+Notre guide suit l'_esprit_ de la méthodologie Clean Code, ce qui veut dire que nous avons adapté certains points au langage de programmation ABAP, par exemple [Levez CX_STATIC_CHECK pour les exceptions gérables](#levez-cx_static_check-pour-les-exceptions-gérables).
 
-Some facts are from the
-[ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenabap_pgl.htm),
-which this guide is mostly compatible to; deviations are indicated and always in the spirit of cleaner code.
+Certains éléments sont issus des [Directives de programmation ABAP](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenabap_pgl.htm), avec lesquelles ce guide est largement compatible ; les écarts sont signalés et vont toujours dans le sens d'un code plus propre.
 
-This guide also respects the
-[DSAG's Recommendations for ABAP Development](https://www.dsag.de/sites/default/files/2020-12/dsag_recommendation_abap_development.pdf),
-although we are more precise in most details.
+Ce guide respecte également les [Recommandations de la DSAG pour le développement ABAP](https://www.dsag.de/sites/default/files/2020-12/dsag_recommendation_abap_development.pdf), mais nous sommes plus précis dans grand nombre de détails.
 
-Since its publication, Clean ABAP has become a reference guide
-for many of SAP's in-house development teams,
-including the several hundred coders that work on S/4HANA.
+### Exprimer un désaccord
 
-### How to Disagree
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Comment faire pour](#comment-faire-pour) > [Cette section](#exprimer-un-désaccord)
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [How to](#how-to) > [This section](#how-to-disagree)
+Nous avons écrit ce guide de style pour les lecteurs qui sont déjà familiarisés avec la méthodologie Clean Code ou qui sont d'ores et déjà en train d'y travailler, en nous concentrant fortement sur la manière d'appliquer le Clean Code _spécifiquement à ABAP_.
 
-We wrote this style guide for readers who are already acquainted with Clean Code or who are right now working on that,
-with a strong focus on how to apply Clean Code _specifically to ABAP_.
+Gardez à l'esprit que de ce fait, nous n'avons pas présenté tous les concepts aussi longuement et en profondeur que dans le livre original et les ressources liées : ceux-ci valent toujours la peine d'être lus, en particulier si vous êtes en désaccord avec certains points ici seulement parce que nous ne les avons pas très bien expliqués. Utilisez les liens dans les sections pour consulter le contexte de notre prescription.
 
-Please mind that we therefore did not introduce all concepts in the same length and depth
-as the original book and related resources: these are still worth a read,
-especially if you disagree with things in here just because we didn't explain them very well.
-Use the links in the sections to read up on the background of our guidance.
+Vous êtes libre de discuter et d'exprimer votre désaccord avec tout ce que nous disons ici. La méthodologie Clean Code repose sur l'un des piliers suivants : _l'équipe établit les règles_. Assurez-vous seulement de donner une chance équitable à quelque chose avant de le rejeter.
 
-You are free to discuss and disagree with anything we say here.
-One of the pillars of Clean Code is that _the team rules_.
-Just be sure to give things a fair chance before you discard them.
+[CONTRIBUTING.md](../CONTRIBUTING.md) suggère des façons dont vous pouvez modifier ce guide ou en dévier dans des détails mineurs.
 
-[CONTRIBUTING.md](../CONTRIBUTING.md) suggests ways how you can change this guide or deviate from it in minor details.
+## Noms
 
-## Names
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#noms)
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#names)
+### Utilisez des noms descriptifs
 
-### Use descriptive names
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-des-noms-descriptifs)
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-descriptive-names)
-
-Use names that convey the content and meaning of things.
+Utilisez des noms qui sont adaptés au contenu et à la signification des éléments.
 
 ```ABAP
 CONSTANTS max_wait_time_in_seconds TYPE i ...
@@ -392,8 +339,7 @@ METHODS read_user_preferences ...
 CLASS /clean/user_preference_reader ...
 ```
 
-Do not focus on the data type or technical encoding.
-They hardly contribute to understanding the code.
+Ne vous concentrez par sur le type de données ou sur la codification technique. Ils ne contribuent pas vraiment à la compréhension du code.
 
 ```ABAP
 " anti-pattern
@@ -403,86 +349,67 @@ METHODS read_t005 ...
 CLASS /dirty/t005_reader ...
 ```
 
-[Do not attempt to fix bad names by comments.](#comments-are-no-excuse-for-bad-names)
+[N'essayez pas de compenser des noms inappropriés par des commentaires.](#les-commentaires-ne-sont-pas-une-excuse-devant-justifier-les-noms-inappropriés)
 
-> Read more in _Chapter 2: Meaningful Names: Use Intention-Revealing Names_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir des noms révélateurs des intentions_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Prefer solution domain and problem domain terms
+### Préférez des termes du domaine de la solution et du domaine du problème
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#prefer-solution-domain-and-problem-domain-terms)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#préférez-des-termes-du-domaine-de-la-solution-et-du-domaine-du-problème)
 
-Search for good names in the solution domain, i.e. computer science terms such as "queue" or "tree",
-and in the problem domain, i.e. business field terms such as "account" or "ledger".
+Recherchez des noms appropriés dans le domaine de la solution, par exemple des termes informatiques comme "file d'attente" ou "arborescence", et dans le domaine du problème traité, par exemple des termes commerciaux comme "compte" ou "ledger".
 
-Layers that are business-like will sound best when named according to the problem domain.
-This is especially true for components that are designed with Domain-Driven Design, such as APIs and business objects.
+Le nom des couches à teneur commerciale sonnera mieux si elles sont intitulées d'après le domaine du problème. Cela est particulièrement vrai pour les composants qui sont conçus avec la conception pilotée par le domaine, tels que les API et les objets de gestion.
 
-Layers that provide mostly technical functionality, such as factory classes and abstract algorithms,
-will sound best when named according to the solution domain.
+Le nom des couches qui offrent des fonctionnalités en grande partie techniques, telles que les classes de factory et les algorithmes abstraits, sonnera mieux si elles sont intitulées d'après le domaine de la solution.
 
-In any case, do not attempt to make up your own language.
-We need to be able to exchange information between developers, product owners, partners and customers,
-so choose names that all of these can relate to without a customized dictionary.
+Dans tous les cas, ne tentez pas de composer votre propre langage. Nous devons être en mesure d'échanger des informations entre développeurs, responsables produit, partenaires et clients. Par conséquent, choisissez des noms qui parleront à tous ces collaborateurs, sans qu'ils aient besoin de consulter un dictionnaire spécialisé.
 
-> Read more in _Chapter 2: Meaningful Names: Use Solution Domain Names_ and _[...]:
-> Use Problem Domain Names_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir des noms dans le domaine de la solution_ et _[...] : > choisir des noms dans le domaine du problème_ du livre de [Robert C. Martin _Coder proprement_].
 
-### Use plural
+### Utilisez le pluriel
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-plural)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-le-pluriel)
 
-There is a legacy practice at SAP to name tables of things in singular,
-for example `country` for a "table of countries".
-Common tendency in the outside world is to use the plural for lists of things.
-We therefore recommend to prefer `countries` instead.
+La pratique existante chez SAP consiste à nommer les tables d'éléments au singulier, par exemple `country` pour une "table de pays". Hors de SAP, la tendance couramment suivie consiste à utiliser le pluriel pour les listes d'éléments. Par conséquent, nous vous recommandons de privilégier `countries` plutôt.
 
-> This advice primarily targets things like variables and properties.
-> For development objects, there may be competing patterns
-> that also make sense, for example the widely used convention
-> to name database tables ("transparent tables") in singular.
+> Ce conseil concerne principalement les éléments tels que les variables et les propriétés. > Pour les objets de développement, il peut y avoir des modèles opposés > qui ont également du sens, par exemple, la convention largement utilisée > qui invite à nommer les tables de base de données ("tables transparentes") au singulier.
 
-> Read more in _Chapter 2: Meaningful Names: Use Intention-Revealing Names_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir des noms révélateurs des intentions_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Use pronounceable names
+### Utilisez des noms prononçables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-pronounceable-names)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-des-noms-prononçables)
 
-We think and talk a lot about objects, so use names that you can pronounce,
-for example prefer `detection_object_types` to something cryptic like `dobjt`.
+Nous pensons beaucoup aux objets et en parlons beaucoup. Par conséquent, utilisez des noms que vous pouvez prononcer. Par exemple, préférez `detection_object_types` à quelque chose d'énigmatique comme `dobjt`.
 
-> Read more in _Chapter 2: Meaningful Names: Use Pronounceable Names_ of [Robert C. Martin's _Clean Code_]
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir des noms prononçables_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Avoid abbreviations
+### Évitez les abréviations
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#avoid-abbreviations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#évitez-les-abréviations)
 
-If you have enough space, write out names in full.
-Start abbreviating only if you exceed length limitations.
+Si vous avez assez d'espace, écrivez les noms complets. Commencez à abréger uniquement si vous dépassez les limites de longueur.
 
-If you do have to abbreviate, start with the _unimportant_ words.
+Si vous devez abréger, commencez par les mots _futiles_.
 
-Abbreviating things may appear efficient at first glance, but becomes ambiguous very fast.
-For example, does the "cust" in `cust` mean "customizing", "customer", or "custom"?
-All three are common in SAP applications.
+À première vue, cela peut sembler efficace d'abréger des éléments, mais bien vite, le contenu devient ambigu. Par exemple, est-ce que `cust` signifie "customizing" (personnalisation), "customer" (client) ou "custom" (personnalisé) ? Ces trois termes sont couramment utilisés dans les applications SAP.
 
-> Read more in _Chapter 2: Meaningful Names: Make Meaningful Distinctions_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : faire des distinctions significatives_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Use same abbreviations everywhere
+### Utilisez les mêmes abréviations partout
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-same-abbreviations-everywhere)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-les-mêmes-abréviations-partout)
 
-People will search for keywords to find relevant code.
-Support this by using the same abbreviation for the same thing.
-For example, always abbreviate "detection object type" to "dobjt"
-instead of mixing "dot", "dotype", "detobjtype" and so on.
+Les collaborateurs rechercheront des mots-clés pour trouver du code pertinent. Facilitez-leur la tâche en utilisant la même abréviation pour le même élément. Par exemple, abrégez toujours l'abréviation "dobjt" pour "detection object type", plutôt qu'un mélange entre "dot", "dotype", "detobjtype" et ainsi de suite.
 
-> Read more in _Chapter 2: Meaningful Names: Use Searchable Names_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir des noms compatibles avec une recherche_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Use nouns for classes and verbs for methods
+### Utilisez des noms pour les classes, et des verbes pour les méthodes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-nouns-for-classes-and-verbs-for-methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-des-noms-pour-les-classes-et-des-verbes-pour-les-méthodes)
 
-Use nouns or noun phrases to name classes, interfaces, and objects:
+Utilisez des noms ou groupes nominaux pour nommer les classes, interfaces et objets :
 
 ```ABAP
 CLASS /clean/account
@@ -490,7 +417,7 @@ CLASS /clean/user_preferences
 INTERFACE /clean/customizing_reader
 ```
 
-Use verbs or verb phrases to name methods:
+Utilisez des verbes ou groupes verbaux pour nommer les méthodes :
 
 ```ABAP
 METHODS withdraw
@@ -498,41 +425,41 @@ METHODS add_message
 METHODS read_entries
 ```
 
-Starting Boolean methods with verbs like `is_` and `has_` yields nice reading flow:
+Nommez les méthodes booléennes en commençant par des verbes comme `is_` et `has_` pour rendre la lecture plus fluide :
 
 ```ABAP
 IF is_empty( table ).
 ```
 
-We recommend naming functions like methods:
+Nous vous recommandons de nommer les fonctions comme les méthodes :
 
 ```ABAP
 FUNCTION /clean/read_alerts
 ```
 
-### Avoid noise words such as "data", "info", "object"
+### Évitez les mots parasites, comme "données", "info", "objet"
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#avoid-noise-words-such-as-data-info-object)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#évitez-les-mots-parasites-comme-données-info-objet)
 
-Omit noise words
+Omettez les mots parasites
 
 ```ABAP
 account  " instead of account_data
 alert    " instead of alert_object
 ```
 
-or replace them with something specific that really adds value
+ou remplacez-les par des termes spécifiques qui leur donnent vraiment du sens.
 
 ```ABAP
 user_preferences          " instead of user_info
 response_time_in_seconds  " instead of response_time_variable
 ```
 
-> Read more in _Chapter 2: Meaningful Names: Make Meaningful Distinctions_ of [Robert C. Martin's _Clean Code_]
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : faire des distinctions significatives_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Pick one word per concept
+### Sélectionnez un mot par concept
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#pick-one-word-per-concept)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#sélectionnez-un-mot-par-concept)
 
 ```ABAP
 METHODS read_this.
@@ -540,8 +467,7 @@ METHODS read_that.
 METHODS read_those.
 ```
 
-Choose a term for a concept and stick to it; don't mix in other synonyms.
-Synonyms will make the reader waste time on finding a difference that's not there.
+Choisissez un terme par concept et adhérez à cette règle. N'ajoutez pas des synonymes. En présence de synonymes, le lecteur perdra du temps à rechercher une différence, alors qu'il n'y en a pas.
 
 ```ABAP
 " anti-pattern
@@ -550,31 +476,21 @@ METHODS retrieve_that.
 METHODS query_those.
 ```
 
-> Read more in _Chapter 2: Meaningful Names: Pick One Word per Concept_ of [Robert C. Martin's _Clean Code_]
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : choisir un mot par concept_ dans le livre de [Robert C. Martin _Coder proprement_]
 
-### Use pattern names only if you mean them
+### Utilisez des noms de modèle uniquement s'ils ont du sens
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#use-pattern-names-only-if-you-mean-them)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#utilisez-des-noms-de-modèle-uniquement-sils-ont-du-sens)
 
-Don't use the names of software design patterns for classes and interfaces unless you really mean them.
-For example, don't call your class `file_factory` unless it really implements the factory design pattern.
-The most common patterns include:
-[singleton](https://en.wikipedia.org/wiki/Singleton_pattern),
-[factory](https://en.wikipedia.org/wiki/Factory_method_pattern),
-[facade](https://en.wikipedia.org/wiki/Facade_pattern),
-[composite](https://en.wikipedia.org/wiki/Composite_pattern),
-[decorator](https://en.wikipedia.org/wiki/Decorator_pattern),
-[iterator](https://en.wikipedia.org/wiki/Iterator_pattern),
-[observer](https://en.wikipedia.org/wiki/Observer_pattern), and
-[strategy](https://en.wikipedia.org/wiki/Strategy_pattern).
+N'utilisez pas des noms de modèles de conception logicielle pour les classes et interfaces, sauf s'ils ont vraiment ce sens. Par exemple, appelez votre classe `file_factory` uniquement si elle implémente véritablement le modèle de conception de factory. Les modèles les plus couramment utilisés incluent : [singleton](https://en.wikipedia.org/wiki/Singleton_pattern), [factory](https://en.wikipedia.org/wiki/Factory_method_pattern), [façade](https://en.wikipedia.org/wiki/Facade_pattern), [composite](https://en.wikipedia.org/wiki/Composite_pattern), [décorateur](https://en.wikipedia.org/wiki/Decorator_pattern), [itérateur](https://en.wikipedia.org/wiki/Iterator_pattern), [observateur](https://en.wikipedia.org/wiki/Observer_pattern) et [stratégie](https://en.wikipedia.org/wiki/Strategy_pattern).
 
-> Read more in _Chapter 2: Meaningful Names: Avoid Disinformation_ of [Robert C. Martin's _Clean Code_]
+> Pour en savoir plus, lisez _Chapitre 2 : Noms significatifs : éviter la désinformation_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Avoid encodings, esp. Hungarian notation and prefixes
+### Évitez les codifications, en particulier la notation hongroise et les préfixes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Names](#names) > [This section](#avoid-encodings-esp-hungarian-notation-and-prefixes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Noms](#noms) > [Cette section](#évitez-les-codifications-en-particulier-la-notation-hongroise-et-les-préfixes)
 
-We encourage you to get rid of _all_ encoding prefixes.
+Nous vous encourageons à vous débarrasser de _tous_ les préfixes de codification.
 
 ```ABAP
 METHOD add_two_numbers.
@@ -582,7 +498,7 @@ METHOD add_two_numbers.
 ENDMETHOD.
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 METHOD add_two_numbers.
@@ -590,64 +506,39 @@ METHOD add_two_numbers.
 ENDMETHOD.
 ```
 
-> [Avoid Encodings](sub-sections/AvoidEncodings.md)
-> describes the reasoning in depth.
+> [Évitez les codifications](sub-sections/AvoidEncodings.md) > explique en profondeur ce raisonnement.
 
-## Language
+## Langage
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#language)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#langage)
 
-### Mind the legacy
+### Tenez compte des éléments existants
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#mind-the-legacy)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#tenez-compte-des-éléments-existants)
 
-If you code for older ABAP releases, take the advice in this guide with care:
-Many recommendations below make use of relatively new syntax and constructs
-that may not be supported in older ABAP releases.
-Validate the guidelines you want to follow on the oldest release you must support.
-Do not simply discard Clean Code as a whole -
-the vast majority of rules (e.g. naming, commenting) will work in _any_ ABAP version.
+Si vous codez pour des versions ABAP plus anciennes, prenez avec des pincettes les conseils dans ce guide : de nombreuses recommandations ci-dessous utilisent une syntaxe et des constructs relativement nouveaux qui ne sont pas nécessairement pris en charge dans les versions ABAP plus anciennes. Validez les directives à suivre sur l'ancienne version que vous devez prendre en charge. Ne rejetez pas la méthodologie Clean Code en bloc : la grande majorité des règles (par ex. : attribution de noms, commentaires) fonctionneront dans _n'importe quelle_ version ABAP.
 
-### Mind the performance
+### Tenez compte des performances
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#mind-the-performance)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#tenez-compte-des-performances)
 
-If you code high performance components, take the advice in this guide with care:
-Some aspects of Clean Code may make things slower (more method calls) or consume more memory (more objects).
-ABAP has some specialties that may intensify this, for example it compares data types when calling a method,
-such that splitting a single large method into many sub-methods may make the code slower.
+Si vous codez des composants hautes performances, prenez avec des pincettes les conseils dans ce guide : certains aspects du Clean Code peuvent ralentir l'exécution (un nombre plus important d'appels de méthode) ou consommez plus de mémoire (un nombre plus important d'objets). ABAP présente quelques spécificités qui peuvent intensifier le phénomène. Par exemple, il compare les types de données lors de l'appel d'une méthode, de telle sorte que le fractionnement d'une grosse méthode individuelle en plusieurs sous-méthodes peut ralentir le code.
 
-However, we strongly recommend to not optimize prematurely, based on obscure fears.
-The vast majority of rules (e.g. naming, commenting) has no negative impact at all.
-Try to build things in a clean, object-oriented way.
-If something is too slow, make a performance measurement.
-Only then should you take a fact-based decision to discard selected rules.
+Cependant, nous vous recommandons vivement de ne pas optimiser prématurément, sous prétexte de peurs obscures. La vaste majorité des règles (par ex. : attribution de noms, commentaires) n'a pas le moindre impact négatif. Essayez de créer de façon propre, selon une approche orientée objet. Si quelque chose est trop lent, effectuez une mesure des performances. Après quoi seulement, vous pourrez prendre la décision, fondée sur les faits, de rejeter les règles en question.
 
-Some further thoughts, taken in part from Chapter 2 of
-[Martin Fowler's _Refactoring_](https://martinfowler.com/books/refactoring.html):
+Pour aller plus loin, lisez ces considérations extraites en partie du Chapitre 2 du livre de [Martin Fowler_ Refactoring_](https://martinfowler.com/books/refactoring.html) :
 
-In a typical application the majority of the runtime is spent in a very small proportion
-of the code. As little as 10% of the code can account for 90% of the runtime, and especially
-in ABAP a large proportion of runtime is likely to be database time.
+Dans une application classique, la majorité de la durée d'exécution concerne une infime proportion du code. 90 % de la durée d'exécution peuvent se rapporter à seulement 10 % du code. De plus, dans ABAP en particulier, il est probable qu'une vaste proportion de la durée d'exécution corresponde en réalité à du temps de base de données.
 
-Thus it is not the best use of resources to spend significant effort on trying to make _all_
-code super-efficient all the time. We're not suggesting ignoring performance, but rather
-focus more on clean and well structured code during initial development, and use the
-profiler to identify critical areas to optimize.
+Ainsi, en termes d'utilisation des ressources, l'idéal n'est pas de s'efforcer de rendre _l'intégralité_ du code super efficace tout le temps. Nous ne vous suggérons pas d'ignorer les performances, mais plutôt de vous concentrer sur un code plus propre et mieux structuré lors du développement initial, et d'utiliser ABAP Profiler pour identifier les points critiques à optimiser.
 
-In fact, we would argue that such an approach will have a net positive effect on performance
-because it is a more targeted optimization effort, and it should be easier
-to identify performance bottlenecks and easier to refactor and tune well structured code.
+En fait, il y a lieu d'ajouter qu'une telle approche aura un effet positif net sur les performances, car l'effort d'optimisation sera plus ciblé. Par ailleurs, il sera plus facile d'identifier les goulots d'étranglement au niveau des performances, ainsi que plus facile de refactoriser et ajuster du code bien structuré.
 
-### Prefer object orientation to procedural programming
+### Préférez la programmation orientée objet à la programmation procédurale
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#prefer-object-orientation-to-procedural-programming)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#préférez-la-programmation-orientée-objet-à-la-programmation-procédurale)
 
-Object-oriented programs (classes, interfaces) are segmented better
-and can be refactored and tested more easily than procedural code (functions, programs).
-Although there are situations where you must provide procedural objects
-(a function for an RFC, a program for a transaction),
-these objects should do little more than call a corresponding class that provides the actual feature:
+Les programmes orientés objet (classes, interfaces) étant mieux segmentés, ils peuvent être refactorisés et testés plus facilement que le code procédural (fonctions, programmes). Dans certaines situations néanmoins, vous devez indiquer des objets procéduraux (une fonction pour un RFC, un programme pour une transaction), mais ces objets doivent servir tout au plus à appeler une classe correspondante qui fournit la fonctionnalité réelle :
 
 ```ABAP
 FUNCTION check_business_partner [...].
@@ -656,14 +547,13 @@ FUNCTION check_business_partner [...].
 ENDFUNCTION.
 ```
 
-> [Function Groups vs. Classes](sub-sections/FunctionGroupsVsClasses.md)
-> describes the differences in detail.
+> [Groupe de fonctions contre classes de fonctions](sub-sections/FunctionGroupsVsClasses.md) > décrit en détail les différences.
 
-### Prefer functional to procedural language constructs
+### Préférez des constructs de langage fonctionnel plutôt que procédural
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#prefer-functional-to-procedural-language-constructs)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#préférez-des-constructs-de-langage-fonctionnel-plutôt-que-procédural)
 
-They are usually shorter and come more natural to modern programmers.
+Ils sont généralement plus courts et plus naturels pour les développeurs modernes.
 
 ```ABAP
 DATA(variable) = 'A'.
@@ -684,8 +574,7 @@ result = VALUE #( FOR row IN input ( row-text ) ).
 "  INSERT row-text INTO TABLE result.
 " ENDLOOP.
 
-DATA(line) = value_pairs[ name = 'A' ]. " entry must exist
-DATA(line) = VALUE #( value_pairs[ name = 'A' ] OPTIONAL ). " entry can be missing
+DATA(line) = value_pairs[ name = 'A' ].
 " READ TABLE value_pairs INTO DATA(line) WITH KEY name = 'A'.
 
 DATA(exists) = xsdbool( line_exists( value_pairs[ name = 'A' ] ) ).
@@ -694,19 +583,15 @@ IF line_exists( value_pairs[ name = 'A' ] ).
 " DATA(exists) = xsdbool( sy-subrc = 0 ).
 ```
 
-Many of the detailed rules below are just specific reiterations of this general advice.
+Parmi les règles détaillées ci-dessous, nombreuses sont simplement des rappels plus spécifiques de ce conseil général.
 
-### Avoid obsolete language elements
+### Évitez les éléments de langage obsolètes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#avoid-obsolete-language-elements)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#évitez-les-éléments-de-langage-obsolètes)
 
-When upgrading your ABAP version,
-make sure to check for obsolete language elements
-and refrain from using them.
+Lorsque vous mettez à niveau votre version ABAP, assurez-vous de l'absence d'élément de langage obsolète et abstenez-vous d'en utiliser.
 
-For example, the `@`-escaped "host" variables
-in the following statement make a little clearer
-what's a program variable and what's a column in the database,
+Par exemple, les variables "hôte" placées dans une séquence d'échappement avec `@` dans l'instruction suivante clarifie un peu mieux ce qui correspond à une variable de programme et ce qui correspond à une colonne dans la base de données
 
 ```ABAP
 SELECT *
@@ -716,7 +601,7 @@ SELECT *
   INTO TABLE @itab.
 ```
 
-as compared to the [obsolete unescaped form](https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenopen_sql_hostvar_obsolete.htm)
+par rapport à la [forme obsolète sans séquence d'échappement](https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenopen_sql_hostvar_obsolete.htm)
 
 ```ABAP
 SELECT *
@@ -726,56 +611,44 @@ SELECT *
   INTO TABLE itab.
 ```
 
-Newer alternatives tend to improve readability of the code,
-and reduce design conflicts with modern programming paradigms,
-such that switching to them can automatically clean your code.
+Les dernières alternatives ont tendance à améliorer la lisibilité du code et à réduire les conflits de conception grâce à des paradigmes de programmation modernes. Basculer vers ces nouveautés peut vous permettre d'obtenir un code plus propre automatiquement.
 
-While continuing to work, obsolete elements may stop benefitting
-from optimizations in terms of processing speed and memory consumption.
+Bien qu'ils fonctionnent encore, les éléments obsolètes peuvent ne plus bénéficier d'optimisations en matière de vitesse de traitement et d'utilisation de la mémoire.
 
-With modern language elements, you can onboard young ABAPers easier,
-who may no longer be familiar with the outdated constructs
-because they are no longer taught in SAP's trainings.
+Avec des éléments de langage modernes, vous pouvez plus facilement intégrer des jeunes développeurs ABAP, qui peut-être ne connaîtront pas les constructs obsolètes, parce qu'ils n'ont pas suivi des formations SAP comme c'était le cas auparavant.
 
-The SAP NetWeaver documentation contains a stable section
-that lists obsolete language elements, for example
-[NW 7.50](https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/index.htm?file=abenabap_obsolete.htm),
-[NW 7.51](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenabap_obsolete.htm),
-[NW 7.52](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/index.htm?file=abenabap_obsolete.htm),
-[NW 7.53](https://help.sap.com/doc/abapdocu_753_index_htm/7.53/en-US/index.htm?file=abenabap_obsolete.htm).
+La documentation SAP NetWeaver comporte une section stable qui répertorie les éléments de langage obsolètes, par exemple [NW 7.50](https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/index.htm?file=abenabap_obsolete.htm),[ NW 7.51](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenabap_obsolete.htm),[ NW 7.52](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/index.htm?file=abenabap_obsolete.htm)et [NW 7.53](https://help.sap.com/doc/abapdocu_753_index_htm/7.53/en-US/index.htm?file=abenabap_obsolete.htm).
 
-### Use design patterns wisely
+### Utilisez les modèles de conception de manière avisée
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Language](#language) > [This section](#use-design-patterns-wisely)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Langage](#langage) > [Cette section](#utilisez-les-modèles-de-conception-de-manière-avisée)
 
-Where they are appropriate and provide noticeable benefit.
-Don't apply design patterns everywhere just for the sake of it.
+Utilisez des modèles de conception lorsqu'ils sont appropriés et fournissent un avantage apparent. N'en utilisez pas partout, juste pour le plaisir.
 
-## Constants
+## Constantes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#constants)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#constantes)
 
-### Use constants instead of magic numbers
+### Utilisez des constantes et non des nombres magiques
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Constants](#constants) > [This section](#use-constants-instead-of-magic-numbers)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constantes](#constantes) > [Cette section](#utilisez-des-constantes-et-non-des-nombres-magiques)
 
 ```ABAP
 IF abap_type = cl_abap_typedescr=>typekind_date.
 ```
 
-is clearer than
+est plus clair que
 
 ```ABAP
 " anti-pattern
 IF abap_type = 'D'.
 ```
 
-> Read more in _Chapter 17: Smells and Heuristics: G25:
-> Replace Magic Numbers with Named Constants_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 17 : Indicateurs et heuristiques : G25 : > remplacer le nombre magiques par des constantes nommées_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Prefer enumeration classes to constants interfaces
+### Préférez les classes d'énumération aux interfaces de constantes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Constants](#constants) > [This section](#prefer-enumeration-classes-to-constants-interfaces)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constantes](#constantes) > [Cette section](#préférez-les-classes-dénumération-aux-interfaces-de-constantes)
 
 ```ABAP
 CLASS /clean/message_severity DEFINITION PUBLIC ABSTRACT FINAL.
@@ -786,7 +659,7 @@ CLASS /clean/message_severity DEFINITION PUBLIC ABSTRACT FINAL.
 ENDCLASS.
 ```
 
-or
+ou
 
 ```ABAP
 CLASS /clean/message_severity DEFINITION PUBLIC CREATE PRIVATE FINAL.
@@ -798,9 +671,7 @@ CLASS /clean/message_severity DEFINITION PUBLIC CREATE PRIVATE FINAL.
 ENDCLASS.
 ```
 
-instead of mixing unrelated things
-or misleading people to the conclusion
-that constants collections could be "implemented":
+au lieu de mélanger des éléments non liés comme dans
 
 ```ABAP
 " anti-pattern
@@ -813,17 +684,15 @@ INTERFACE /dirty/common_constants.
 ENDINTERFACE.
 ```
 
-> [Enumerations](sub-sections/Enumerations.md)
-> describes common enumeration patterns
-> and discusses their advantages and disadvantages.
->
-> Read more in _Chapter 17: Smells and Heuristics: J3: Constants versus Enums_ of [Robert C. Martin's _Clean Code_].
+> [Énumérations](sub-sections/Enumerations.md) > décrit les modèles d'énumération courants> , en traitant de leurs avantages et inconvénients.
+> 
+> Pour en savoir plus, lisez _Chapitre 17 : Indicateurs et heuristiques : J3 : constantes contre énumérations_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### If you don't use enumeration classes, group your constants
+### Si vous n'utilisez pas de classes d'énumération, regroupez vos constantes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Constants](#constants) > [This section](#if-you-dont-use-enumeration-classes-group-your-constants)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constantes](#constantes) > [Cette section](#si-vous-nutilisez-pas-de-classes-dénumération-regroupez-vos-constantes)
 
-If you collect constants in a loose way, for example in an interface, group them:
+Si vous recueillez des constantes de façon désordonnée, par exemple dans une interface, regroupez-les :
 
 ```ABAP
 CONSTANTS:
@@ -837,7 +706,7 @@ CONSTANTS:
   END OF message_lifespan.
 ```
 
-Makes the relation clearer than:
+clarifie la relation par rapport :
 
 ```ABAP
 " Anti-pattern
@@ -848,34 +717,29 @@ CONSTANTS:
   persisted    TYPE i       VALUE 2,
 ```
 
-The group also allows you group-wise access, for example for input validation:
+Le groupe vous fait bénéficier également d'un accès par groupe, pour la validation des entrées par exemple :
 
 ```ABAP
-DO.
+DO number_of_constants TIMES.
   ASSIGN COMPONENT sy-index OF STRUCTURE message_severity TO FIELD-SYMBOL(<constant>).
-  IF sy-subrc IS INITIAL.
-    IF input = <constant>.
-      DATA(is_valid) = abap_true.
-      RETURN.
-    ENDIF.
-  ELSE.
+  IF <constant> = input.
+    is_valid = abap_true.
     RETURN.
   ENDIF.
-ENDDO.
+ENDWHILE.
 ```
 
-> Read more in _Chapter 17: Smells and Heuristics: G27: Structure over Convention_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 17 : Indicateurs et heuristiques : G27 : privilégier la structure à une convention_ dans le livre de [Robert C. Martin _Coder proprement_].
 
 ## Variables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#variables)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#variables)
 
-### Prefer inline to up-front declarations
+### Préférez les déclarations en ligne aux déclarations initiales
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Variables](#variables) > [This section](#prefer-inline-to-up-front-declarations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Variables](#variables) > [Cette section](#préférez-les-déclarations-en-ligne-aux-déclarations-initiales)
 
-If you follow these guidelines, your methods will become so short (3-5 statements)
-that declaring variables inline at first occurrence will look more natural
+Si vous suivez ces directives, vos méthodes deviendront si courtes (3 à 5 instructions) qu'il vous paraîtra plus naturel d'utiliser des déclarations de variables en ligne à la première occurrence
 
 ```ABAP
 METHOD do_something.
@@ -885,7 +749,7 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-than declaring variables with a separate `DATA` section at the beginning of the method
+plutôt que des déclarations de variables avec une section `DATA` distincte au début de la méthode
 
 ```ABAP
 " anti-pattern
@@ -899,11 +763,11 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-> Read more in _Chapter 5: Formatting: Vertical Distance: Variable Declarations_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 5 : Mise en forme : distance verticale : déclarations de variables_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Don't declare inline in optional branches
+### N'effectuez pas de déclarations en ligne dans les branchements facultatifs
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Variables](#variables) > [This section](#dont-declare-inline-in-optional-branches)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Variables](#variables) > [Cette section](#neffectuez-pas-de-déclarations-en-ligne-dans-les-branchements-facultatifs)
 
 ```ABAP
 " anti-pattern
@@ -914,10 +778,7 @@ ELSE.
 ENDIF.
 ```
 
-This works fine because ABAP handles inline declarations as if they were at the beginning of the method.
-However, it is extremely confusing for readers,
-especially if the method is longer and you don't spot the declaration right away.
-In this case, break with inlining and put the declaration up-front:
+Cela fonctionne sans problème, car ABAP traite les déclarations en ligne comme si elles se trouvaient au début de la méthode. Cependant, cette façon de faire est extrêmement déroutante pour les lecteurs, en particulier si la méthode est longue et qu'il est difficile de repérer la déclaration au premier coup d'œil. Dans ce cas, convertissez votre déclaration en ligne en déclaration en déclaration initiale :
 
 ```ABAP
 DATA value TYPE i.
@@ -928,58 +789,47 @@ ELSE.
 ENDIF.
 ```
 
-> Read more in _Chapter 5: Formatting: Vertical Distance: Variable Declarations_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 5 : Mise en forme : distance verticale : déclarations de variables_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Do not chain up-front declarations
+### Ne créez pas des chaînes de déclarations initiales
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Variables](#variables) > [This section](#do-not-chain-up-front-declarations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Variables](#variables) > [Cette section](#ne-créez-pas-des-chaînes-de-déclarations-initiales)
 
 ```ABAP
 DATA name TYPE seoclsname.
-DATA reader TYPE REF TO reader.
+DATA reader TYPE REF TO /dirty/reader.
 ```
 
-Chaining suggests the defined variables are related on a logical level.
-To consistently use it, you would have to ensure that all chained variables belong together,
-and introduce additional chain groups to add variables.
-While this is possible, it is usually not worth the effort.
+Le chaînage suggère que les variables définies sont liées à un niveau logique. Pour une utilisation cohérente, il faudrait veiller à ce que toutes les variables mises en chaîne soient effectivement liées entre elles, puis introduire d'autres groupes de chaînes pour ajouter des variables. Cela est possible, mais généralement, le jeu n'en vaut pas la chandelle.
 
-Chaining also needlessly complicates reformatting and refactoring
-because each line looks different and changing them requires meddling with
-colons, dots, and commas, that are not worth the effort.
+En outre, le chaînage complique inutilement l'ajustement de la mise en forme et le refactoring, car chaque ligne apparaît différente et leur modification requiert donc de jouer avec les deux-points, les points et les virgules, qui n'en valent pas la peine.
 
 ```ABAP
 " anti-pattern
 DATA:
   name   TYPE seoclsname,
-  reader TYPE REF TO reader.
+  reader TYPE REF TO /dirty/reader.
 ```
 
-> Also refer to [Don't align type clauses](#dont-align-type-clauses)  
-> If chaining of data declaration is used, then use one chain for each group of variables belonging together.
+> Consultez également [N'alignez pas les clauses type](#nalignez-pas-les-clauses-type)
+> En cas d'utilisation du chaînage de déclaration de données, utilisez alors une chaîne par groupe de variables liées entre elles.
 
-### Prefer REF TO to FIELD-SYMBOL
+### Préférez REF TO à FIELD-SYMBOL
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Variables](#variables) > [This section](#prefer-ref-to-to-field-symbol)
-
-> This section [is being challenged](https://github.com/SAP/styleguides/issues/115).
-> `FIELD-SYMBOL`s seem to be considerably faster
-> when iterating internal tables,
-> such that the recommendation to use `REF TO`
-> for these cases may worsen performance.
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Variables](#variables) > [Cette section](#préférez-ref-to-à-field-symbol)
 
 ```ABAP
 LOOP AT components REFERENCE INTO DATA(component).
 ```
 
-instead of the equivalent
+au lieu de son équivalent
 
 ```ABAP
 " anti-pattern
 LOOP AT components ASSIGNING FIELD-SYMBOL(<component>).
 ```
 
-except where you need field symbols
+sauf lorsque vous avez besoin de symboles de zone
 
 ```ABAP
 ASSIGN generic->* TO FIELD-SYMBOL(<generic>).
@@ -987,110 +837,79 @@ ASSIGN COMPONENT name OF STRUCTURE structure TO FIELD-SYMBOL(<component>).
 ASSIGN (class_name)=>(static_member) TO FIELD-SYMBOL(<member>).
 ```
 
-Code reviews demonstrate that people tend to choose between the two arbitrarily,
-"just because", "because we are always LOOPing that way", or "for no special reason".
-Arbitrary choices make the reader waste time on the pointless question why one is used over the other
-and thus should be replaced with well-founded, precise decisions.
-Our recommendation is based on this reasoning:
+Comme le démontrent les revues de code, les collaborateurs ont tendance à choisir l'un ou l'autre arbitrairement, "juste comme ça", "parce que nous créons toujours des boucles comme ça" ou "sans raison particulière". En raison de ces choix arbitraires, le lecteur perd du temps à se demander, pour rien, pourquoi l'un est utilisé plus que l'autre. Il faut donc remplacer ces choix arbitraires par des décisions fondées et précises. Notre recommandation est basée sur ce raisonnement :
 
-- Field symbols can do some things that references cannot, such as dynamically accessing the components of a structure.
-Likewise, references can do things that field symbols can't, such as constructing a dynamically typed data structure.
-In summary, settling for one alone is not possible.
+- Les symboles de zone offrent des possibilités que les références n'offrent pas, telles que l'accès dynamique aux composants d'une structure. De la même manière, les références offrent des possibilités que les symboles de zone n'offrent pas, telles que la création d'une structure de données en typage dynamique. En résumé, il est impossible d'arrêter son choix sur une solution.
 
-- In object-oriented ABAP, references are all over the place and cannot be avoided,
-as any object is a `REF TO <class-name>`.
-In contrast, field symbols are only strictly required in few, special cases concerned with dynamic typing.
-References thus form a natural preference in any object-oriented program.
+- Dans ABAP orienté objet, les références sont omniprésentes et inévitables, puisque tout objet est un `REF TO <class-name>`. A contrario, les symboles de zone sont strictement requis uniquement dans quelques cas spécifiques où intervient le typage dynamique. Les références sont ainsi naturellement privilégiées dans les programmes orientés objet.
 
-- Field symbols are shorter than references, but the resulting memory saving is so tiny that it can be safely neglected.
-Similarly, speed is not an issue. As a consequence, there is no performance-related reason to prefer one to the other.
+- Les symboles de zone sont plus courts que les références, mais l'économie de mémoire qui en résulte est si infime qu'il peut assurément être négligé. De la même façon, la vitesse n'est pas un problème. Par conséquent, aucune raison propre aux performances ne nous invite à privilégier l'un ou l'autre.
 
-> Read more in the article
-> [_Accessing Data Objects Dynamically_ in the ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abendyn_access_data_obj_guidl.htm).
+> Pour en savoir plus, lisez l'article > [_Accès dynamique aux objets de données_ dans les Directives de programmation ABAP ](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abendyn_access_data_obj_guidl.htm).
 
 ## Tables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#tables)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#tables)
 
-### Use the right table type
+### Utilisez le bon type de table
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#use-the-right-table-type)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#utilisez-le-bon-type-de-table)
 
-- You typically use `HASHED` tables for **large tables**
-that are **filled in a single step**, **never modified**, and **read often by their key**.
-Their inherent memory and processing overhead makes hash tables only valuable
-for large amounts of data and lots of read accesses.
-Each change to the table's content requires expensive recalculation of the hash,
-so don't use this for tables that are modified too often.
+- En général, vous utilisez des tables `HASHED` pour les **grandes tables** qui sont **renseignées en une seule étape**, ne sont **jamais modifiées** et sont **souvent lues grâce à leur clé**. De par la consommation de mémoire et les données inutiles de traitement qui leur sont inhérentes, les tables de hachage se justifient uniquement pour les gros volumes de données et les nombreux accès en lecture. Chaque modification apportée au contenu des tables implique un recalcul coûteux du hachage, donc n'utilisez pas cette fonction pour les tables régulièrement modifiées.
 
-- You typically use `SORTED` tables for **large tables**
-that need to be **sorted at all times**, that are **filled bit by bit** or **need to be modified**,
-and **read often by one or more full or partial keys** or processed **in a certain order**.
-Adding, changing, or removing content requires finding the right insertion spot,
-but doesn't require adjusting the rest of the table's index.
-Sorted tables demonstrate their value only for large numbers of read accesses.
+- En général, vous utilisez des tables `SORTED` pour les **grandes tables** qui doivent être **triées en permanence**, sont **renseignées pas à pas** ou **doivent être modifiées**, sont **souvent lues grâce à une ou plusieurs clés complètes** ou traitées **dans un ordre donné**. L'ajout, la modification ou la suppression du contenu nécessite de trouver le bon emplacement d'insertion, mais n'implique pas d'ajuster le reste de l'index des tables. Les tables triées sont utiles uniquement en présence d'un grand nombre d'accès en lecture.
 
-- Use `STANDARD` tables for **small tables**, where indexing produces more overhead than benefit, and **"arrays"**, where you either don't care at all for the order of the rows, or you want to process them in exactly the order they were appended. Also, if different access to the table is needed e.g. indexed access and sorted access via `SORT` and `BINARY SEARCH`.
+- Utilisez les tables `STANDARD` pour les **petites tables**, lorsque l'indexation produit plus de données inutiles que d'avantages, et pour les **"tableaux"**, lorsque vous ne vous souciez pas du tout de l'ordre des lignes ou vous souhaitez traiter celles-ci en suivant précisément l'ordre dans lequel elles ont été ajoutées. Même chose si différents accès à la table sont nécessaires (par ex. : accès indexé et accès trié via `SORT` et `BINARY SEARCH`.
 
-> These are only rough guidelines.
-> Find more details in the article [_Selection of Table Category_ in the ABAP Language Help](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenitab_kind.htm).
+> Il s'agit là des directives générales. > Pour aller plus loin, lisez l'article [_Sélection de catégorie de table_ dans l'Aide au langage ABAP ](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenitab_kind.htm).
 
-### Avoid DEFAULT KEY
+### Évitez DEFAULT KEY
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#avoid-default-key)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#évitez-default-key)
 
 ```ABAP
 " anti-pattern
 DATA itab TYPE STANDARD TABLE OF row_type WITH DEFAULT KEY.
 ```
 
-Default keys are often only added to get the newer functional statements working.
-The keys themselves in fact are usually superfluous and waste resources for nothing.
-They can even lead to obscure mistakes because they ignore numeric data types.
-The `SORT` and `DELETE ADJACENT` statements without explicit field list will resort to the primary key of the
- internal table, which in case of usage of `DEFAULT KEY` can lead to very unexpected results when having
- e.g. numeric fields as component of the key, in particular in combination with `READ TABLE ... BINARY` etc.
+Souvent, DEFAULT KEY est ajouté uniquement pour que les dernières instructions fonctionnelles soient opérationnelles. À vrai dire, les clés en soi sont souvent superflues et gaspillent des ressources pour rien. Elles peuvent même conduire à des erreurs obscures, car elles ignorent les types de données numériques. Les instructions `SORT` et `DELETE ADJACENT` sans liste de zones explicite recourront à la clé primaire de la table interne qui, en cas d'utilisation de `DEFAULT KEY`, peut donner des résultats très inattendus si vous avez par exemple des zones numériques comme composant de la clé, utilisées notamment en combinaison avec `READ TABLE ... BINARY`, etc.
 
-Either specify the key components explicitly
+Indiquez explicitement les composants de la clé
 
 ```ABAP
 DATA itab2 TYPE STANDARD TABLE OF row_type WITH NON-UNIQUE KEY comp1 comp2.
 ```
 
-or resort to `EMPTY KEY` if you don't need a key at all.
+ou recourez à `EMPTY KEY` si vous n'avez pas du tout besoin de clé.
 
 ```ABAP
 DATA itab1 TYPE STANDARD TABLE OF row_type WITH EMPTY KEY.
 ```
 
-> Following [Horst Keller's blog on _Internal Tables with Empty Key_](https://blogs.sap.com/2013/06/27/abap-news-for-release-740-internal-tables-with-empty-key/)
-> 
-> **Caution:** `SORT` on internal tables with `EMPTY KEY` (without explicit sort fields) will not sort at all,
-> but syntax warnings are issued in case the key's emptiness can be determined statically.
+> Pour aller plus loin, consultez le [blog de Horst Keller sur les _Tables internes avec EMPTY KEY_ ](https://blogs.sap.com/2013/06/27/abap-news-for-release-740-internal-tables-with-empty-key/)
+> **Attention :** `SORT` sur les tables internes avec `EMPTY KEY` n'effectuera aucun tri, > mais des avertissements de syntaxe seront émis si l'absence de clé peut être déterminée statistiquement.
 
-### Prefer INSERT INTO TABLE to APPEND TO
+### Préférez INSERT INTO TABLE à APPEND TO
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#prefer-insert-into-table-to-append-to)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#préférez-insert-into-table-à-append-to)
 
 ```ABAP
 INSERT VALUE #( ... ) INTO TABLE itab.
 ```
 
-`INSERT INTO TABLE` works with all table and key types,
-thus making it easier for you to refactor the table's type and key definitions if your performance requirements change.
+`INSERT INTO TABLE` fonctionne avec tous les types de table et clé, ce qui vous facilite la tâche de refactoring du type de table et des définitions de clés si vos exigences en matière de performances évoluent.
 
-Use `APPEND TO` only if you use a `STANDARD` table in an array-like fashion,
-if you want to stress that the added entry shall be the last row.
+Utilisez `APPEND TO` uniquement si vous utilisez une table `STANDARD` un peu comme un tableau, dans l'ambition d'insister sur le fait que l'entrée ajoutée doit être la dernière ligne.
 
-### Prefer LINE_EXISTS to READ TABLE or LOOP AT
+### Préférez LINE_EXISTS à READ TABLE ou LOOP AT
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#prefer-line_exists-to-read-table-or-loop-at)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#préférez-line_exists-à-read-table-ou-loop-at)
 
 ```ABAP
 IF line_exists( my_table[ key = 'A' ] ).
 ```
 
-expresses the intent clearer and shorter than
+permet d'exprimer votre intention de façon plus claire et plus courte que
 
 ```ABAP
 " anti-pattern
@@ -1098,7 +917,7 @@ READ TABLE my_table TRANSPORTING NO FIELDS WITH KEY key = 'A'.
 IF sy-subrc = 0.
 ```
 
-or even
+ou même
 
 ```ABAP
 " anti-pattern
@@ -1108,15 +927,15 @@ LOOP AT my_table REFERENCE INTO DATA(line) WHERE key = 'A'.
 ENDLOOP.
 ```
 
-### Prefer READ TABLE to LOOP AT
+### Préférez READ TABLE à LOOP AT
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#prefer-read-table-to-loop-at)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#préférez-read-table-à-loop-at)
 
 ```ABAP
 READ TABLE my_table REFERENCE INTO DATA(line) WITH KEY key = 'A'.
 ```
 
-expresses the intent clearer and shorter than
+permet d'exprimer votre intention de façon plus claire et plus courte que
 
 ```ABAP
 " anti-pattern
@@ -1125,7 +944,7 @@ LOOP AT my_table REFERENCE INTO DATA(line) WHERE key = 'A'.
 ENDLOOP.
 ```
 
-or even
+ou même
 
 ```ABAP
 " anti-pattern
@@ -1136,15 +955,15 @@ LOOP AT my_table REFERENCE INTO DATA(line).
 ENDLOOP.
 ```
 
-### Prefer LOOP AT WHERE to nested IF
+### Préférez LOOP AT WHERE à un IF imbriqué
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#prefer-loop-at-where-to-nested-if)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#préférez-loop-at-where-à-un-if-imbriqué)
 
 ```ABAP
 LOOP AT my_table REFERENCE INTO DATA(line) WHERE key = 'A'.
 ```
 
-expresses the intent clearer and shorter than
+permet d'exprimer votre intention de façon plus claire et plus courte que
 
 ```ABAP
 LOOP AT my_table REFERENCE INTO DATA(line).
@@ -1154,12 +973,11 @@ LOOP AT my_table REFERENCE INTO DATA(line).
 ENDLOOP.
 ```
 
-### Avoid unnecessary table reads
+### Évitez les lectures de table superflues
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Tables](#tables) > [This section](#avoid-unnecessary-table-reads)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Tables](#tables) > [Cette section](#évitez-les-lectures-de-table-superflues)
 
-In case you _expect_ a row to be there,
-read once and react to the exception,
+Si vous vous _attendez_ à la présence d'une ligne, lisez-la une fois et réagissez à l'exception
 
 ```ABAP
 TRY.
@@ -1169,36 +987,32 @@ TRY.
 ENDTRY.
 ```
 
-instead of littering and slowing down
-the main control flow with a double read
+au lieu d'encombrer et de ralentir le flux de contrôle principal avec une double lecture
 
 ```ABAP
 " anti-pattern
 IF NOT line_exists( my_table[ key = input ] ).
   RAISE EXCEPTION NEW /clean/my_data_not_found( ).
-ENDIF.
+ENDTRY.
 DATA(row) = my_table[ key = input ].
 ```
 
-> Besides being a performance improvement,
-> this is a special variant of the more general
-> [Focus on the happy path or error handling, but not both](#focus-on-the-happy-path-or-error-handling-but-not-both).
+> En plus d'améliorer les performances, cette façon de faire constitue une variante spécifique à la consigne plus générale [Activez les cas d'utilisation correcte ou la gestion des erreurs, mais pas les deux](#activez-les-cas-dutilisation-correcte-ou-la-gestion-des-erreurs-mais-pas-les-deux).
 
-## Strings
+## Chaînes de caractères
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#strings)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#chaînes-de-caractères)
 
-### Use ` to define literals
+### Utilisez ` pour définir des littéraux
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Strings](#strings) > [This section](#use--to-define-literals)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Chaînes de caractères](#chaînes-de-caractères) > [Cette section](#utilisez--pour-définir-des-littéraux)
 
 ```ABAP
 CONSTANTS some_constant TYPE string VALUE `ABC`.
 DATA(some_string) = `ABC`.  " --> TYPE string
 ```
 
-Refrain from using `'`, as it adds a superfluous type conversion and confuses the reader
-whether he's dealing with a `CHAR` or `STRING`:
+Évitez d'utiliser `'`, car cela ajoute une conversion de type superflue et le lecteur ne sait plus s'il gère un `CHAR` ou `STRING` :
 
 ```ABAP
 " anti-pattern
@@ -1206,101 +1020,86 @@ DATA some_string TYPE string.
 some_string = 'ABC'.
 ```
 
-`|` is generally okay, but cannot be used for `CONSTANTS` and adds needless overhead when specifying a fixed value:
+`|` passe en général, mais ne peut pas être utilisé pour `CONSTANTS` et ajoute des données inutiles lors de la définition d'une constante :
 
 ```ABAP
 " anti-pattern
 DATA(some_string) = |ABC|.
 ```
 
-### Use | to assemble text
+### Utilisez | pour assembler du texte
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Strings](#strings) > [This section](#use--to-assemble-text)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Chaînes de caractères](#chaînes-de-caractères) > [Cette section](#utilisez-|-pour-assembler-du-texte)
 
 ```ABAP
 DATA(message) = |Received HTTP code { status_code } with message { text }|.
 ```
 
-String templates highlight better what's literal and what's variable,
-especially if you embed multiple variables in a text.
+Les modèles de chaîne de caractères mettent davantage en évidence ce qui correspond à des littéraux et ce qui correspond à des variables, en particulier si vous incorporez plusieurs variables dans un texte.
 
 ```ABAP
 " anti-pattern
 DATA(message) = `Received an unexpected HTTP ` && status_code && ` with message ` && text.
 ```
 
-## Booleans
+## Booléens
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#booleans)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#booléens)
 
-### Use Booleans wisely
+### Utilisez les booléens de manière avisée
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Booleans](#booleans) > [This section](#use-booleans-wisely)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Booléens](#booléens) > [Cette section](#utilisez-les-booléens-de-manière-avisée)
 
-We often encounter cases where Booleans seem to be a natural choice
+Dans bien des cas, il paraît naturel d'utiliser des booléens
 
 ```ABAP
 " anti-pattern
 is_archived = abap_true.
 ```
 
-until a change of viewpoint suggests
-we should have chosen an enumeration
+jusqu'à ce qu'un changement de perspective laisse à penser qu'une énumération aurait été un choix plus judicieux
 
 ```ABAP
 archiving_status = /clean/archivation_status=>archiving_in_process.
 ```
 
-Generally, Booleans are a bad choice
-to distinguish types of things
-because you will nearly always encounter cases
-that are not exclusively one or the other
+En règle générale, il est déconseillé d'utiliser des booléens pour faire la distinction entre des types d'éléments, car presque toujours, vous tomberez sur des cas qui ne sont pas exclusivement l'un ou l'autre
 
 ```ABAP
 assert_true( xsdbool( document->is_archived( ) = abap_true AND
                       document->is_partially_archived( ) = abap_true ) ).
 ```
 
-[Split method instead of Boolean input parameter](#split-method-instead-of-boolean-input-parameter)
-moreover explains why you should always challenge Boolean parameters.
+[Fractionnez la méthode au lieu d'utiliser un paramètre d'entrée booléen](#fractionnez-la-méthode-au-lieu-dutiliser-un-paramètre-dentrée-booléen) explique également pourquoi vous devez toujours remettre en question les paramètres booléens.
 
-> Read more in
-> [1](http://www.beyondcode.org/articles/booleanVariables.html)
+> Pour en savoir plus, lisez [1](http://www.beyondcode.org/articles/booleanVariables.html)
 
-### Use ABAP_BOOL for Booleans
+### Utilisez ABAP_BOOL pour les booléens
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Booleans](#booleans) > [This section](#use-abap_bool-for-booleans)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Booléens](#booléens) > [Cette section](#utilisez-abap_bool-pour-les-booléens)
 
 ```ABAP
 DATA has_entries TYPE abap_bool.
 ```
 
-Don't use the generic type `char1`.
-Although it is technically compatible it obscures the fact that we're dealing with a Boolean variable.
+N'utilisez pas le type générique `char1`. Bien qu'il soit compatible d'un point de vue technique, il masque le fait que nous traitons une variable booléenne.
 
-Also avoid other Boolean types as they often have strange side effects,
-for example `boolean` supports a third value "undefined" that results in subtle programming errors.
+Évitez également les autres types booléens, car ils entraînent souvent des effets secondaires étranges. Par exemple, `boolean` prend en charge une troisième valeur "undefined" (non définie) qui donnent lieu à de subtiles erreurs de programmation.
 
-In some cases you may need a data dictionary element, for example for DynPro fields.
-`abap_bool` cannot be used here because it is defined in the type pool `abap`, not in the data dictionary.
-In this case, resort to `boole_d` or `xfeld`.
-Create your own data element if you need a custom description.
+Dans certains cas, vous aurez peut-être besoin d'un élément du Dictionnaire ABAP, par exemple pour les zones de dynpro. `abap_bool` ne peut pas être utilisé à ce moment-là, car il est défini dans le groupe de types `abap`, et non dans le Dictionnaire ABAP. Dans ce cas, recourez à `boole_d` ou `xfeld`. Créez votre propre élément de données si vous avez besoin d'une description personnalisée.
 
-> ABAP may be the one single programming language that does not come with a universal Boolean data type.
-> However, having one is imperative.
-> This recommendation is based on the ABAP Programming Guidelines.
+> ABAP est peut-être l'unique langage de programmation qui n'est pas préconfiguré avec un type booléen universel. Cependant, il est impératif d'en avoir un. Cette recommandation est basée sur les Directives de programmation ABAP.
 
-### Use ABAP_TRUE and ABAP_FALSE for comparisons
+### Utilisez ABAP_TRUE et ABAP_FALSE pour les comparaisons
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Booleans](#booleans) > [This section](#use-abap_true-and-abap_false-for-comparisons)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Booléens](#booléens) > [Cette section](#utilisez-abap_true-et-abap_false-pour-les-comparaisons)
 
 ```ABAP
 has_entries = abap_true.
 IF has_entries = abap_false.
 ```
 
-Don't use the character equivalents `'X'` and `' '` or `space`;
-they make it hard to see that this is a Boolean expression:
+N'utilisez pas les caractères équivalents `'X'` et `' '` ou `space` ; avec ceux-ci il est plus difficile d'identifier qu'il s'agit d'une expression booléenne :
 
 ```ABAP
 " anti-pattern
@@ -1308,26 +1107,24 @@ has_entries = 'X'.
 IF has_entries = space.
 ```
 
-Avoid comparisons with `INITIAL` - it forces readers to recollect that `abap_bool`'s default is `abap_false`:
+Évitez les comparaisons avec `INITIAL`. Cela oblige les lecteurs à se souvenir que la valeur par défaut de `abap_bool` est `abap_false` :
 
 ```ABAP
 " anti-pattern
 IF has_entries IS NOT INITIAL.
 ```
 
-> ABAP may be the one single programming language that does not come with built-in "constants" for true and false.
-> However, having them is imperative.
-> This recommendation is based on the ABAP Programming Guidelines.
+> ABAP est peut-être l'unique langage de programmation qui n'est pas préconfiguré avec des "constantes" pour vrai et faux. Cependant, il est impératif d'en avoir. Cette recommandation est basée sur les Directives de programmation ABAP.
 
-### Use XSDBOOL to set Boolean variables
+### Utilisez XSDBOOL pour définir des variables booléennes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Booleans](#booleans) > [This section](#use-xsdbool-to-set-boolean-variables)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Booléens](#booléens) > [Cette section](#utilisez-xsdbool-pour-définir-des-variables-booléennes)
 
 ```ABAP
 DATA(has_entries) = xsdbool( line IS NOT INITIAL ).
 ```
 
-The equivalent `IF`-`THEN`-`ELSE` is much longer for nothing:
+Le `IF`-`THEN`-`ELSE` équivalent est plus long et n'apporte rien de plus :
 
 ```ABAP
 " anti-pattern
@@ -1338,18 +1135,11 @@ ELSE.
 ENDIF.
 ```
 
-`xsdbool` is the best method for our purpose, as it directly produces a `char1`,
-which fits our boolean type `abap_bool` best.
-The equivalent functions `boolc` and `boolx` produce different types
-and add an unnecessary implicit type conversion.
+`xsdbool` est la meilleure méthode pour notre objectif car il produit directement un `char1` qui est le mieux adapté à notre type booléen `abap_bool`. Les fonctions équivalentes `boolc` et `boolx` produisent des types différents et nécessitent une conversion de type implicite superflue.
 
-We agree that the name `xsdbool` is unlucky and misleading;
-after all, we're not at all interested in the "XML Schema Definition" parts that the "xsd" prefix suggests.
+Nous convenons que le nom `xsdbool` est mal choisi et qu'il prête à confusion ; après tout, nous ne sommes pas du tout intéressés par les parties "définition de schéma XML" que le préfixe "xsd" suggère.
 
-A possible alternative to `xsdbool` is the `COND` ternary form.
-Its syntax is intuitive, but a little longer because it needlessly repeats the `THEN abap_true` segment,
-and requires knowledge of the implicit default value `abap_false` -
-which is why we suggest it only as secondary solution.
+Une alternative possible pour `xsdbool` est la forme ternaire `COND`. Sa syntaxe est intuitive mais un peu plus longue, car elle répète inutilement le segment `THEN abap_true`, et elle nécessite de connaître la valeur par défaut implicite `abap_false`. C'est pourquoi nous la recommandons seulement comme solution secondaire.
 
 ```ABAP
 DATA(has_entries) = COND abap_bool( WHEN line IS NOT INITIAL THEN abap_true ).
@@ -1357,25 +1147,24 @@ DATA(has_entries) = COND abap_bool( WHEN line IS NOT INITIAL THEN abap_true ).
 
 ## Conditions
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#conditions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#conditions)
 
-### Try to make conditions positive
+### Essayez de rendre les conditions positives
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Conditions](#conditions) > [This section](#try-to-make-conditions-positive)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Conditions](#conditions) > [Cette section](#essayez-de-rendre-les-conditions-positives)
 
 ```ABAP
 IF has_entries = abap_true.
 ```
 
-For comparison, see how hard to understand the same statement gets by reversing it:
+À titre de comparaison, regardez comme il est difficile de comprendre la même instruction quand elle est inversée :
 
 ```ABAP
 " anti-pattern
 IF has_no_entries = abap_false.
 ```
 
-The "try" in the section title means you shouldn't force this
-up to the point where you end up with something like [empty IF branches](#no-empty-if-branches):
+Le terme "essayez" du titre de la section signifie que vous ne devez pas pousser la contrainte jusqu'à vous retrouver avec quelque chose comme des [branchements IF vides](#aucun-branchement-if-vide) :
 
 ```ABAP
 " anti-pattern
@@ -1385,11 +1174,11 @@ ELSE.
 ENDIF.
 ```
 
-> Read more in _Chapter 17: Smells and Heuristics: G29: Avoid Negative Conditionals_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 17 : Indicateurs et heuristiques : G29 : éviter les expressions conditionnelles négatives_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Prefer IS NOT to NOT IS
+### Préférez IS NOT à NOT IS
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Conditions](#conditions) > [This section](#prefer-is-not-to-not-is)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Conditions](#conditions) > [Cette section](#préférez-is-not-à-not-is)
 
 ```ABAP
 IF variable IS NOT INITIAL.
@@ -1397,9 +1186,7 @@ IF variable NP 'TODO*'.
 IF variable <> 42.
 ```
 
-Negation is logically equivalent
-but requires a "mental turnaround"
-that makes it harder to understand.
+La négation est logiquement équivalente, mais elle requiert une "inversion mentale" qui la rend plus difficile à comprendre.
 
 ```ABAP
 " anti-pattern
@@ -1408,17 +1195,13 @@ IF NOT variable CP 'TODO*'.
 IF NOT variable = 42.
 ```
 
-> A more specific variant of
-[Try to make conditions positive](#try-to-make-conditions-positive).
-Also as described in the section
-[Alternative Language Constructs](https://help.sap.com/doc/abapdocu_753_index_htm/7.53/en-US/index.htm?file=abenalternative_langu_guidl.htm)
-in the ABAP programming guidelines.
+> Une variante plus spécifique par rapport à [Essayez de rendre les conditions positives](#essayez-de-rendre-les-conditions-positives). Également décrit dans la section [Constructs de langage alternatifs](https://help.sap.com/doc/abapdocu_753_index_htm/7.53/en-US/index.htm?file=abenalternative_langu_guidl.htm) dans les Directives de programmation ABAP.
 
-### Consider decomposing complex conditions
+### Efforcez-vous de décomposer les conditions complexes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Conditions](#conditions) > [This section](#consider-decomposing-complex-conditions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Conditions](#conditions) > [Cette section](#efforcez-vous-de-décomposer-les-conditions-complexes)
 
-Conditions can become easier when decomposing them into the elementary parts that make them up:
+Les conditions peuvent devenir plus simples lorsqu'on les décompose en parties élémentaires :
 
 ```ABAP
 DATA(example_provided) = xsdbool( example_a IS NOT INITIAL OR
@@ -1432,7 +1215,7 @@ IF example_provided = abap_true AND
    one_example_fits = abap_true.
 ```
 
-instead of leaving everything in-place:
+Plutôt que de laisser tout en place :
 
 ```ABAP
 " anti-pattern
@@ -1443,13 +1226,13 @@ IF ( example_a IS NOT INITIAL OR
      fits( example_b ) = abap_true ).
 ```
 
-> Use the ABAP Development Tools quick fixes to quickly extract conditions and create variables as shown above.
+> Utilisez les solutions rapides d'ABAP Development Tools pour extraire rapidement les conditions et créer les variables comme indiqué ci-dessus.
 
-### Consider extracting complex conditions
+### Efforcez-vous d'extraire les conditions complexes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Conditions](#conditions) > [This section](#consider-extracting-complex-conditions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Conditions](#conditions) > [Cette section](#efforcez-vous-dextraire-les-conditions-complexes)
 
-It's nearly always a good idea to extract complex conditions to methods of their own:
+C'est presque toujours une bonne idée d'extraire des conditions complexes vers des méthodes dédiées :
 
 ```ABAP
 IF is_provided( example ).
@@ -1463,13 +1246,13 @@ METHOD is_provided.
 ENDMETHOD.
 ```
 
-## Ifs
+## If
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#ifs)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#if)
 
-### No empty IF branches
+### Aucun branchement IF vide
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Ifs](#ifs) > [This section](#no-empty-if-branches)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [If](#if) > [Cette section](#aucun-branchement-if-vide)
 
 ```ABAP
 IF has_entries = abap_false.
@@ -1477,7 +1260,7 @@ IF has_entries = abap_false.
 ENDIF.
 ```
 
-is shorter and clearer than
+est plus court et plus clair que
 
 ```ABAP
 " anti-pattern
@@ -1487,9 +1270,9 @@ ELSE.
 ENDIF.
 ```
 
-### Prefer CASE to ELSE IF for multiple alternative conditions
+### Préférez CASE à ELSE IF pour des conditions alternatives multiples
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Ifs](#ifs) > [This section](#prefer-case-to-else-if-for-multiple-alternative-conditions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [If](#if) > [Cette section](#préférez-case-à-else-if-pour-des-conditions-alternatives-multiples)
 
 ```ABAP
 CASE type.
@@ -1502,11 +1285,7 @@ CASE type.
 ENDCASE.
 ```
 
-`CASE` makes it easy to see a set of alternatives that exclude each other.
-It can be faster than a series of `IF`s because it can translate to a different microprocessor command
-instead of a series of subsequently evaluated conditions.
-You can introduce new cases quickly, without having to repeat the discerning variable over and over again.
-The statement even prevents some errors that can occur when accidentally nesting the `IF`-`ELSEIF`s.
+`CASE` facilite la lecture d'un ensemble d'alternatives qui s'excluent mutuellement. Case peut-être plus rapide qu'une série de `IF`, car il peut convertir vers une commande microprocesseur différente au lieu d'une série de conditions évaluées l'une après l'autre. Vous pouvez insérer des nouveau cas rapidement sans avoir à répéter encore et encore la variable discernante. L'instruction permet même d'éviter d'éventuelles erreurs d'imbrication accidentelle des `IF`-`ELSEIF`.
 
 ```ABAP
 " anti-pattern
@@ -1519,12 +1298,12 @@ ELSE.
 ENDIF.
 ```
 
-### Keep the nesting depth low
+### Gardez un niveau d'imbrication bas
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Ifs](#ifs) > [This section](#keep-the-nesting-depth-low)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [If](#if) > [Cette section](#gardez-un-niveau-dimbrication-bas)
 
 ```ABAP
-" anti-pattern
+" ani-pattern
 IF <this>.
   IF <that>.
   ENDIF.
@@ -1537,17 +1316,17 @@ ELSE.
 ENDIF.
 ```
 
-Nested `IF`s get hard to understand very quickly and require an exponential number of test cases for complete coverage.
+Les `IF` imbriqués deviennent rapidement difficiles à comprendre et exigent une quantité exponentielle de scénarios de test pour une couverture complète du code.
 
-Decision trees can usually be taken apart by forming sub-methods and introducing boolean helper variables.
+Les arbres de décision peuvent généralement être mis à part en créant des sous-méthodes et en déclarant des variables auxiliaires booléennes.
 
-Other cases can be simplified by merging IFs, such as
+D'autres cas peuvent être simplifiés en fusionnant des IF, comme
 
 ```ABAP
 IF <this> AND <that>.
 ```
 
-instead of the needlessly nested
+au lieu de l'imbrication inutile
 
 ```ABAP
 " anti-pattern
@@ -1555,13 +1334,13 @@ IF <this>.
   IF <that>.
 ```
 
-## Regular expressions
+## Expressions régulières
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#regular-expressions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#expressions-régulières)
 
-### Prefer simpler methods to regular expressions
+### Préférez des méthodes plus simples aux expressions régulières
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Regular expressions](#regular-expressions) > [This section](#prefer-simpler-methods-to-regular-expressions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Expressions régulières](#expressions-régulières) > [Cette section](#préférez-des-méthodes-plus-simples-aux-expressions-régulières)
 
 ```ABAP
 IF input IS NOT INITIAL.
@@ -1571,16 +1350,13 @@ WHILE contains( val = input  sub = 'abc' ).
 " WHILE contains( val = input  regex = 'abc' ).
 ```
 
-Regular expressions become hard to understand very quickly.
-Simple cases are usually easier without them.
+Les expressions régulières deviennent très vite difficiles à comprendre. Les cas simples sont généralement plus simples sans elles.
 
-Regular expressions also usually consume more memory and processing time
-because they need to be parsed into an expression tree and compiled at runtime into an executable matcher.
-Simple solutions may do with a straight-forward loop and a temporary variable.
+Habituellement les expressions régulières consomment plus de mémoire et de temps de traitement, parce qu'elles doivent être analysées dans un arbre d'expressions et compilées en un analyseur (matcher) exécutable lors de l'exécution. Des solutions simples peuvent faire le travail avec une boucle directe et une variable temporaire.
 
-### Prefer basis checks to regular expressions
+### Préférez les vérifications de base aux expressions régulières
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Regular expressions](#regular-expressions) > [This section](#prefer-basis-checks-to-regular-expressions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Expressions régulières](#expressions-régulières) > [Cette section](#préférez-les-vérifications-de-base-aux-expressions-régulières)
 
 ```ABAP
 CALL FUNCTION 'SEO_CLIF_CHECK_NAME'
@@ -1590,7 +1366,7 @@ CALL FUNCTION 'SEO_CLIF_CHECK_NAME'
     ...
 ```
 
-instead of reinventing things
+au lieu de réinventer les choses
 
 ```ABAP
 " anti-pattern
@@ -1598,13 +1374,11 @@ DATA(is_valid) = matches( val     = class_name
                           pattern = '[A-Z][A-Z0-9_]{0,29}' ).
 ```
 
-> There seems to be a natural tendency to turn blind to the Don't-Repeat-Yourself (DRY) principle
-> when there are regular expressions around,
-> compare section _Chapter 17: Smells and Heuristics: General: G5: Duplication_ in [Robert C. Martin's _Clean Code_].
+> Il semble régner une tendance naturelle à fermer les yeux sur le principe "Ne vous répétez pas quand il y a des expressions régulières", voir section _Chapitre 17 : Indicateurs et heuristiques : Généralités : G5 : redondance_ dans le livre de [Robert C. Martin_ Coder proprement_].
 
-### Consider assembling complex regular expressions
+### Efforcez-vous d'assembler des expressions régulières complexes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Regular expressions](#regular-expressions) > [This section](#consider-assembling-complex-regular-expressions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Expressions régulières](#expressions-régulières) > [Cette section](#efforcez-vous-dassembler-des-expressions-régulières-complexes)
 
 ```ABAP
 CONSTANTS class_name TYPE string VALUE `CL\_.*`.
@@ -1612,31 +1386,25 @@ CONSTANTS interface_name TYPE string VALUE `IF\_.*`.
 DATA(object_name) = |{ class_name }\|{ interface_name }|.
 ```
 
-Some complex regular expressions become easier
-when you demonstrate to the reader how they are built up from more elementary pieces.
+Certaines expressions régulières complexes deviennent plus simples lorsque vous montrez au lecteur comment elles sont construites à partir de parties plus élémentaires.
 
 ## Classes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#constructeurs)
 
-### Classes: Object orientation
+### Classes : orientation objet
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [This section](#classes-object-orientation)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Cette section](#classes--orientation-objet)
 
-#### Prefer objects to static classes
+#### Préférez les objets aux classes statiques
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Classes: Object orientation](#classes-object-orientation) > [This section](#prefer-objects-to-static-classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Classes : orientation objet](#classes-:-orientation-objet) > [Cette section](#préférez-les-objets-aux-classes-statiques)
 
-Static classes give up all advantages gained by object orientation in the first place.
-They especially make it nearly impossible to replace productive dependencies with test doubles in unit tests.
+Les classes statiques abandonnent tous les avantages gagnés initialement par l'orientation objet. En particulier, elles rendent quasi-impossible le remplacement des dépendances productives par des simulations de test dans les tests de module.
 
-If you think about whether to make a class or method static, the answer will nearly always be: no.
+Si vous vous demandez s'il faut rendre une classe ou une méthode statique, la réponse sera presque toujours : non.
 
-One accepted exception to this rule are plain type utils classes.
-Their methods make it easier to interact with certain ABAP types.
-They are not only completely stateless, but so basic that they look like ABAP statements or built-in functions.
-The discriminating factor is that their consumers tie them into their code so tightly
-that they actually don't want to mock them in unit tests.
+Une exception reconnue à cette règle : les classes utils de type brut. Leurs méthodes facilitent l'interaction avec certains types ABAP. Non seulement elles sont complètement sans statut, mais elles sont aussi tellement basiques qu'elles ressemblent à des instructions ABAP ou à des fonctions prédéfinies. Le facteur discriminant est que leurs consommateurs les lient à leur code si étroitement qu'en réalité, ils ne veulent pas les simuler dans les tests de module.
 
 ```ABAP
 CLASS /clean/string_utils DEFINITION [...].
@@ -1653,42 +1421,27 @@ METHOD retrieve.
 ENDMETHOD.
 ```
 
-#### Prefer composition to inheritance
+#### Préférez la composition à l'héritage
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Classes: Object orientation](#classes-object-orientation) > [This section](#prefer-composition-to-inheritance)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Classes : orientation objet](#classes-:-orientation-objet) > [Cette section](#préférez-la-composition-à-lhéritage)
 
-Avoid building hierarchies of classes with inheritance. Instead, favor composition.
+Évitez de créer des hiérarchies de classes avec un héritage. Favorisez plutôt la composition.
 
-Clean inheritance is hard to design because you need to respect rules
-like the [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle).
-It is also hard to understand because people need to realize and digest the guiding principles behind the hierarchy.
-Inheritance reduces reuse because methods tend to be made available only to sub-classes.
-It also complicates refactoring because moving or changing members tend to require changes to the whole hierarchy tree.
+Un héritage propre est difficile à concevoir, car vous devez respecter des règles telles que le [principe de substitution de Liskov](https://en.wikipedia.org/wiki/Liskov_substitution_principle). Il est aussi difficile à comprendre, car il faut prendre conscience des principes directeurs qui sous-tendent la hiérarchie et les intégrer. L'héritage limite la réutilisation, parce que les méthodes tendent à être mises à disposition seulement pour des sous-classes. Il complique également le refactoring, car déplacer ou modifier des membres a tendance à nécessiter des modifications sur toute l'arborescence.
 
-Composition means that you design small, independent objects, each of which serves one specific purpose.
-These objects can be recombined into more complex objects by simple delegation and facade patterns.
-Composition may produce more classes, but has otherwise no further disadvantages.
+"Composition" signifie que vous concevez des petits objets indépendants, chacun servant un objectif précis. Ces objets peuvent être recombinés en objets plus complexes par des modèles de délégation et de façade simples. La composition peut produire un plus grand nombre de classes, mais c'est son seul inconvénient.
 
-Don't let this rule discourage you from using inheritance in the right places.
-There are good applications for inheritance,
-for example the [Composite design pattern](https://en.wikipedia.org/wiki/Composite_pattern).
-Just ask yourself critically whether inheritance in your case will really provide more benefits than disadvantages.
-If in doubt, composition generally is the safer choice.
+Ne laissez pas cette règle vous décourager d'utiliser de l'héritage quand c'est justifié. De bonnes applications existent pour l'héritage, par exemple le [modèle de conception composite](https://en.wikipedia.org/wiki/Composite_pattern). Demandez-vous simplement et objectivement si dans votre cas l'héritage va vraiment apporter plus d'avantages que d'inconvénients. En cas de doute, la composition est généralement le choix le plus sûr.
 
-> [Interfaces vs. abstract classes](sub-sections/InterfacesVsAbstractClasses.md)
-compares some details.
+> [Interfaces vs classes abstraites](sub-sections/InterfacesVsAbstractClasses.md) compare certains détails.
 
-#### Don't mix stateful and stateless in the same class
+#### Ne mélangez pas des paradigmes avec statut et sans statut dans la même classe
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Classes: Object orientation](#classes-object-orientation)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Classes : orientation objet](#classes-:-orientation-objet)
 
-Don't mix the stateless and the stateful
-programming paradigms in the same class.
+Ne mélangez pas des paradigmes de programmation avec statut et sans statut dans la même classe.
 
-In stateless programming, methods get input and produce output,
-_without any side effects_, resulting in methods
-that produce the same result
-no matter when and in what order they are called.
+Dans la programmation sans statut, les méthodes accèdent à des entrées et produisent des sorties, _sans aucun effet secondaire_, ce qui fait que les méthodes produisent le même résultat quel que soit le moment et l'ordre dans lequel elles sont appelées.
 
 ```ABAP
 CLASS /clean/xml_converter DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -1713,8 +1466,7 @@ CLASS /clean/xml_converter IMPLEMENTATION.
 ENDCLASS.
 ```
 
-In stateful programming, we manipulate the internal state of objects
-through their methods, meaning it is _full of side effects_.
+Dans la programmation avec statut, nous manipulons le statut interne des objets au travers de leurs méthodes, ce qui signifie qu'elle est _pleine d'effets secondaires_.
 
 ```ABAP
 CLASS /clean/log DEFINITION PUBLIC CREATE PUBLIC.
@@ -1731,102 +1483,66 @@ CLASS /clean/log IMPLEMENTATION.
 ENDCLASS.
 ```
 
-Both paradigms are okay and have their applications.
-However, _mixing_ them in the same object produces code
-that is hard to understand and sure to fail
-with obscure carry-over errors and synchronicity problems.
-Don't do that.
+Les deux paradigmes sont corrects et ont leurs domaines d'application. Cependant, _mélanger_ les deux dans le même objet rend le code difficile à comprendre et voué à l'échec, avec d'obscures erreurs de transfert et des problèmes de synchronicité. Ne faites pas ça.
 
-### Scope
+### Portée
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [This section](#scope)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Cette section](#portée)
 
-#### Global by default, local only where appropriate
+#### Globale par défaut, locale uniquement le cas échéant
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Scope](#scope) > [This section](#global-by-default-local-only-where-appropriate)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Portée](#portée) > [Cette section](#globale-par-défaut-locale-uniquement-le-cas-échéant)
 
-Work with global classes as default.
-Use local classes only where appropriate.
+Par défaut, travaillez avec des classes globales. Utilisez des classes locales seulement là où c'est justifié.
 
-> Global classes are the ones that are visible in the data dictionary.
-> Local classes live within an include of another development object
-> and are only visible to this other object.
+> Les classes globales sont celles qui sont visibles dans le Dictionnaire ABAP. Les classes locales vivent au sein d'un include d'un autre objet de développement et sont visibles uniquement pour cet autre objet.
 
-Local classes are suited
+Les classes locales sont adaptées
 
-- for very specific private data structures,
-for example an iterator for the global class's data,
-which will only ever be needed here,
+- pour des structures de données privées très spécifiques, par exemple un itérateur pour les données de la classe globale, qui sera toujours utilisé là seulement ;
 
-- to extract a complex private piece algorithm,
-for example to disentangle that special purpose multi-method
-sort-aggregate algorithm from the rest of your class's code,
+- pour extraire un algorithme de pièces privées complexe, par exemple pour séparer cet algorithme de tri-agrégat multi-méthodes ciblant un objectif particulier du reste du code de votre classe ;
 
-- to enable mocking certain aspects of the global class,
-for example by extracing all database access to a separate local class
-that can the be replaced with a test double in the unit tests.
+- pour permettre de simuler certains aspects de la classe globale, par exemple en extrayant tout accès à la base de données dans une classe locale distincte qui peut être remplacée par une simulation test dans les tests de module.
 
-Local classes hinder reuse because they cannot be used elsewhere.
-Although they are easy to extract, people will usually fail to even find them,
-leading to undesired code duplication.
-Orientation, navigation, and debugging in very long local class includes
-is tedious and annoying. 
-As ABAP locks on include level, people will not be able to work on
-different parts of the local include simultaneously
-(which would be possible if they were separate global classes).
+Les classes locales empêchent la réutilisation, parce qu'elles ne peuvent pas être utilisées ailleurs. Bien qu'elles soient aisées à extraire, les collaborateurs échouent même à les trouver, ce qui entraîne une double saisie de code indésirable. L'orientation, la navigation et le débogage dans des très longs includes de classes locales sont fastidieux et rébarbatifs. Comme ABAP bloque au niveau include, les collaborateurs ne pourront pas travailler simultanément sur différentes parties de l'include local (ce qui serait possible s'il s'agissait de classes globales distinctes).
 
-Reconsider your use of local classes if
+Repensez votre utilisation des classes locales si
 
-- your local include spans dozens of classes and thousands of lines of code,
-- you think about global classes as "packages" that hold other classes,
-- your global classes degenerate into empty hulls,
-- you find duplicate code repeated throughout separate local includes,
-- your developers start locking each other out and become unable to work in parallel,
-- your backlog estimates go sky-high because your teams fail to understand each other's local sub-trees.
+- votre include local s'étend sur des dizaines de classes et des milliers de lignes de code,
+- vous voyez les classes globales comme des "packages" qui contiennent d'autres classes,
+- vos classes globales finissent en coquilles vides,
+- vous trouvez du code redondant répété dans plusieurs includes locaux,
+- vos développeurs commencent à se bloquer les uns les autres et n'arrivent plus à travailler en parallèle,
+- vos estimations de consignation atteignent des sommets, car vos équipes n'arrivent pas à comprendre leurs sous-arborescences locales respectives.
 
-#### FINAL if not designed for inheritance
+#### FINAL si non conçue pour l'héritage
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Scope](#scope) > [This section](#final-if-not-designed-for-inheritance)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Portée](#portée) > [Cette section](#final-si-non-conçue-pour-lhéritage)
 
-Make classes that are not explicitly designed for inheritance `FINAL`.
+Définissez les classes qui ne sont pas explicitement conçues pour l'héritage sur `FINAL`.
 
-When designing class cooperation,
-your first choice should be [composition, not inheritance](#prefer-composition-to-inheritance).
-Enabling inheritance is not something that should be done lightly,
-as it requires you to think about things like `PROTECTED` vs. `PRIVATE`
-and the [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle),
-and freezes a lot of design internals.
-If you didn't consider these things in your class design,
-you should thus prevent accidental inheritance by making your class `FINAL`.
+Lorsque vous concevez une coopération entre classes, vous devez penser en premier lieu [composition, et non héritage](#préférez-la-composition-à-lhéritage). Activer l'héritage n'est pas une opération qui doit être effectuée à la légère, car cela implique de réfléchir à l'accès (`PROTECTED` ou `PRIVATE`) ainsi qu'au [principe de substitution de Liskov](https://en.wikipedia.org/wiki/Liskov_substitution_principle), et un grand nombre de parties internes de conception seront gelés. Si vous ne tenez pas compte de ces critères lors de votre conception de classe, vous devez alors empêcher l'héritage accidentel en définissant votre classe comme `FINAL`.
 
-There _are_ some good applications for inheritance, of course,
-for example the design pattern [composite](https://en.wikipedia.org/wiki/Composite_pattern).
-Business Add-Ins can also become more useful by allowing sub-classes,
-enabling the customer to reuse most of the original code.
-However, note that all of these cases have inheritance built in by design from the start.
+De bonnes applications _existent_ pour l'héritage, par exemple le [modèle de conception composite](https://en.wikipedia.org/wiki/Composite_pattern). Les Business Add-Ins peuvent également s'avérer plus utiles en autorisant les sous-classes, ce qui permet au client de réutiliser la plupart du code d'origine. Notez cependant que pour tous ces cas, l'héritage est configuré dès le but, à la conception.
 
-Unclean classes that don't [implement interfaces](#public-instance-methods-should-be-part-of-an-interface)
-should be left non-`FINAL` to allow consumers mocking them in their unit tests.
+Les classes incorrectes qui [n'implémentent pas les interfaces](#les-méthodes-dinstance-publiques-doivent-faire-partie-dune-interface) doivent être laissées comme non-`FINAL`, pour permettre aux consommateurs de les simuler dans leurs tests de module.
 
-#### Members PRIVATE by default, PROTECTED only if needed
+#### Membres PRIVATE par défaut, PROTECTED seulement si besoin
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Scope](#scope) > [This section](#members-private-by-default-protected-only-if-needed)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Portée](#portée) > [Cette section](#membres-private-par-défaut-protected-seulement-si-besoin)
 
-Make attributes, methods, and other class members `PRIVATE` by default.
+Définissez les attributs, méthodes et autres membres de classe sur `PRIVATE` par défaut.
 
-Make them only `PROTECTED` if you want to enable sub-classes that override them.
+Définissez-les sur `PROTECTED` uniquement si vous souhaitez activer les sous-classes qui les remplacent.
 
-Internals of classes should be made available to others only on a need-to-know basis.
-This includes not only outside callers but also sub-classes.
-Making information over-available can cause subtle errors by unexpected redefinitions and hinder refactoring
-because outsiders freeze members in place that should still be liquid.
+Les parties internes de classes doivent être mis à la disposition d'autrui uniquement au besoin. Sont inclus parmi ces parties internes non seulement les programmes appelant externes, mais aussi les sous-classes. Ne mettez pas trop d'informations à disposition, car cela peut causer des erreurs subtiles dues à des redéfinitions inattendues et entraver le refactoring, car les programmes externes gèlent directement les membres qui doivent pourtant demeurer "fluides".
 
-#### Consider using immutable instead of getter
+#### Efforcez-vous d'utiliser un immuable au lieu d'un getter
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Scope](#scope) > [This section](#consider-using-immutable-instead-of-getter)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Portée](#portée) > [Cette section](#efforcez-vous-dutiliser-un-immuable-au-lieu-dun-getter)
 
-An immutable is an object that never changes after its construction.
-For this kind of object consider using public read-only attributes instead of getter methods.
+Un immuable est un objet qui ne change jamais après sa création. Pour ce type d'objet, utilisez des attributs publics en lecture seule, plutôt que des méthodes getter.
 
 ```ABAP
 CLASS /clean/some_data_container DEFINITION.
@@ -1842,7 +1558,7 @@ CLASS /clean/some_data_container DEFINITION.
 ENDCLASS.
 ```
 
-instead of
+au lieu de
 
 ```ABAP
 CLASS /dirty/some_data_container DEFINITION.
@@ -1857,37 +1573,29 @@ CLASS /dirty/some_data_container DEFINITION.
 ENDCLASS.
 ```
 
-> **Caution**: For objects which **do** have changing values, do not use public read-only attributes.
-> Otherwise this attributes always have to be kept up to date,
-> regardless if their value is needed by any other code or not.
+> **Attention** : pour les objets qui eux **changent** de valeurs, n'utilisez pas des attributs publics en lecture seule. Autrement, ces attributs devront sans cesse être mis à jour, que leur valeur soit requise par un autre code ou non.
 
-#### Use READ-ONLY sparingly
+#### Utilisez READ-ONLY avec parcimonie
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Scope](#scope) > [This section](#use-read-only-sparingly)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Portée](#portée) > [Cette section](#utilisez-read-only-avec-parcimonie)
 
-Many modern programming languages, especially Java, recommend making class members read-only
-wherever appropriate to prevent accidental side effects.
+Nombre de langages de programmation modernes, en particulier Java, recommandent de définir les membres de classe en lecture seule lorsqu'il y a lieu, afin d'éviter les effets secondaires accidentels.
 
-While ABAP _does_ offer the `READ-ONLY` addition for data declarations, we recommend to use it sparingly.
+ABAP _offre_ bien l'option `READ-ONLY` pour les déclarations de données, mais nous vous recommandons de l'utiliser avec parcimonie.
 
-First, the addition is only available in the `PUBLIC SECTION`, reducing its applicability drastically.
-You can neither add it to protected or private members nor to local variables in a method.
+Premièrement, l'option n'est disponible que dans `PUBLIC SECTION`, ce qui limite considérablement son champ d'application. Vous ne pouvez l'ajouter ni aux membres protégés ou privés, ni aux variables locales dans une méthode.
 
-Second, the addition works subtly different from what people might expect from other programming languages:
-READ-ONLY data can still be modified freely from any method within the class itself, its friends, and its sub-classes.
-This contradicts the more widespread write-once-modify-never behavior found in other languages.
-The difference may lead to bad surprises.
+Deuxièmement, le fonctionnement de cette option est légèrement différent de ce à quoi les collaborateurs ont été habitués par les autres langages de programmation : les données en READ-ONLY peuvent tout de même être modifiées librement à partir de n'importe quelle méthode dans la classe elle-même, ses amis et ses sous-classes. Ce comportement est en contradiction avec celui le plus répandu dans les autres langages, où l'élément, une fois écrit, n'est plus jamais modifié. Cette différence peut conduire à de mauvaises surprises.
 
-> To avoid misunderstandings: Protecting variables against accidental modification is a good practice.
-> We would recommend applying it to ABAP as well if there was an appropriate statement.
+> Pour éviter tout malentendu : nous rappelons que protéger les variables contre la modification accidentelle est une bonne pratique. Nous vous recommanderions d'appliquer cette pratique à ABAP également s'il existait une instruction appropriée.
 
-### Constructors
+### Constructeurs
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [This section](#constructors)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Classes](#constructeurs) > [Cette section](#constructeurs)
 
-#### Prefer NEW to CREATE OBJECT
+#### Préférez NEW à CREATE OBJECT
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Constructors](#constructors) > [This section](#prefer-new-to-create-object)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constructeurs](#constructeurs) > [Portée](#constructeurs) > [Cette section](#préférez-new-à-create-object)
 
 ```ABAP
 DATA object TYPE REF TO /clean/some_number_range.
@@ -1898,7 +1606,7 @@ DATA(object) = NEW /clean/some_number_range( '/CLEAN/CXTGEN' ).
 DATA(object) = CAST /clean/number_range( NEW /clean/some_number_range( '/CLEAN/CXTGEN' ) ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -1908,7 +1616,7 @@ CREATE OBJECT object
     number_range = '/DIRTY/CXTGEN'.
 ```
 
-except where you need dynamic types, of course
+sauf si vous avez besoin de types dynamiques, bien sûr
 
 ```ABAP
 CREATE OBJECT number_range TYPE (dynamic_type)
@@ -1916,9 +1624,9 @@ CREATE OBJECT number_range TYPE (dynamic_type)
     number_range = '/CLEAN/CXTGEN'.
 ```
 
-#### If your global class is CREATE PRIVATE, leave the CONSTRUCTOR public
+#### Si votre classe globale est CREATE PRIVATE, laissez CONSTRUCTOR public
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Constructors](#constructors) > [This section](#if-your-global-class-is-create-private-leave-the-constructor-public)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constructeurs](#constructeurs) > [Portée](#constructeurs) > [Cette section](#si-votre-classe-globale-est-create-private-laissez-constructor-public)
 
 ```ABAP
 CLASS /clean/some_api DEFINITION PUBLIC FINAL CREATE PRIVATE.
@@ -1926,17 +1634,13 @@ CLASS /clean/some_api DEFINITION PUBLIC FINAL CREATE PRIVATE.
     METHODS constructor.
 ```
 
-We agree that this contradicts itself.
-However, according to the article
-[_Instance Constructor_ of the ABAP Help](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm),
-specifying the `CONSTRUCTOR` in the `PUBLIC SECTION` is required to guarantee correct compilation and syntax validation.
+Nous reconnaissons que cette règle est contradictoire. Cependant, selon l'article [_Constructeur d'instance_ dans l'Aide ABAP](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm), il est nécessaire de définir `CONSTRUCTOR` dans `PUBLIC SECTION` pour garantir la validation de syntaxe et compilation correctes.
 
-This applies only to global classes.
-In local classes, make the constructor private, as it should be.
+Cette règle s'applique uniquement aux classes globales. Dans les classes locales, définissez le constructeur sur privé, comme le veut la logique.
 
-#### Prefer multiple static creation methods to optional parameters
+#### Préférez les méthodes de création statiques multiples aux paramètres facultatifs
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Constructors](#constructors) > [This section](#prefer-multiple-static-creation-methods-to-optional-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constructeurs](#constructeurs) > [Portée](#constructeurs) > [Cette section](#prefer-multiple-static-factory-methods-to-optional-parameters)
 
 ```ABAP
 CLASS-METHODS describe_by_data IMPORTING data TYPE any [...]
@@ -1945,8 +1649,7 @@ CLASS-METHODS describe_by_object_ref IMPORTING object_ref TYPE REF TO object [..
 CLASS-METHODS describe_by_data_ref IMPORTING data_ref TYPE REF TO data [...]
 ```
 
-ABAP does not support [overloading](https://en.wikipedia.org/wiki/Function_overloading).
-Use name variations and not optional parameters to achieve the desired semantics.
+ABAP ne prend pas en charge la [surcharge](https://en.wikipedia.org/wiki/Function_overloading). Utilisez des variantes de noms, au lieu de paramètres facultatifs, pour réaliser la sémantique souhaitée.
 
 ```ABAP
 " anti-pattern
@@ -1959,20 +1662,15 @@ METHODS constructor
   [...]
 ```
 
-The general guideline
-[_Split methods instead of adding OPTIONAL parameters_](#split-methods-instead-of-adding-optional-parameters)
-explains the reasoning behind this.
+La directive générale [_Fractionnez les méthodes au lieu d'ajouter des paramètres OPTIONAL_](#fractionnez-les-méthodes-au-lieu-dajouter-des-paramètres-optional) explique le raisonnement derrière.
 
-Consider resolving complex constructions to a multi-step construction with the
-[Builder design pattern](https://en.wikipedia.org/wiki/Builder_pattern).
+Efforcez-vous de convertir les constructions complexes en une construction à étapes multiples avec le [modèle de conception Builder](https://en.wikipedia.org/wiki/Builder_pattern).
 
-#### Use descriptive names for multiple creation methods
+#### Utilisez des noms descriptifs pour les méthodes de création multiples
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Constructors](#constructors) > [This section](#use-descriptive-names-for-multiple-creation-methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constructeurs](#constructeurs) > [Portée](#constructeurs) > [Cette section](#utilisez-des-noms-descriptifs-pour-les-méthodes-de-création-multiples)
 
-Good words to start creation methods are `new_`, `create_`, and `construct_`.
-People intuitively connect them to the construction of objects.
-They also add up nicely to verb phrases like `new_from_template`, `create_as_copy`, or `create_by_name`.
+`new_`, `create_` et `construct_` sont des bons termes pour débuter les méthodes de création. Les collaborateurs les relient intuitivement à la construction des objets. Ils se combinent parfaitement aussi avec des groupes verbaux comme `new_from_template`, `create_as_copy` ou `create_by_name`.
 
 ```ABAP
 CLASS-METHODS new_describe_by_data IMPORTING p_data TYPE any [...]
@@ -1981,7 +1679,7 @@ CLASS-METHODS new_describe_by_object_ref IMPORTING p_object_ref TYPE REF TO obje
 CLASS-METHODS new_describe_by_data_ref IMPORTING p_data_ref TYPE REF TO data [...]
 ```
 
-instead of something meaningless like
+plutôt que du code insignifiant comme
 
 ```ABAP
 " anti-pattern
@@ -1991,9 +1689,9 @@ CLASS-METHODS create_3 IMPORTING p_object_ref TYPE REF TO object [...]
 CLASS-METHODS create_4 IMPORTING p_data_ref TYPE REF TO data [...]
 ```
 
-#### Make singletons only where multiple instances don't make sense
+#### Codez des singletons uniquement là où les instances multiples n'ont pas de sens
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Classes](#classes) > [Constructors](#constructors) > [This section](#make-singletons-only-where-multiple-instances-dont-make-sense)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Constructeurs](#constructeurs) > [Portée](#constructeurs) > [Cette section](#codez-des-singletons-uniquement-là-où-les-instances-multiples-nont-pas-de-sens)
 
 ```ABAP
 METHOD new.
@@ -2004,69 +1702,23 @@ METHOD new.
 ENDMETHOD.
 ```
 
-Apply the singleton pattern where your object-oriented design says
-that having a second instance of something doesn't make sense.
-Use it to ensure that every consumer is working with the same thing in the same state and with the same data.
+Appliquez le modèle singleton lorsque votre conception orientée objet indique qu'il n'y a pas de sens à avoir une seconde instance pour tel ou tel élément. Utilisez-le pour veiller à ce que chaque consommateur travaille avec les mêmes outils, au même statut et avec les mêmes données.
 
-Do not use the singleton pattern out of habit or because some performance rule tells you so.
-It is the most overused and wrongly applied pattern and
-produces unexpected cross-effects and needlessly complicates testing.
-If there are no design-driven reasons for a unitary object,
-leave that decision to the consumer - he can still reach the same by means outside the constructor,
-for example with a factory.
+N'utilisez pas le modèle singleton par habitude ou en considération des performances. Il s'agit du modèle le plus surutilisé et appliqué à mauvais escient. Il produit des effets croisés inattendus et complique inutilement les tests. En l'absence de motifs liés à la conception justifiant la définition d'un objet unitaire, laissez le consommateur prendre cette décision. Il pourra toujours obtenir le même résultat en recourant à des moyens externes au constructeur, par exemple, avec une factory.
 
-## Methods
+## Méthodes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#méthodes)
 
-These rules apply to methods in classes and function modules.
+Ces règles s'appliquent aux méthodes dans les classes et les modules fonctions.
 
-### Calls
+### Appels
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#calls)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#appels)
 
-#### Don't call static methods through instance variables
+#### Préférez les appels fonctionnels aux appels procéduraux
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#dont-call-static-methods-through-instance-variables)
-
-For calling a static method, use
-```ABAP
-cl_my_class=>static_method( ).
-```
-
-Instead of calling it through an instance variable to `cl_my_class`
-```ABAP
-" anti-pattern
-lo_my_instance->static_method( ).
-```
-
-A static method is attached to the class itself, and calling it through an instance variable is a potential source of confusion.
-
-It's OK to call a static method of the same class without qualifying it within another static method.
-
-```ABAP
-METHOD static_method.
-  another_static_method( ).
-  yet_another( ).
-ENDMETHOD.
-```
-
-However, within an instance method, even when calling a static method of the same class, you should still qualify the call with the class name:
-
-```ABAP
-CLASS cl_my_class IMPLEMENTATION.
-
-  METHOD instance_method.
-    cl_my_class=>a_static_method( ).
-    another_instance_method( ).
-  ENDMETHOD.
-
-  ...
-```
-
-#### Prefer functional to procedural calls
-
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#prefer-functional-to-procedural-calls)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Appels](#appels) > [Cette section](#préférez-les-appels-fonctionnels-aux-appels-procéduraux)
 
 ```ABAP
 modify->update( node           = /clean/my_bo_c=>node-item
@@ -2075,7 +1727,7 @@ modify->update( node           = /clean/my_bo_c=>node-item
                 changed_fields = changed_fields ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -2087,7 +1739,7 @@ CALL METHOD modify->update
     changed_fields = changed_fields.
 ```
 
-If dynamic typing forbids functional calls, resort to the procedural style
+Si le typage dynamique interdit les appels fonctionnels, recourez au style procédural
 
 ```ABAP
 CALL METHOD modify->(method_name)
@@ -2098,17 +1750,17 @@ CALL METHOD modify->(method_name)
     changed_fields = changed_fields.
 ```
 
-Many of the detailed rules below are just more specific variations of this advice.
+Parmi les règles détaillées ci-dessous, nombreuses sont simplement des variantes plus spécifiques de ce conseil.
 
-#### Omit RECEIVING
+#### Omettez RECEIVING
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#omit-receiving)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Appels](#appels) > [Cette section](#omettez-receiving)
 
 ```ABAP
 DATA(sum) = aggregate_values( values ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -2119,9 +1771,9 @@ aggregate_values(
     result = DATA(sum) ).
 ```
 
-#### Omit the optional keyword EXPORTING
+#### Omettez le mot-clé facultatif EXPORTING
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#omit-the-optional-keyword-exporting)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Appels](#appels) > [Cette section](#omettez-le-mot-clé-facultatif-exporting)
 
 ```ABAP
 modify->update( node           = /clean/my_bo_c=>node-item
@@ -2130,7 +1782,7 @@ modify->update( node           = /clean/my_bo_c=>node-item
                 changed_fields = changed_fields ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -2142,63 +1794,60 @@ modify->update(
     changed_fields = changed_fields ).
 ```
 
-#### Omit the parameter name in single parameter calls
+#### Omettez le nom du paramètre dans les appels de paramètre unique
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#omit-the-parameter-name-in-single-parameter-calls)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Appels](#appels) > [Cette section](#omettez-le-nom-du-paramètre-dans-les-appels-de-paramètre-unique)
 
 ```ABAP
 DATA(unique_list) = remove_duplicates( list ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
 DATA(unique_list) = remove_duplicates( list = list ).
 ```
 
-There are cases, however, where the method name alone is not clear enough
-and repeating the parameter name may further understandability:
+Dans certains cas, cependant, le nom de la méthode seul n'est pas assez clair et il peut être utile de répéter le nom du paramètre pour faciliter la compréhension :
 
 ```ABAP
 car->drive( speed = 50 ).
 update( asynchronous = abap_true ).
 ```
 
-#### Omit the self-reference me when calling an instance method
+#### Omettez l'autoréférence me lorsque vous appelez une méthode d'instance
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Calls](#calls) > [This section](#omit-the-self-reference-me-when-calling-an-instance-method)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Appels](#appels) > [Cette section](#omettez-lautoréférence-me-lorsque-vous-appelez-une-méthode-dinstance)
 
-Since the self-reference `me->` is implicitly set by the system, omit it when calling an instance method
+Comme l'autoréférence `me->` est implicitement définie par le système, omettez-la lorsque vous appelez une méthode d'instance
 
 ```ABAP
 DATA(sum) = aggregate_values( values ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
 DATA(sum) = me->aggregate_values( values ).
 ```
 
-### Methods: Object orientation
+### Méthodes : orientation objet
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#methods-object-orientation)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#méthodes--orientation-objet)
 
-#### Prefer instance to static methods
+#### Préférez les méthodes d'instance aux méthodes statiques
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Methods: Object orientation](#methods-object-orientation) > [This section](#prefer-instance-to-static-methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Méthodes : orientation objet](#méthodes--orientation-objet) > [Cette section](#préférez-les-méthodes-dinstance-aux-méthodes-statiques)
 
-Methods should be instance members by default.
-Instance methods better reflect the "object-hood" of the class.
-They can be mocked easier in unit tests.
+Les méthodes doivent être des membres d'instance par défaut. Les méthodes d'instance reflètent mieux la "condition de l'objet" de la classe. Elles peuvent être simulées plus facilement dans les tests de module.
 
 ```ABAP
 METHODS publish.
 ```
 
-Methods should be static only in exceptional cases, such as static creation methods.
+Les méthodes doivent être statiques uniquement dans des cas exceptionnels, comme les méthodes de création statiques.
 
 ```ABAP
 CLASS-METHODS create_instance
@@ -2206,31 +1855,27 @@ CLASS-METHODS create_instance
     VALUE(result) TYPE REF TO /clean/blog_post.
 ```
 
-#### Public instance methods should be part of an interface
+#### Les méthodes d'instance publiques doivent faire partie d'une interface
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Methods: Object orientation](#methods-object-orientation) > [This section](#public-instance-methods-should-be-part-of-an-interface)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Méthodes : orientation objet](#méthodes-:-orientation-objet) > [Cette section](#les-méthodes-dinstance-publiques-doivent-faire-partie-dune-interface)
 
-Public instance methods should always be part of an interface.
-This decouples dependencies and simplifies mocking them in unit tests.
+Les méthodes d'instance publiques doivent toujours faire partie d'une interface. Elles séparent les dépendances et simplifient leur simulation dans les tests de module.
 
 ```ABAP
 METHOD /clean/blog_post~publish.
 ```
 
-In clean object orientation, having a method public without an interface does not make much sense -
-with few exceptions such as enumeration classes
-which will never have an alternative implementation and will never be mocked in test cases.
+Dans une orientation objet propre, il y a peu d'intérêt à avoir une méthode publique sans interface (à quelques exceptions près, notamment les classes d'énumération, qui ne feront jamais l'objet d'une implémentation alternative et ne seront jamais simulées dans des scénarios de test.
 
-> [Interfaces vs. abstract classes](sub-sections/InterfacesVsAbstractClasses.md)
-describes why this also applies to classes that overwrite inherited methods.
+> [Interfaces vs classes abstraites](sub-sections/InterfacesVsAbstractClasses.md) décrit la raison pour laquelle cette règle s'applique également aux classes qui écrasent les méthodes héritées.
 
-### Parameter Number
+### Nombre de paramètres
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#parameter-number)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#nombre-de-paramètres)
 
-#### Aim for few IMPORTING parameters, at best less than three
+#### Visez un petit nombre de paramètres IMPORTING, dans l'idéal moins de trois
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Number](#parameter-number) > [This section](#aim-for-few-importing-parameters-at-best-less-than-three)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Nombre de paramètres](#nombre-de-paramètres) > [Cette section](#visez-un-petit-nombre-de-paramètres-importing-dans-lidéal-moins-de-trois)
 
 ```ABAP
 FUNCTION seo_class_copy
@@ -2242,7 +1887,7 @@ FUNCTION seo_class_copy
     ...
 ```
 
-would be much clearer than
+est plus clair que
 
 ```ABAP
 " anti-pattern
@@ -2262,22 +1907,20 @@ FUNCTION seo_class_copy
     ...
 ```
 
-Too many input parameters let the complexity of a method explode
-because it needs to handle an exponential number of combinations.
-Many parameters are an indicator that the method may do more than one thing.
+Les paramètres d'entrée, s'ils sont trop nombreux, font exploser la complexité d'une méthode, car elle doit alors traiter un nombre exponentiel de combinaisons. Un grand nombre de paramètres est un signe indiquant que la méthode accomplira certainement plusieurs choses.
 
-You can reduce the number of parameters by combining them into meaningful sets with structures and objects.
+Vous pouvez réduire le nombre de paramètres en les combinant en plusieurs ensembles significatifs comportant des structures et des objets.
 
-#### Split methods instead of adding OPTIONAL parameters
+#### Fractionnez les méthodes au lieu d'ajouter des paramètres OPTIONAL
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Number](#parameter-number) > [This section](#split-methods-instead-of-adding-optional-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Nombre de paramètres](#nombre-de-paramètres) > [Cette section](#fractionnez-les-méthodes-au-lieu-dajouter-des-paramètres-optional)
 
 ```ABAP
 METHODS do_one_thing IMPORTING what_i_need TYPE string.
 METHODS do_another_thing IMPORTING something_else TYPE i.
 ```
 
-to achieve the desired semantic as ABAP does not support [overloading](https://en.wikipedia.org/wiki/Function_overloading).
+pour atteindre la sémantique souhaitée, puisque ABAP ne prend pas en charge la [surcharge](https://en.wikipedia.org/wiki/Function_overloading).
 
 ```ABAP
 " anti-pattern
@@ -2287,33 +1930,27 @@ METHODS do_one_or_the_other
     something_else TYPE i OPTIONAL.
 ```
 
-Optional parameters confuse callers:
+Les paramètres facultatifs déroutent les programmes appelant :
 
-- Which ones are really required?
-- Which combinations are valid?
-- Which ones exclude each other?
+- Lesquels sont véritablement requis ?
+- Quelles combinaisons sont valides ?
+- Lesquels s'excluent mutuellement ?
 
-Multiple methods with specific parameters for the use case avoid this confusion by giving clear guidance which parameter combinations are valid and expected.
+Le recours à plusieurs méthodes avec des paramètres spécifiques pour les cas d'utilisation permet d'éviter cette confusion, en indiquant clairement les combinaisons de paramètres qui sont valides et attendus.
 
-#### Use PREFERRED PARAMETER sparingly
+#### Utilisez PREFERRED PARAMETER avec parcimonie
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Number](#parameter-number) > [This section](#use-preferred-parameter-sparingly)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Nombre de paramètres](#nombre-de-paramètres) > [Cette section](#utilisez-preferred-parameter-avec-parcimonie)
 
-The addition `PREFERRED PARAMETER` makes it hard to see which parameter is actually supplied,
-making it harder to understand the code.
-Minimizing the number of parameters, especially optional ones,
-automatically reduces the need for `PREFERRED PARAMETER`.
+Avec l'option `PREFERRED PARAMETER`, il est plus difficile de distinguer les paramètres qui sont véritablement renseignés, et encore plus difficile de comprendre le code. En minimisant le nombre de paramètres, en particulier ceux étant facultatifs, vous réduisez automatiquement le besoin d'utiliser `PREFERRED PARAMETER`.
 
-#### RETURN, EXPORT, or CHANGE exactly one parameter
+#### Utilisez RETURN, EXPORT ou CHANGE pour un seul et unique paramètre
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Number](#parameter-number) > [This section](#return-export-or-change-exactly-one-parameter)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Nombre de paramètres](#nombre-de-paramètres) > [Cette section](#utilisez-return-export-ou-change-pour-un-seul-et-unique-paramètre)
 
-A good method does _one thing_, and that should be reflected by the method also returning exactly one thing.
-If the output parameters of your method do _not_ form a logical entity,
-your method does more than one thing and you should split it.
+Une bonne méthode fait _une seule chose_. Ainsi, par extrapolation de cette règle, une méthode doit aussi renvoyer une seule chose. Si les paramètres de sortie de votre méthode ne forment _pas_ une entité logique, votre méthode accomplit plusieurs choses et doit être fractionnée.
 
-There are cases where the output is a logical entity that consists of multiple things.
-These are easiest represented by returning a structure or object:
+Dans certains cas, la sortie est une entité logique qui comprend plusieurs choses. Il est plus facile de représenter ces cas en renvoyant une structure ou un objet :
 
 ```ABAP
 TYPES:
@@ -2330,7 +1967,7 @@ METHODS check_business_partners
     VALUE(result)     TYPE check_result.
 ```
 
-instead of
+au lieu de
 
 ```ABAP
 " anti-pattern
@@ -2343,11 +1980,9 @@ METHODS check_business_partners
     messages          TYPE /bobf/t_frw_message.
 ```
 
-Especially in comparison to multiple EXPORTING parameters, this allows people to use the functional call style,
-spares you having to think about `IS SUPPLIED` and saves people from accidentally forgetting
-to retrieve a vital `ERROR_OCCURRED` information.
+Par rapport aux multiples paramètres EXPORTING notamment, cela permet aux collaborateurs d'utiliser un style d'appel fonctionnel, vous évite d'avoir à réfléchir à `IS SUPPLIED` et empêche les oublis accidentels quand il s'agit d'extraire les informations `ERROR_OCCURRED` vitales.
 
-Instead of multiple optional output parameters, consider splitting the method according to meaningful call patterns:
+Au lieu d'utiliser de multiples paramètres de sortie facultatifs, fractionnez la méthode d'après des modèles d'appels significatifs :
 
 ```ABAP
 TYPES:
@@ -2370,13 +2005,13 @@ METHODS check_and_report
     VALUE(result)     TYPE check_result.
 ```
 
-### Parameter Types
+### Types de paramètre
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#parameter-types)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#types-de-paramètre)
 
-#### Prefer RETURNING to EXPORTING
+#### Préférez RETURNING à EXPORTING
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Types](#parameter-types) > [This section](#prefer-returning-to-exporting)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Types de paramètre](#types-de-paramètre) > [Cette section](#préférez-returning-à-exporting)
 
 ```ABAP
 METHODS square
@@ -2388,7 +2023,7 @@ METHODS square
 DATA(result) = square( 42 ).
 ```
 
-Instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -2405,17 +2040,13 @@ square(
     result = DATA(result) ).
 ```
 
-`RETURNING` not only makes the call shorter,
-it also allows method chaining and prevents [same-input-and-output errors](#take-care-if-input-and-output-could-be-the-same).
+`RETURNING` non seulement permet de raccourcir l'appel, mais aussi autorise le chaînage de méthodes et empêche les [erreurs où entrées et sorties sont identiques](#soyez-vigilant-si-lentrée-et-la-sortie-peuvent-être-identiques).
 
-#### RETURNING large tables is usually okay
+#### N'hésitez pas à utiliser RETURNING avec de grandes tables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Types](#parameter-types) > [This section](#returning-large-tables-is-usually-okay)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Types de paramètre](#types-de-paramètre) > [Cette section](#nhésitez-pas-à-utiliser-returning-avec-de-grandes-tables)
 
-Although the ABAP language documentation and performance guides say otherwise,
-we rarely encounter cases where handing over a large or deeply-nested table in a VALUE parameter
-_really_ causes performance problems.
-We therefore recommend to generally use
+Bien que la documentation relative au langage ABAP et les guides de performance disent le contraire, ils sont rares les cas où le transfert d'une grande table ou d'une table profondément imbriquée dans un paramètre VALUE entraîne _réellement_ des problèmes de performance. Par conséquent, nous vous recommandons d'utiliser en règle générale
 
 ```ABAP
 METHODS get_large_table
@@ -2429,8 +2060,7 @@ ENDMETHOD.
 DATA(my_table) = get_large_table( ).
 ```
 
-Only if there is actual proof (= a bad performance measurement) for your individual case
-should you resort to the more cumbersome procedural style
+Si vraiment vous obtenez preuve du contraire (c'est-à-dire, une mesure indiquant de mauvaises performances), vous pouvez recourir au style procédural plus fastidieux
 
 ```ABAP
 " anti-pattern
@@ -2445,14 +2075,11 @@ ENDMETHOD.
 get_large_table( IMPORTING result = DATA(my_table) ).
 ```
 
-> This section contradicts the ABAP Programming Guidelines and Code Inspector checks,
-> both of whom suggest that large tables should be EXPORTED by reference to avoid performance deficits.
-> We consistently failed to reproduce any performance and memory deficits
-> and received notice about kernel optimization that generally improves RETURNING performance.
+> Cette section contredit les Directives de programmation ABAP et les contrôles Code Inspector, qui tous deux suggèrent que les grandes tables doivent être exportées par référence afin d'éviter des baisses de performance. À chaque tentative, nous ne sommes pas parvenus à reproduire ces baisses de performance et de mémoire, et avons reçu une notification à propos de l'optimisation du noyau, qui permet généralement d'améliorer la performance de RETURNING.
 
-#### Use either RETURNING or EXPORTING or CHANGING, but not a combination
+#### Utilisez soit RETURNING, soit EXPORTING, soit CHANGING, mais ne les utilisez pas en combinaison
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Types](#parameter-types) > [This section](#use-either-returning-or-exporting-or-changing-but-not-a-combination)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Types de paramètre](#types-de-paramètre) > [Cette section](#utilisez-soit-returning-soit-exporting-soit-changing-mais-ne-les-utilisez-pas-en-combinaison)
 
 ```ABAP
 METHODS copy_class
@@ -2465,7 +2092,7 @@ METHODS copy_class
     /clean/class_copy_failure.
 ```
 
-instead of confusing mixtures like
+au lieu de mélanges déroutants comme
 
 ```ABAP
 " anti-pattern
@@ -2480,10 +2107,9 @@ METHODS copy_class
     package            TYPE devclass.
 ```
 
-Different sorts of output parameters is an indicator that the method does more than one thing.
-It confuses the reader and makes calling the method needlessly complicated.
+L'utilisation de différentes sortes de paramètres de sortie est un signe indiquant que la méthode accomplit plus d'une chose. Cela déroute le lecteur et complique inutilement l'appel de la méthode.
 
-An acceptable exception to this rule may be builders that consume their input while building their output:
+Les générateurs, qui utilisent leur entrée lorsqu'ils génèrent leur sortie, peuvent faire exception à cette règle :
 
 ```ABAP
 METHODS build_tree
@@ -2493,7 +2119,7 @@ METHODS build_tree
     VALUE(result) TYPE REF TO tree.
 ```
 
-However, even those can be made clearer by objectifying the input:
+Cependant, même ceux-là peuvent être plus clairs par conversion de l'entrée en objet :
 
 ```ABAP
 METHODS build_tree
@@ -2503,12 +2129,11 @@ METHODS build_tree
     VALUE(result) TYPE REF TO tree.
 ```
 
-#### Use CHANGING sparingly, where suited
+#### Utilisez CHANGING avec parcimonie, lorsque cela est adapté
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Types](#parameter-types) > [This section](#use-changing-sparingly-where-suited)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Types de paramètre](#types-de-paramètre) > [Cette section](#utilisez-changing-avec-parcimonie-lorsque-cela-est-adapté)
 
-`CHANGING` should be reserved for cases where an existing local variable
-that is already filled is updated in only some places:
+`CHANGING` doit être réservé aux cas où une variable locale existante déjà renseignée est mise à jour seulement à quelques emplacements :
 
 ```ABAP
 METHODS update_references
@@ -2524,15 +2149,13 @@ METHOD update_references.
 ENDMETHOD.
 ```
 
-Do not force your callers to introduce unnecessary local variables only to supply your `CHANGING` parameter.
-Do not use `CHANGING` parameters to initially fill a previously empty variable.
+Ne forcez pas vos programmes appelant à introduire des variables locales superflues uniquement pour renseigner votre paramètre `CHANGING`. N'utilisez pas les paramètres `CHANGING` pour renseigner initialement une variable auparavant vide.
 
-#### Split method instead of Boolean input parameter
+#### Fractionnez la méthode au lieu d'utiliser un paramètre d'entrée booléen
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Types](#parameter-types) > [This section](#split-method-instead-of-boolean-input-parameter)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Types de paramètre](#types-de-paramètre) > [Cette section](#fractionnez-la-méthode-au-lieu-dutiliser-un-paramètre-dentrée-booléen)
 
-Boolean input parameters are often an indicator
-that a method does _two_ things instead of one.
+Souvent, la présence de paramètres d'entrée booléens est un signe indiquant qu'une méthode accomplit _deux_ choses, au lieu d'une.
 
 ```ABAP
 " anti-pattern
@@ -2541,23 +2164,21 @@ METHODS update
     do_save TYPE abap_bool.
 ```
 
-Also, method calls with a single - and thus unnamed - Boolean parameter
-tend to obscure the parameter's meaning.
+En outre, les appels de méthode avec un paramètre booléen unique (et donc sans nom) ont tendance à rendre le sens du paramètre un peu plus obscur.
 
 ```ABAP
 " anti-pattern
 update( abap_true ).  " what does 'true' mean? synchronous? simulate? commit?
 ```
 
-Splitting the method may simplify the methods' code
-and describe the different intentions better
+Fractionner la méthode peut aider à simplifier le code des méthodes et à mieux décrire les différentes intentions
 
 ```ABAP
 update_without_saving( ).
 update_and_save( ).
 ```
 
-Common perception suggests that setters for Boolean variables are okay:
+Le point de vue communément adopté suggère qu'il est possible d'utiliser des setters pour les variables booléens :
 
 ```ABAP
 METHODS set_is_deleted
@@ -2565,23 +2186,19 @@ METHODS set_is_deleted
     new_value TYPE abap_bool.
 ```
 
-> Read more in
-> [1](http://www.beyondcode.org/articles/booleanVariables.html)
-> [2](https://silkandspinach.net/2004/07/15/avoid-boolean-parameters/)
-> [3](http://jlebar.com/2011/12/16/Boolean_parameters_to_API_functions_considered_harmful..html)
+> Pour en savoir plus, lisez [1](http://www.beyondcode.org/articles/booleanVariables.html) [2](https://silkandspinach.net/2004/07/15/avoid-boolean-parameters/) [3](http://jlebar.com/2011/12/16/Boolean_parameters_to_API_functions_considered_harmful..html)
 
-### Parameter Names
+### Noms de paramètres
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#parameter-names)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#noms-de-paramètres)
 
-#### Consider calling the RETURNING parameter RESULT
+#### Efforcez-vous d'appeler "RESULT" le paramètre RETURNING
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Names](#parameter-names) > [This section](#consider-calling-the-returning-parameter-result)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Noms de paramètres](#noms-de-paramètres) > [Cette section](#efforcez-vous-dappeler-result-le-paramètre-returning)
 
-Good method names are usually so good that the `RETURNING` parameter does not need a name of its own.
-The name would do little more than parrot the method name or repeat something obvious.
+Généralement, si les noms de méthodes sont bien choisis, le paramètre `RETURNING` n'a même pas besoin d'avoir un nom. Ce dernier ne ferait qu'imiter le nom de la méthode ou répéter quelque chose d'évident.
 
-Repeating a member name can even produce conflicts that need to be resolved by adding a superfluous `me->`.
+La répétition d'un nom de membre peut même provoquer des conflits qui doivent être résolus par l'ajout d'un `me->` superflu.
 
 ```ABAP
 " anti-pattern
@@ -2594,22 +2211,19 @@ METHOD get_name.
 ENDMETHOD.
 ```
 
-In these cases, simply call the parameter `RESULT`, or something like `RV_RESULT` if you prefer Hungarian notation.
+Dans ces cas, appelez simplement le paramètre `RESULT`, ou bien quelque chose comme `RV_RESULT` si vous préférez la notation hongroise.
 
-Name the `RETURNING` parameter if it is _not_ obvious what it stands for,
-for example in methods that return `me` for method chaining,
-or in methods that create something but don't return the created entity but only its key or so.
+Nommez le paramètre `RETURNING` si ce qu'il désigne n'est _pas_ évident (par exemple, dans les méthodes qui renvoient `me` pour le chaînage de méthodes ou dans les méthodes qui créent quelque chose, mais qui, au lieu de renvoyer l'entité créée, renvoie uniquement sa clé ou autre.
 
-### Parameter Initialization
+### Initialisation de paramètres
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#parameter-initialization)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#initialisation-de-paramètres)
 
-#### Clear or overwrite EXPORTING reference parameters
+#### Réinitialisez ou écrasez les paramètres de référence EXPORTING
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Initialization](#parameter-initialization) > [This section](#clear-or-overwrite-exporting-reference-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Initialisation de paramètres](#initialisation-de-paramètres) > [Cette section](#réinitialisez-ou-écrasez-les-paramètres-de-référence-exporting)
 
-Reference parameters refer to existing memory areas that may be filled beforehand.
-Clear or overwrite them to provide reliable data:
+Les paramètres de référence font référence aux zones de mémoire existantes qui peuvent être renseignées au préalable. Supprimez-les ou écrasez-les pour fournir des données fiables :
 
 ```ABAP
 METHODS square
@@ -2628,18 +2242,15 @@ METHOD square.
 ENDMETHOD.
 ```
 
-> Code inspector and Checkman point out `EXPORTING` variables that are never written.
-Use these static checks to avoid this otherwise rather obscure error source.
+> Code Inspector et Checkman mettent l'accent que les variables `EXPORTING` qui ne sont jamais écrites. Utilisez ces contrôles statiques pour éviter cette source d'erreur assez obscure.
 
-##### Take care if input and output could be the same
+##### Soyez vigilant si l'entrée et la sortie peuvent être identiques
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Initialization](#parameter-initialization) > [This section](#take-care-if-input-and-output-could-be-the-same)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Initialisation de paramètres](#initialisation-de-paramètres) > [Cette section](#soyez-vigilant-si-lentrée-et-la-sortie-peuvent-être-identiques)
 
-Generally, it is a good idea to clear the parameter as a first thing in the method after type and data declarations.
-This makes the statement easy to spot and avoids that the still-contained value is accidentally used by later statements.
+En général, il est judicieux de supprimer le paramètre qui apparaît comme le premier élément dans la méthode, après les déclarations de type et de données. Cela permet de repérer plus facilement l'instruction et d'éviter que la valeur encore contenue soit accidentellement utilisée par des instructions ultérieures.
 
-However, some parameter configurations could use the same variable as input and output.
-In this case, an early `CLEAR` would delete the input value before it can be used, producing wrong results.
+Cependant, certaines configurations de paramètres peuvent utiliser la même variable comme entrée et sortie. Dans ce cas, une utilisation préalable de `CLEAR` supprimera la valeur d'entrée avant son utilisation, ce qui donnera lieu à des résultats incorrects.
 
 ```ABAP
 " anti-pattern
@@ -2657,16 +2268,13 @@ METHOD square_dirty.
 ENDMETHOD.
 ```
 
-Consider redesigning such methods by replacing `EXPORTING` with `RETURNING`.
-Also consider overwriting the `EXPORTING` parameter in a single result calculation statement.
-If neither fits, resort to a late `CLEAR`.
+Efforcez-vous de restructurer ces méthodes en remplaçant `EXPORTING` par `RETURNING`. Efforcez-vous également d'écraser le paramètre `EXPORTING` dans une instruction de calcul à résultat unique. Si aucune de ces solutions ne fonctionne, recourez à un `CLEAR` ultérieurement.
 
-#### Don't clear VALUE parameters
+#### Ne réinitialisez pas les paramètres VALUE
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Parameter Initialization](#parameter-initialization) > [This section](#dont-clear-value-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Initialisation de paramètres](#initialisation-de-paramètres) > [Cette section](#ne-réinitialisez-pas-les-paramètres-value)
 
-Parameters that work by `VALUE` are handed over as new, separate memory areas that are empty by definition.
-Don't clear them again:
+Les paramètres qui fonctionnent par `VALUE` sont transférés en tant que nouvelles zones de mémoire distinctes, vides par définition. Ne les supprimez pas à nouveau :
 
 ```ABAP
 METHODS square
@@ -2678,7 +2286,7 @@ METHOD square.
 ENDMETHOD.
 ```
 
-`RETURNING` parameters are always `VALUE` parameters, so you never have to clear them:
+Les paramètres `RETURNING` sont toujours des paramètres `VALUE`, donc vous ne devez jamais les supprimer :
 
 ```ABAP
 METHODS square
@@ -2690,36 +2298,31 @@ METHOD square.
 ENDMETHOD.
 ```
 
-### Method Body
+### Corps de la méthode
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#method-body)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#corps-de-la-méthode)
 
-#### Do one thing, do it well, do it only
+#### Faites une chose, faites-la bien et ne faites que cela
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Method Body](#method-body) > [This section](#do-one-thing-do-it-well-do-it-only)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Corps de la méthode](#corps-de-la-méthode) > [Cette section](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela)
 
-A method should do one thing, and only one thing.
-It should do it in the best way possible.
+Une méthode doit faire une seule et unique chose, de la meilleure manière possible.
 
-A method likely does one thing if
+Une méthode ne fait probablement qu'une chose si
 
-- it has [few input parameters](#aim-for-few-importing-parameters-at-best-less-than-three)
-- it [doesn't include Boolean parameters](#split-method-instead-of-boolean-input-parameter)
-- it has [exactly one output parameter](#return-export-or-change-exactly-one-parameter)
-- it is [small](#keep-methods-small)
-- it [descends one level of abstraction](#descend-one-level-of-abstraction)
-- it only [throws one type of exception](#throw-one-type-of-exception)
-- you cannot extract meaningful other methods
-- you cannot meaningfully group its statements into sections
+- elle a [un petit nombre de paramètres d'entrée](#visez-un-petit-nombre-de-paramètres-importing-dans-lidéal-moins-de-trois) ;
+- ses paramètres d'entrée [n'incluent pas des booléens](#fractionnez-la-méthode-au-lieu-dutiliser-un-paramètre-dentrée-booléen) ;
+- elle n'a [qu'un seul paramètre de sortie](#utilisez-return-export-ou-change-pour-un-seul-et-unique-paramètre) ;
+- elle est [petite](#privilégiez-les-méthodes-courtes) ;
+- elle [descend d'un niveau d'abstraction](#descendez-dun-niveau-dabstraction) ;
+- vous ne pouvez pas en extraire d'autres méthodes significatives ;
+- vous ne pouvez pas regrouper de façon significative ses instructions en sections.
 
-#### Focus on the happy path or error handling, but not both
+#### Activez les cas d'utilisation correcte ou la gestion des erreurs, mais pas les deux
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Method Body](#method-body) > [This section](#focus-on-the-happy-path-or-error-handling-but-not-both)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Corps de la méthode](#corps-de-la-méthode) > [Cette section](#activez-les-cas-dutilisation-correcte-ou-la-gestion-des-erreurs-mais-pas-les-deux)
 
-As a specialization of the rule [_Do one thing, do it well, do it only_](#do-one-thing-do-it-well-do-it-only),
-a method should either follow the happy-path it's built for,
-or the error-handling-detour in case it can't,
-but probably not both.
+Au-delà de la règle [_Faites une chose, faites-la bien et ne faites que cela_](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela), plus spécifiquement, une méthode doit suivre les cas d'utilisation correcte pour lesquels elle a été créée ou, en cas d'impossibilité, suivre la voie détournée de la gestion des erreurs, mais certainement pas les deux.
 
 ```ABAP
 " anti-pattern
@@ -2738,7 +2341,7 @@ METHOD append_xs.
 ENDMETHOD.
 ```
 
-Can be decomposed into
+peut être décomposé en
 
 ```ABAP
 METHOD append_xs.
@@ -2759,7 +2362,7 @@ METHOD validate.
 ENDMETHOD.
 ```
 
-or, to stress the validation part
+ou, pour souligner la partie propre à la validation
 
 ```ABAP
 METHOD append_xs.
@@ -2781,12 +2384,11 @@ METHOD append_xs_without_check.
 ENDMETHOD.
 ```
 
-#### Descend one level of abstraction
+#### Descendez d'un niveau d'abstraction
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Method Body](#method-body) > [This section](#descend-one-level-of-abstraction)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Corps de la méthode](#corps-de-la-méthode) > [Cette section](#descendez-dun-niveau-dabstraction)
 
-Statements in a method should be one level of abstraction below the method itself.
-Correspondingly, they should all be on the same level of abstraction.
+Les instructions dans une méthode doivent se situer un niveau d'abstraction en-dessous de la méthode elle-même. Elles doivent toutes apparaître au même niveau d'abstraction.
 
 ```ABAP
 METHOD create_and_publish.
@@ -2795,7 +2397,7 @@ METHOD create_and_publish.
 ENDMETHOD.
 ```
 
-instead of confusing mixtures of low level (`trim`, `to_upper`, ...) and high level (`publish`, ...) concepts like
+au lieu des mélanges déroutants de concepts de bas niveau (`trim`, `to_upper`, ...) et haut niveau (`publish`, ...) comme
 
 ```ABAP
 " anti-pattern
@@ -2807,15 +2409,13 @@ METHOD create_and_publish.
 ENDMETHOD.
 ```
 
-A reliable way to find out what the right level of abstraction is is this:
-Let the method's author explain what the method does in few, short words, without looking at the code.
-The bullets (s)he numbers are the sub-methods the method should call or the statements it should execute.
+Voici une méthode fiable pour déterminer le bon niveau d'abstraction : laissez l'auteur de la méthode expliquer brièvement, en quelques mots, à quoi sert la méthode, sans même regarder le code. Les points qu'il/elle numérote correspondent aux sous-méthodes que la méthode devra appeler ou aux instructions qu'elle devra exécuter.
 
-#### Keep methods small
+#### Privilégiez les méthodes courtes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Method Body](#method-body) > [This section](#keep-methods-small)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Corps de la méthode](#corps-de-la-méthode) > [Cette section](#privilégiez-les-méthodes-courtes)
 
-Methods should have less than 20 statements, optimal around 3 to 5 statements.
+Les méthodes doivent comporter moins de 20 instructions, le nombre optimal se situant autour de 3 à 5 instructions.
 
 ```ABAP
 METHOD read_and_parse_version_filters.
@@ -2825,7 +2425,7 @@ METHOD read_and_parse_version_filters.
 ENDMETHOD.
 ```
 
-The following `DATA` declaration alone is sufficient to see that the surrounding method does way more than one thing:
+La déclaration `DATA` suivante permet à elle seule de constater que la méthode supérieure fait bien plus qu'une seule chose :
 
 ```ABAP
 " anti-pattern
@@ -2855,8 +2455,7 @@ DATA:
   new_clskey_save TYPE seoclskey.
 ```
 
-Of course there are occasions where it does not make sense to reduce a larger method further.
-This is perfectly okay as long as the method remains [focused on one thing](#do-one-thing-do-it-well-do-it-only):
+Bien sûr, dans certaines circonstances, il n'est pas logique de réduire davantage une méthode assez vaste. Cela est tout à fait acceptable tant que la méthode reste [axée sur une chose](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela) :
 
 ```ABAP
 METHOD decide_what_to_do.
@@ -2875,7 +2474,7 @@ METHOD decide_what_to_do.
 ENDMETHOD.
 ```
 
-However, it still makes sense to validate whether the verbose code hides a more suitable pattern:
+Cependant, il est toujours pertinent de vérifier si le code détaillé cache un modèle plus adapté :
 
 ```ABAP
 METHOD decide_what_to_do.
@@ -2883,18 +2482,17 @@ METHOD decide_what_to_do.
 ENDMETHOD.
 ```
 
-> Cutting methods very small can have bad impact on performance because it increases the number of method calls.
-> The [section _Mind the performance_](#mind-the-performance) gives guidance on how to balance Clean Code and performance.
+> Le découpage de méthodes pour les réduire au minimum peut avoir un effet négatif sur les performances, puisqu'il en résulte une augmentation du nombre d'appels de méthode. La section [_Tenez compte des performances_](#tenez-compte-des-performances) donne des conseils pour trouver l'équilibre entre un code propre et des performances optimales.
 
-### Control flow
+### Flux de contrôle
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [This section](#control-flow)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Cette section](#flux-de-contrôle)
 
-#### Fail fast
+#### Échec accéléré
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Control flow](#control-flow) > [This section](#fail-fast)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Flux de contrôle](#flux-de-contrôle) > [Cette section](#échec-accéléré)
 
-Validate and fail as early as possible:
+Procédez à des contrôles de validation et de réussite dès que possible :
 
 ```ABAP
 METHOD do_something.
@@ -2906,7 +2504,7 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-Later validations are harder to spot and understand and may have already wasted resources to get there.
+Dans le cas de validations tardives, les problèmes sont plus difficiles à détecter et à comprendre. De plus, il est probable que de nombreuses ressources ont déjà été gaspillées pour en arriver là.
 
 ```ABAP
 " anti-pattern
@@ -2919,14 +2517,13 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-#### CHECK vs. RETURN
+#### CHECK contre RETURN
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Control flow](#control-flow) > [This section](#check-vs-return)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Flux de contrôle](#flux-de-contrôle) > [Cette section](#check-contre-return)
 
-There is no consensus on whether you should use `CHECK` or `RETURN` to exit a method
-if the input doesn't meet expectations.
+Il n'existe aucun consensus quant à l'utilisation de `CHECK` ou `RETURN` pour quitter une méthode si l'entrée ne répond pas aux attentes.
 
-While `CHECK` definitely provides the shorter syntax
+`CHECK` permet clairement de raccourcir la syntaxe
 
 ```ABAP
 METHOD read_customizing.
@@ -2935,8 +2532,7 @@ METHOD read_customizing.
 ENDMETHOD.
 ```
 
-the statement's name doesn't reveal what happens if the condition fails,
-such that people will probably understand the long form better:
+mais le nom de l'instruction ne révèle pas ce qui se passe en cas d'échec de la condition, de telle sorte que les collaborateurs comprendront probablement mieux la forme longue :
 
 ```ABAP
 METHOD read_customizing.
@@ -2944,86 +2540,75 @@ METHOD read_customizing.
     RETURN.
   ENDIF.
   " do whatever needs doing
-ENDMETHOD.
+ENDMETHOD:
 ```
 
-You can avoid the question completely by reversing the validation
-and adopting a single-return control flow
+Vous pouvez éluder complètement la question, en inversant la validation et en adoptant un flux de contrôle à retour unique.
 
 ```ABAP
 METHOD read_customizing.
   IF keys IS NOT INITIAL.
     " do whatever needs doing
   ENDIF.
-ENDMETHOD.
+ENDMETHOD:
 ```
 
-In any case, consider whether returning nothing is really the appropriate behavior.
-Methods should provide a meaningful result, meaning either a filled return parameter, or an exception.
-Returning nothing is in many cases similar to returning `null`, which should be avoided.
+Dans tous les cas, demandez-vous si l'absence de résultat renvoyé est vraiment le comportement approprié. Les méthodes doivent fournir un résultat significatif, c'est-à-dire un paramètre de retour renseigné ou une exception. Dans nombre de cas, l'absence de résultat renvoyé équivaut au renvoi de `null`, ce qui doit être évité.
 
-> The [section _Exiting Procedures_ in the ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenexit_procedure_guidl.htm)
-> recommends using `CHECK` in this instance.
-> Community discussion suggests that the statement is so unclear
-> that many people will not understand the program's behavior.
+> La [section _Quitter les procédures_ dans les Directives de programmation ABAP ](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenexit_procedure_guidl.htm) recommande d'utiliser `CHECK` dans cette instance. La communauté qui discute sur ce point estime que l'instruction n'est pas claire, à tel point que peu de collaborateurs réussiront à comprendre le comportement du programme.
 
-#### Avoid CHECK in other positions
+#### Évitez d'utiliser CHECK dans d'autres positions
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Methods](#methods) > [Control flow](#control-flow) > [This section](#avoid-check-in-other-positions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Méthodes](#méthodes) > [Flux de contrôle](#flux-de-contrôle) > [Cette section](#évitez-dutiliser-check-dans-dautres-positions)
 
-Do not use `CHECK` outside of the initialization section of a method.
-The statement behaves differently in different positions and may lead to unclear, unexpected effects.
+N'utilisez pas `CHECK` en dehors de la section d'initialisation d'une méthode. L'instruction suit un comportement différent suivant sa position et peut entraîner des effets obscurs et inattendus.
 
-For example,
-[`CHECK` in a `LOOP` ends the current iteration and proceeds with the next one](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcheck_loop.htm);
-people might accidentally expect it to end the method or exit the loop.
-Prefer using an `IF` statement in combination with `CONTINUE` instead, since `CONTINUE` only can be used in loops.
+Par exemple, [`CHECK` dans une boucle (`LOOP`) termine l'itération actuelle et passe à la suivante](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcheck_loop.htm) ; les collaborateurs pourraient s'attendre accidentellement à ce que cela termine la méthode ou quitte la boucle.
 
-> Based on the [section _Exiting Procedures_ in the ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenexit_procedure_guidl.htm).
-> Note that this contradicts the [keyword reference for `CHECK` in loops](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcheck_loop.htm).
+> Source : [section _Quitter les procédures_ dans les Directives de programmation ABAP ](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abenexit_procedure_guidl.htm). Notez que cette consigne contredit la [référence sur les mots-clés pour `CHECK` dans les boucles ](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcheck_loop.htm).
 
-## Error Handling
+## Gestion des erreurs
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#error-handling)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#gestion-des-erreurs)
 
 ### Messages
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [This section](#messages)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Cette section](#messages)
 
-#### Make messages easy to find
+#### Facilitez la recherche des messages
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Messages](#messages) > [This section](#make-messages-easy-to-find)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Messages](#messages) > [Cette section](#facilitez-la-recherche-des-messages)
 
-To make messages easy to find through a where-used search from transaction SE91, use the following pattern:
+Pour trouver plus facilement les messages via une recherche par cas d'utilisation avec la transaction SE91, utilisez le modèle suivant :
 
 ```ABAP
 MESSAGE e001(ad) INTO DATA(message).
 ```
 
-In case variable `message` is not needed, add the pragma `##NEEDED`:
+Si la variable `message` n'est pas nécessaire, ajoutez le pragma `##NEEDED` :
 
 ```ABAP
 MESSAGE e001(ad) INTO DATA(message) ##NEEDED.
 ```
 
-Avoid the following:
+Évitez l'exemple suivant :
 
 ```ABAP
 " anti-pattern
 IF 1 = 2. MESSAGE e001(ad). ENDIF.
 ```
 
-This is an anti-pattern since:
-- It contains unreachable code.
-- It tests a condition which can never be true for equality.
+Il s'agit d'un contre-modèle, car :
+- il contient un code inaccessible ;
+- il teste l'égalité d'une condition qui ne peut jamais être vraie.
 
-### Return Codes
+### Codes retour
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [This section](#return-codes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Cette section](#codes-retour)
 
-#### Prefer exceptions to return codes
+#### Préférez les exceptions aux codes retour
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Return Codes](#return-codes) > [This section](#prefer-exceptions-to-return-codes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Codes retour](#codes-retour) > [Cette section](#préférez-les-exceptions-aux-codes-retour)
 
 ```ABAP
 METHOD try_this_and_that.
@@ -3031,7 +2616,7 @@ METHOD try_this_and_that.
 ENDMETHOD.
 ```
 
-instead of
+au lieu de
 
 ```ABAP
 " anti-pattern
@@ -3040,28 +2625,21 @@ METHOD try_this_and_that.
 ENDMETHOD.
 ```
 
-Exceptions have multiple advantages over return codes:
+Les exceptions présentent plusieurs avantages par rapport aux codes retour :
 
-- Exceptions keep your method signatures clean:
-you can return the result of the method as a `RETURNING` parameter and still throw exceptions alongside.
-Return codes pollute your signatures with additional parameters for error handling.
+- Les exceptions maintiennent vos signatures de méthode propres : vous pouvez renvoyer le résultat d'une méthode comme paramètre `RETURNING` et lever des exceptions en parallèle. Les codes retour polluent vos signatures avec des paramètres supplémentaires pour la gestion des erreurs.
 
-- The caller doesn't have to react to them immediately.
-He can simply write down the happy path of his code.
-The exception-handling `CATCH` can be at the very end of his method, or completely outside.
+- Le programme appelant n'a pas besoin de répondre immédiatement aux exceptions. Il peut simplement s'en tenir aux cas d'utilisation correcte de son code. La gestion des exceptions `CATCH` peut se trouver à la toute fin de sa méthode ou carrément en dehors.
 
-- Exceptions can provide details on the error in their attributes and through methods.
-Return codes require you to devise a different solution on your own, such as also returning a log.
+- Les exceptions peuvent fournir des détails sur l'erreur dans leurs attributs et par le biais des méthodes. Les codes retour vous obligent à imaginer une autre solution par vous-même (par exemple, renvoyer un journal également).
 
-- The environment reminds the caller with syntax errors to handle exceptions.
-Return codes can be accidentally ignored without anybody noticing.
+- L'environnement rappelle au programme appelant les erreurs de syntaxe pour la gestion des exceptions. Les codes retour peuvent être accidentellement ignorés sans que personne ne s'en aperçoive.
 
-#### Don't let failures slip through
+#### Ne laissez pas passer des erreurs
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Return Codes](#return-codes) > [This section](#dont-let-failures-slip-through)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Codes retour](#codes-retour) > [Cette section](#ne-laissez-pas-passer-des-erreurs)
 
-If you do have to use return codes, for example because you call Functions and older code not under your control,
-make sure you don't let failures slip through.
+Si vous devez utiliser des codes retour, par exemple parce que vous utilisez Fonctions et un code plus ancien n'étant pas sous votre contrôle, veillez à ne pas laisser passer des erreurs.
 
 ```ABAP
 DATA:
@@ -3075,17 +2653,17 @@ CALL FUNCTION 'BAPI_GET_CURRENT_DATE'
     response     = response.
 
 IF response-type = 'E'.
-  RAISE EXCEPTION NEW /clean/some_error( ).
+  RAISE EXCEPTION NEW /clean/some_error( );
 ENDIF.
 ```
 
 ### Exceptions
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [This section](#exceptions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Cette section](#exceptions)
 
-#### Exceptions are for errors, not for regular cases
+#### Les exceptions sont pour les erreurs, et non pour les cas normaux
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Exceptions](#exceptions) > [This section](#exceptions-are-for-errors-not-for-regular-cases)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Exceptions](#exceptions) > [Cette section](#les-exceptions-sont-pour-les-erreurs-et-non-pour-les-cas-normaux)
 
 ```ABAP
 " anti-pattern
@@ -3096,7 +2674,7 @@ METHODS entry_exists_in_db
     cx_not_found_exception.
 ```
 
-If something is a regular, valid case, it should be handled with regular result parameters.
+Tout cas normal et valide doit être traité avec des paramètres de résultat normaux.
 
 ```ABAP
 METHODS entry_exists_in_db
@@ -3106,7 +2684,7 @@ METHODS entry_exists_in_db
     VALUE(result) TYPE abap_bool.
 ```
 
-Exceptions should be reserved for cases that you don't expect and that reflect error situations.
+Vous devez réserver les exceptions aux cas qui sont inattendus et qui reflètent des situations d'erreur.
 
 ```ABAP
 METHODS assert_user_input_is_valid
@@ -3116,13 +2694,11 @@ METHODS assert_user_input_is_valid
     cx_bad_user_input.
 ```
 
-Misusing exceptions misguides the reader into thinking something went wrong, when really everything is just fine.
-Exceptions are also much slower than regular code because they need to be constructed
-and often gather lots of context information.
+La mauvaise utilisation des exceptions induit le lecteur en erreur, celui-ci pouvant penser qu'il existe un problème alors que tout va parfaitement bien. Les exceptions prennent plus de temps que le code normal, car elles doivent être construites et rassemblent souvent de nombreuses informations contextuelles.
 
-#### Use class-based exceptions
+#### Utilisez des exceptions basées sur une classe
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Exceptions](#exceptions) > [This section](#use-class-based-exceptions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Exceptions](#exceptions) > [Cette section](#utilisez-des-exceptions-basées-sur-une-classe)
 
 ```ABAP
 TRY.
@@ -3131,7 +2707,7 @@ TRY.
 ENDTRY.
 ```
 
-The outdated non-class-based exceptions have the same features as return codes and shouldn't be used anymore.
+Les exceptions non basées sur une classe qui sont obsolètes présentent les mêmes fonctionnalités que les codes retour et ne doivent plus être utilisées.
 
 ```ABAP
 " anti-pattern
@@ -3141,28 +2717,24 @@ get_component_types(
     OTHERS              = 2 ).
 ```
 
-### Throwing
+### Levée d'exceptions
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [This section](#throwing)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Cette section](#levée-dexceptions)
 
-#### Use own super classes
+#### Utilisez vos propres surclasses
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#use-own-super-classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#utilisez-vos-propres-surclasses)
 
 ```ABAP
 CLASS cx_fra_static_check DEFINITION ABSTRACT INHERITING FROM cx_static_check.
 CLASS cx_fra_no_check DEFINITION ABSTRACT INHERITING FROM cx_no_check.
 ```
 
-Consider creating abstract super classes for each exception type for your application,
-instead of sub-classing the foundation classes directly.
-Allows you to `CATCH` all _your_ exceptions.
-Enables you to add common functionality to all exceptions, such as special text handling.
-`ABSTRACT` prevents people from accidentally using these non-descriptive errors directly.
+Efforcez-vous de créer des surclasses abstraites pour chaque type d'exception pour votre application, plutôt que d'établir directement un sous-classement des Foundation Classes. Cela vous permet d'intercepter (`CATCH`) toutes _vos_ exceptions. Vous pouvez également ajouter des fonctionnalités communes à toutes les exceptions, telles que le traitement de texte spécial. `ABSTRACT` empêche les collaborateurs d'utiliser accidentellement des erreurs non descriptives directement.
 
-#### Throw one type of exception
+#### Levez un seul type d'exception
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#throw-one-type-of-exception)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#levez-un-seul-type-dexception)
 
 ```ABAP
 METHODS generate
@@ -3170,10 +2742,7 @@ METHODS generate
     cx_generation_error.
 ```
 
-In the vast majority of cases, throwing multiple types of exceptions has no use.
-The caller usually is neither interested nor able to distinguish the error situations.
-He will therefore typically handle them all in the same way -
-and if this is the case, why distinguish them in the first place?
+Dans la grande majorité des cas, lever plusieurs types d'exception n'a aucune utilité. Généralement, le programme appelant n'a ni l'intérêt ni la capacité de faire la distinction des situations d'erreur. Par conséquent, il les traitera tous de la même manière en général, et dans ce cas, pourquoi prendre la peine de les distinguer au début ?
 
 ```ABAP
 " anti-pattern
@@ -3184,13 +2753,11 @@ METHODS generate
     cx_model_read_error.
 ```
 
-A better solution to recognize different error situations is using one exception type
-but adding sub-classes that allow - but don't require - reacting to individual error situations,
-as described in [Use sub-classes to enable callers to distinguish error situations](#use-sub-classes-to-enable-callers-to-distinguish-error-situations).
+Pour identifier les différentes situations d'erreur, il existe une meilleure solution : utiliser un seul type d'exception, mais ajouter des sous-classes qui permettent (mais ne nécessitent pas) de réagir aux situations d'erreur individuelles, tel que décrit dans [Utilisez des surclasses pour permettre aux programmes appelant d'identifier les situations d'erreur](#utilisez-des-surclasses-pour-permettre-aux-programmes-appelant-didentifier-les-situations-derreur).
 
-#### Use sub-classes to enable callers to distinguish error situations
+#### Utilisez des surclasses pour permettre aux programmes appelant d'identifier les situations d'erreur
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#use-sub-classes-to-enable-callers-to-distinguish-error-situations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#utilisez-des-surclasses-pour-permettre-aux-programmes-appelant-didentifier-les-situations-derreur)
 
 ```ABAP
 CLASS cx_bad_generation_variable DEFINITION INHERITING FROM cx_generation_error.
@@ -3207,7 +2774,7 @@ TRY.
 ENDTRY.
 ```
 
-If there are many different error situations, use error codes instead:
+S'il existe une grande variété de situations d'erreur, utilisez plutôt des codes d'erreur :
 
 ```ABAP
 CLASS cx_generation_error DEFINITION ...
@@ -3232,13 +2799,11 @@ TRY.
 ENDTRY.
 ```
 
-#### Throw CX_STATIC_CHECK for manageable exceptions
+#### Levez CX_STATIC_CHECK pour les exceptions gérables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#throw-cx_static_check-for-manageable-exceptions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#levez-cx_static_check-pour-les-exceptions-gérables)
 
-If an exception can be expected to occur and be reasonably handled by the receiver,
-throw a checked exception inheriting from `CX_STATIC_CHECK`: failing user input validation,
-missing resource for which there are fallbacks, etc.
+Si une exception peut être anticipée et raisonnablement traitée par le programme récepteur, levez une exception contrôlée héritée de `CX_STATIC_CHECK` : échec de la validation des entrées utilisateur, ressource manquante pour laquelle il existe des procédures de secours, etc.
 
 ```ABAP
 CLASS cx_file_not_found DEFINITION INHERITING FROM cx_static_check.
@@ -3250,21 +2815,15 @@ METHODS read_file
     cx_file_not_found.
 ```
 
-This exception type _must_ be given in method signatures and _must_ be caught or forwarded to avoid syntax errors.
-It is therefore plain to see for the consumer and ensures that (s)he won't be surprised by an unexpected exception
-and will take care of reacting to the error situation.
+Ce type d'exception _doit_ être indiqué dans les signatures de méthode et _doit_ être intercepté ou transmis pour éviter les erreurs de syntaxe. Ainsi, le consommateur peut le voir facilement, ne sera pas surpris par une exception inattendue et prendra soin de réagir à la situation d'erreur.
 
-> This is in sync with the [ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenexception_category_guidl.htm)
-> but contradicts [Robert C. Martin's _Clean Code_],
-> which recommends to prefer unchecked exceptions;
-> [Exceptions](sub-sections/Exceptions.md) explains why.
+> Cette règle est en accord avec les [Directives de programmation ABAP ](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenexception_category_guidl.htm), mais en contradiction avec l'ouvrage de [Robert C. Martin _Coder proprement_], qui recommande de privilégier les exceptions contrôlées. Lisez [Exceptions](sub-sections/Exceptions.md) pour en comprendre les raisons.
 
-#### Throw CX_NO_CHECK for usually unrecoverable situations
+#### Levez CX_NO_CHECK pour les situations généralement irrécupérables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#throw-cx_no_check-for-usually-unrecoverable-situations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#levez-cx_no_check-pour-les-situations-généralement-irrécupérables)
 
-If an exception is so severe that the receiver is unlikely to recover from it, use `CX_NO_CHECK`:
-failure to read a must-have resource, failure to resolve the requested dependency, etc.
+Si une exception est grave au point que le programme récepteur a peu de chances de s'en remettre, utilisez `CX_NO_CHECK` : échec de lecture d'une ressource obligatoire, échec de conversion de la dépendance demandée, etc.
 
 ```ABAP
 CLASS cx_out_of_memory DEFINITION INHERITING FROM cx_no_check.
@@ -3274,27 +2833,15 @@ METHODS create_guid
     VALUE(result) TYPE /bobf/conf_key.
 ```
 
-`CX_NO_CHECK` _cannot_ be declared in method signatures,
-such that its occurrence will come as a bad surprise to the consumer.
-In the case of unrecoverable situations, this is okay
-because the consumer will not be able to do anything useful about it anyway.
+`CX_NO_CHECK` _ne peut pas_ être déclaré dans les signatures de méthode, de telle sorte que sa présence sera considérée comme une mauvaise surprise par le consommateur. En cas de situations irrécupérables, vous pouvez utiliser cette exception, car le consommateur ne pourra rien en faire d'utile de toute façon.
 
-However, there _may_ be cases where the consumer actually wants to recognize and react to this kind of failure.
-For example, a dependency manager could throw a `CX_NO_CHECK` if it's unable to provide an implementation
-for a requested interface because regular application code will not be able to continue.
-However, there may be a test report that tries to instantiate all kinds of things just to see if it's working,
-and that will report failure simply as a red entry in a list -
-this service should be able to catch and ignore the exception instead of being forced to dump.
+Cependant, dans _certains_ cas, le consommateur souhaite en réalité identifier ce type d'échec et y réagir. Par exemple, un gestionnaire des dépendances peut lever une exception `CX_NO_CHECK` s'il est impossible de fournir une implémentation pour une interface demandée, car le code d'application normal ne pourra pas continuer. Cependant, il peut y avoir un programme de test qui tente d'instancier toutes sortes d'éléments, juste pour vérifier leur bon fonctionnement. Ce programme de test signalera l'erreur simplement sous la forme d'une entrée rouge dans une liste. Ce service devrait pouvoir intercepter et ignorer l'exception, plutôt que d'être forcé à effectuer un vidage de la mémoire.
 
-#### Consider CX_DYNAMIC_CHECK for avoidable exceptions
+#### Pensez à CX_DYNAMIC_CHECK pour les exceptions évitables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#consider-cx_dynamic_check-for-avoidable-exceptions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#pensez-à-cx_dynamic_check-pour-les-exceptions-évitables)
 
-Use cases for `CX_DYNAMIC_CHECK` are rare,
-and in general we recommend to resort to the other exception types.
-However, you may want to consider this kind of exception
-as a replacement for `CX_STATIC_CHECK` if the caller has full,
-conscious control over whether an exception can occur.
+Les cas d'utilisation pour `CX_DYNAMIC_CHECK` sont rares et en général, nous vous recommandons de recourir aux autres types d'exception. Cependant, vous pouvez songer à utiliser ce type d'exception en remplacement de `CX_STATIC_CHECK` si le programme appelant dispose d'un contrôle conscient complet sur la survenue des erreurs.
 
 ```ABAP
 DATA value TYPE decfloat.
@@ -3306,45 +2853,32 @@ cl_abap_math=>get_db_length_decs(
     length = DATA(length) ).
 ```
 
-For example, consider the method `get_db_length_decs`
-of class `cl_abap_math`, that tells you the number of digits
-and decimal places of a decimal floating point number.
-This method raises the dynamic exception `cx_parameter_invalid_type`
-if the input parameter does not reflect a decimal floating point number.
-Usually, this method will be called
-for a fully and statically typed variable,
-such that the developer knows
-whether that exception can ever occur or not.
-In this case, the dynamic exception would enable the caller
-to omit the unnecessary `CATCH` clause.
+Par exemple, pensez à la méthode `get_db_length_decs` de la classe `cl_abap_math`, qui vous indique le nombre de chiffres et de décimales d'un nombre décimal en virgule flottante. Cette méthode lève l'exception dynamique `cx_parameter_invalid_type` si le paramètre d'entrée ne reflète pas un nombre décimal en virgule flottante. Généralement, cette méthode sera appelée pour une variable typée de façon complète et statistique, de façon à ce que le développeur sache si cette exception risque ou non de survenir. Dans ce cas, l'exception dynamique permettra au programme appelant d'omettre la clause `CATCH` superflue.
 
-#### Dump for totally unrecoverable situations
+#### Procédez à un vidage de la mémoire pour les situations totalement irrécupérables
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#dump-for-totally-unrecoverable-situations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#procédez-à-un-vidage-de-la-mémoire-pour-les-situations-totalement-irrécupérables)
 
-If a situation is so severe that you are totally sure the receiver is unlikely to recover from it,
-or that clearly indicates a programming error, dump instead of throwing an exception:
-failure to acquire memory, failed index reads on a table that must be filled, etc.
+Si une situation est grave au point que vous savez pertinemment que le programme appelant a peu de chances de s'en remettre, ou si cette situation indique clairement une erreur de programmation, procédez à un vidage de la mémoire plutôt que de lever une exception : échec d'acquisition de la mémoire, échec des lectures d'index sur une table qui doit être renseignée, etc.
 
 ```ABAP
 RAISE SHORTDUMP TYPE cx_sy_create_object_error.  " >= NW 7.53
 MESSAGE x666(general).                           " < NW 7.53
 ```
 
-This behavior will prevent any kind of consumer from doing anything useful afterwards.
-Use this only if you are sure about that.
+Ce comportement empêchera tous les consommateurs, quels qu'ils soient, de faire quelque chose d'utile par la suite. Utilisez cette solution uniquement si vous êtes certain.
 
-#### Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE
+#### Préférez RAISE EXCEPTION NEW à RAISE EXCEPTION TYPE
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Throwing](#throwing) > [This section](#prefer-raise-exception-new-to-raise-exception-type)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Levée d'exceptions](#levée-dexceptions) > [Cette section](#préférez-raise-exception-new-à-raise-exception-type)
 
-Note: Available from NW 7.52 onwards.
+Remarque : disponible dans NW 7.52 et les versions ultérieures.
 
 ```ABAP
 RAISE EXCEPTION NEW cx_generation_error( previous = exception ).
 ```
 
-in general is shorter than the needlessly longer
+est plus court en général que l'exemple inutilement plus long
 
 ```ABAP
 RAISE EXCEPTION TYPE cx_generation_error
@@ -3352,7 +2886,7 @@ RAISE EXCEPTION TYPE cx_generation_error
     previous = exception.
 ```
 
-However, if you make massive use of the addition `MESSAGE`, you may want to stick with the `TYPE` variant:
+Cependant, si vous utilisez massivement l'option `MESSAGE`, il est recommandé de s'en tenir à la variante `TYPE` :
 
 ```ABAP
 RAISE EXCEPTION TYPE cx_generation_error
@@ -3361,13 +2895,13 @@ RAISE EXCEPTION TYPE cx_generation_error
   MESSAGE e136(messages).
 ```
 
-### Catching
+### Interception
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [This section](#catching)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Cette section](#interception)
 
-#### Wrap foreign exceptions instead of letting them invade your code
+#### Enveloppez les exceptions externes pour éviter qu'elles n'envahissent votre code
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Error Handling](#error-handling) > [Catching](#catching) > [This section](#wrap-foreign-exceptions-instead-of-letting-them-invade-your-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Gestion des erreurs](#gestion-des-erreurs) > [Interception](#interception) > [Cette section](#enveloppez-les-exceptions-externes-pour-éviter-quelles-nenvahissent-votre-code)
 
 ```ABAP
 METHODS generate RAISING cx_generation_failure.
@@ -3381,10 +2915,7 @@ METHOD generate.
 ENDMETHOD.
 ```
 
-The [Law of Demeter](https://en.wikipedia.org/wiki/Law_of_Demeter) recommends de-coupling things.
-Forwarding exceptions from other components violates this principle.
-Make yourself independent from the foreign code by catching those exceptions
-and wrapping them in an exception type of your own.
+La [loi de Déméter](https://en.wikipedia.org/wiki/Law_of_Demeter) recommande de découpler les éléments. La transmission d'exceptions provenant d'autres composants viole ce principe. Faites en sorte d'être indépendant vis-à-vis du code externe en interceptant ces exceptions et en les enveloppant dans un type d'exception à vous.
 
 ```ABAP
 " anti-pattern
@@ -3395,13 +2926,13 @@ METHOD generate.
 ENDMETHOD.
 ```
 
-## Comments
+## Commentaires
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#comments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#commentaires)
 
-### Express yourself in code, not in comments
+### Exprimez-vous via le code, et non via des commentaires
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#express-yourself-in-code-not-in-comments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#exprimez-vous-via-le-code-et-non-via-des-commentaires)
 
 ```ABAP
 METHOD correct_day_to_last_in_month.
@@ -3421,7 +2952,7 @@ METHOD reduce_day_by_one.
 ENDMETHOD.
 ```
 
-instead of
+au lieu de
 
 ```ABAP
 " anti-pattern
@@ -3442,26 +2973,19 @@ METHOD fix_day_overflow.
 ENDMETHOD.
 ```
 
-Clean Code does _not_ forbid you to comment your code - it encourages you to exploit _better_ means,
-and resort to comments only if that fails.
+La méthodologie Clean Code ne vous interdit _pas_ de commenter votre code. Simplement, il vous encourage à exploiter de _meilleurs_ moyens et à recourir aux commentaires uniquement si ces autres moyens ne conviennent pas.
 
-> This example has been challenged from a performance point of view,
-> claiming that cutting the methods so small worsens performance too much.
-> Sample measurements show that the refactored code is 2.13 times slower than the original dirty variant.
-> The clean variant takes 9.6 microseconds to fix the input `31-02-2018`, the dirty variant only 4.5 microseconds.
-> This may be a problem when the method is run very often in a high-performance application;
-> for regular user input validation, it should be acceptable.
-> Resort to the section [Mind the performance](#mind-the-performance) to deal with Clean Code and performance issues.
+> L'exemple ci-dessus a été controversé d'un point de vue des performances, certains ayant déclaré que le découpage des méthodes en si petites parties entraînait une trop forte baisse des performances. D'après des exemples de mesures, le code refactorisé est 2,13 fois plus lent que sa variante "sale" d'origine. La variante propre corrige l'entrée `31-02-2018` en 9,6 microsecondes, tandis que la variante "sale" le fait en seulement 4,5 microsecondes. Cela peut poser problème lorsque la méthode est exécutée très fréquemment dans une application haute performance ; pour la validation normale des entrées utilisateur, ce temps supplémentaire est acceptable. Reportez-vous à la section [Tenez compte des performances](#tenez-compte-des-performances) pour traiter du Clean Code et des problèmes de performances.
 
-### Comments are no excuse for bad names
+### Les commentaires ne sont pas une excuse devant justifier les noms inappropriés
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#comments-are-no-excuse-for-bad-names)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#les-commentaires-ne-sont-pas-une-excuse-devant-justifier-les-noms-inappropriés)
 
 ```ABAP
 DATA(input_has_entries) = has_entries( input ).
 ```
 
-Improve your names instead of explaining what they really mean or why you chose bad ones.
+Attribuez des noms plus pertinents plutôt que d'expliquer ce qu'ils signifient en réalité ou la raison pour laquelle vous avez choisi des noms inappropriés.
 
 ```ABAP
 " anti-pattern
@@ -3469,17 +2993,16 @@ Improve your names instead of explaining what they really mean or why you chose 
 DATA(result) = check_table( input ).
 ```
 
-### Use methods instead of comments to segment your code
+### Utilisez les méthodes plutôt que les commentaires pour segmenter votre code
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#use-methods-instead-of-comments-to-segment-your-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#utilisez-les-méthodes-plutôt-que-les-commentaires-pour-segmenter-votre-code)
 
 ```ABAP
 DATA(statement) = build_statement( ).
 DATA(data) = execute_statement( statement ).
 ```
 
-This not only makes the intent, structure, and dependencies of the code much clearer,
-it also avoids carry-over errors when temporary variables aren't properly cleared between the sections.
+En plus de rendre plus claires l'intention, la structure et les dépendances du code, cela évite aussi les erreurs de transfert lorsque des variables temporaires ne sont pas réinitialisées entre les sections.
 
 ```ABAP
 " anti-pattern
@@ -3496,16 +3019,16 @@ DATA(result_set) = adbc->execute_sql_query( statement ).
 result_set->next_package( IMPORTING data = data ).
 ```
 
-### Write comments to explain the why, not the what
+### Écrivez des commentaires pour répondre à la question "pourquoi ?", et non à la question "quoi ?"
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#write-comments-to-explain-the-why-not-the-what)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#écrivez-des-commentaires-pour-répondre-à-la-question-pourquoi--et-non-à-la-question-quoi-)
 
 ```ABAP
 " can't fail, existence of >= 1 row asserted above
 DATA(first_line) = table[ 1 ].
 ```
 
-Nobody needs repeating the code in natural language
+Personne n'a besoin d'un code répété en langage naturel
 
 ```ABAP
 " anti-pattern
@@ -3513,9 +3036,9 @@ Nobody needs repeating the code in natural language
 SELECT * FROM d_alert_root WHERE key = key.
 ```
 
-### Design goes into the design documents, not the code
+### La conception doit être traitée dans les documents de conception, et non dans le code
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#design-goes-into-the-design-documents-not-the-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#la-conception-doit-être-traitée-dans-les-documents-de-conception-et-non-dans-le-code)
 
 ```ABAP
 " anti-pattern
@@ -3525,17 +3048,13 @@ SELECT * FROM d_alert_root WHERE key = key.
 " Have a look at this and that to get the details.
 ```
 
-Nobody reads that - seriously.
-If people need to read a textbook to be able to use your code,
-this may be an indicator that your code has severe design issues that you should solve otherwise.
-Some code _does_ need some explanation beyond a single line of comment;
-consider linking the design document in these cases.
+Personne ne lit ça, sérieusement. Si les collaborateurs ont besoin d'un manuel pour pouvoir utiliser votre code, cela peut être un signe indiquant que votre code présente de gros problèmes de conception, que vous devriez résoudre autrement. Si du code a _vraiment_ besoin d'explications allant au-delà d'une simple ligne de commentaires, pensez à lier le document de conception à ces cas.
 
-### Comment with ", not with *
+### Commentez avec ", et non avec *
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#comment-with--not-with-)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#commentez-avec--et-non-avec)
 
-Quote comments indent along with the statements they comment
+Les commentaires avec guillemets se mettent en retrait en alignement avec les instructions qu'ils commentent
 
 ```ABAP
 METHOD do_it.
@@ -3546,7 +3065,7 @@ METHOD do_it.
 ENDMETHOD.
 ```
 
-Asterisked comments tend to indent to weird places
+Les commentaires avec astérisques ont tendance se mettre en retrait n'importe comment
 
 ```ABAP
 " anti-pattern
@@ -3558,16 +3077,16 @@ METHOD do_it.
 ENDMETHOD.
 ```
 
-### Put comments before the statement they relate to
+### Mettez des commentaires avant l'instruction à laquelle ils font référence
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#put-comments-before-the-statement-they-relate-to)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#mettez-des-commentaires-avant-linstruction-à-laquelle-ils-font-référence)
 
 ```ABAP
 " delegate pattern
 output = calculate_result( input ).
 ```
 
-Clearer than
+Plus propre que
 
 ```ABAP
 " anti-pattern
@@ -3575,29 +3094,26 @@ output = calculate_result( input ).
 " delegate pattern
 ```
 
-And less invasive than
+Et moins invasif que
 
 ```ABAP
 output = calculate_result( input ).  " delegate pattern
 ```
 
-### Delete code instead of commenting it
+### Supprimez le code au lieu de le commenter
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#delete-code-instead-of-commenting-it)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#supprimez-le-code-au-lieu-de-le-commenter)
 
 ```ABAP
 " anti-pattern
 * output = calculate_result( input ).
 ```
 
-When you find something like this, delete it.
-The code is obviously not needed because your application works and all tests are green.
-Deleted code can be reproduced from the version history later on.
-If you need to preserve a piece of code permanently, copy it to a file or a `$TMP` or `HOME` object.
+Lorsque vous trouvez des choses de ce genre, supprimez-les. Manifestement le code n'est pas nécessaire, puisque votre application fonctionne et que tous les tests sont au vert. Le code supprimé pourra être reproduit ultérieurement à partir de l'historique des versions. Si vous avez besoin de conserver un morceau de code de manière permanente, copiez-le dans un fichier ou dans un objet `$TMP` ou `HOME`.
 
-### Use FIXME, TODO, and XXX and add your ID
+### Utilisez FIXME, TODO et XXX, et ajoutez votre ID
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#use-fixme-todo-and-xxx-and-add-your-id)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#utilisez-fixme-todo-et-xxx-et-ajoutez-votre-id)
 
 ```ABAP
 METHOD do_something.
@@ -3605,18 +3121,17 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-- `FIXME` points to errors that are too small or too much in-the-making for internal incidents.
-- `TODO`s are places where you want to complete something in the near(!) future.
-- `XXX` marks code that works but could be better.
+- `FIXME` pointe des erreurs qui sont trop petites ou trop en gestation pour des incidents internes.
+- Les `TODO` sont des endroits où vous voulez ajoutez quelque chose dans un avenir proche (!).
+- `XXX` marque du code qui fonctionne, mais qui pourrait être meilleur.
 
-When you enter such a comment, add your nick, initials, or user to enable your co-developers to contact you
-and ask questions if the comment is unclear.
+Lorsque vous saisissez un tel commentaire, ajoutez votre surnom, vos initiales ou votre utilisateur pour permettre à vos codéveloppeurs de vous contacter et de vous poser des questions si le commentaire n'est pas clair.
 
-### Don't add method signature and end-of comments
+### N'ajoutez pas de commentaires de type signature de méthode et end-of
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#dont-add-method-signature-and-end-of-comments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#najoutez-pas-de-commentaires-de-type-signature-de-méthode-et-end-of)
 
-Method signature comments don't help anybody.
+Les commentaires de type signature de méthode n'aident personne.
 
 ```ABAP
 " anti-pattern
@@ -3630,20 +3145,11 @@ Method signature comments don't help anybody.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
 ```
 
-Decades ago, when you couldn't see the method signature when inspecting its code,
-or working with printouts that had dozens of pages, these comments may have made sense.
-But all modern ABAP IDEs (SE24, SE80, ADT) show the method signature easily
-such that these comments have become nothing but noise.
+Il y a quelques décennies, quand vous ne pouviez pas voir la signature de méthode lors de l'inspection de son code ou quand vous travailliez avec des impressions qui faisaient des douzaines de pages, ces commentaires pouvaient avoir un sens. Mais tous les IDE ABAP modernes (SE24, SE80, ADT) affichent facilement la signature de méthode, et ces commentaires sont donc devenus des commentaires parasites.
 
-> In the form-based editor of SE24/SE80, press button _Signature_.
-> In the ABAP Development Tools, mark the method name and press F2
-> or add the view _ABAP Element Info_ to your perspective.
+> Dans l'éditeur basé sur des formulaires de SE24/SE80, appuyez sur le bouton _Signature_. Dans ABAP Development Tools, marquez le nom de la méthode et appuyez sur F2 ou ajoutez la vue _Info élément ABAP_ à votre perspective.
 
-Similarly, end-of comments are superfluous.
-These comments may have been helpful decades ago,
-when programs and functions and the nested IFs inside were hundreds of lines of code long.
-But our modern coding style produces methods short enough to readily see
-what opening statement an `ENDIF` or `ENDMETHOD` belongs to:
+De même les commentaires end-of sont superflus. Ces commentaires ont pu être utiles il y a quelques décennies, quand les programmes et fonctions et les IF qui y étaient imbriqués faisaient des centaines de lignes de code. Mais notre style de code moderne produit des méthodes suffisamment courtes pour voir à la lecture à quelle instruction d'ouverture un `ENDIF` ou `ENDMETHOD` appartient :
 
 ```ABAP
 " anti-pattern
@@ -3654,9 +3160,9 @@ METHOD get_kpi_calc.
 ENDMETHOD.   " get_kpi_calc
 ```
 
-### Don't duplicate message texts as comments
+### N'ajoutez pas des commentaires qui font doublons avec les textes de messages
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#dont-duplicate-message-texts-as-comments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#najoutez-pas-des-commentaires-qui-font-doublons-avec-les-textes-de-messages)
 
 ```ABAP
 " anti-pattern
@@ -3664,17 +3170,11 @@ ENDMETHOD.   " get_kpi_calc
 MESSAGE e003 INTO dummy.
 ```
 
-Messages change independently from your code,
-and nobody will remember adjusting the comment,
-such that it will outdate and even become misleading quickly
-and without anybody noticing.
+Les messages changent indépendamment de votre code, et personne ne pensera à adapter le commentaire, de sorte qu'il va rapidement se périmer et même devenir trompeur sans que personne ne le remarque.
 
-The modern IDEs give you easy ways to see the text behind a message,
-for example in the ABAP Development Tools,
-mark the message ID and press Shift+F2.
+Les IDE modernes fournissent des moyens aisés de voir le texte derrière un message ; par exemple, dans les ABAP Development Tools, marquez l'ID de message et appuyez sur Maj+F2.
 
-If you want it more explicit,
-consider extracting the message to a method of its own.
+Si vous voulez que ce soit plus explicite, pensez à extraire le message dans une méthode dédiée.
 
 ```ABAP
 METHOD create_alert_not_found_message.
@@ -3682,29 +3182,21 @@ METHOD create_alert_not_found_message.
 ENDMETHOD.
 ```
 
-### ABAP Doc only for public APIs
+### Utilisez ABAP Doc uniquement pour les API publiques
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#abap-doc-only-for-public-apis)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#utilisez-abap-doc-uniquement-pour-les-api-publiques)
 
-Write ABAP Doc to document public APIs,
-meaning APIs that are intended for developers
-in other teams or applications.
-Don't write ABAP Doc for internal stuff.
+Écrivez dans ABAP Doc pour documenter des API publiques, c'est-à-dire des API qui sont prévues pour des développeurs d'autres équipes ou application. N'écrivez pas dans ABAP Doc pour du contenu interne.
 
-ABAP Doc suffers from the same weaknesses as all comments,
-that is, it outdates quickly and then becomes misleading.
-As a consequence, you should employ it only where it makes sense,
-not enforce writing ABAP Doc for each and everything.
+ABAP Doc souffre des mêmes faiblesses que tous les commentaires, à savoir qu'il se périme très vite et devient ensuite trompeur. En conséquence, vous devez l'employer uniquement où cela a du sens. N'imposez pas d'écrire dans ABAP Doc pour tout et n'importe quoi.
 
-> Read more in _Chapter 4: Good Comments: Javadocs in Public APIs_ and _Chapter 4: Bad Comments:
-> Javadocs in Nonpublic Code_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 4 : Bons commentaires : documentation Javadoc dans les API publiques_ et _Chapitre 4 : Mauvais commentaires : documentation Javadoc dans du code non public_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Prefer pragmas to pseudo comments
+### Préférez les pragmas aux pseudo-commentaires
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Comments](#comments) > [This section](#prefer-pragmas-to-pseudo-comments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Commentaires](#commentaires) > [Cette section](#préférez-les-pragmas-aux-pseudo-commentaires)
 
-Prefer pragmas to pseudo comments to suppress irrelevant warnings and errors identified by the ATC. Pseudo comments 
-have mostly become obsolete and have been replaced by pragmas.
+Préférez les pragmas aux pseudo-commentaires pour supprimer les avertissements et erreurs non pertinents identifiés par l'ATC. Les pseudo-commentaires sont généralement devenus obsolètes et ont été remplacés par des pragmas.
 
 ```ABAP
 " pattern
@@ -3714,42 +3206,33 @@ MESSAGE e001(ad) INTO DATA(message) ##NEEDED.
 MESSAGE e001(ad) INTO DATA(message). "#EC NEEDED
 ```
 
-Use program `ABAP_SLIN_PRAGMAS` or table `SLIN_DESC` to find the mapping between obsolete pseudo comments and the pragmas that 
-have replaced them.
+Utilisez le programme `ABAP_SLIN_PRAGMAS` ou la table `SLIN_DESC` pour rechercher le mappage entre les pseudo-commentaires et les pragmas qui les ont remplacés.
 
-## Formatting
+## Mise en forme
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#formatting)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#mise-en-forme)
 
-The suggestions below are [optimized for reading, not for writing](#optimize-for-reading-not-for-writing).
-As ABAP's Pretty Printer doesn't cover them, some of them produce additional manual work to reformat statements
-when name lengths etc. change; if you want to avoid this, consider dropping rules like
-[Align assignments to the same object, but not to different ones](#align-assignments-to-the-same-object-but-not-to-different-ones).
+Les suggestions ci-dessous sont [optimisées pour la lecture, et non l'écriture](#optimisez-votre-code-pour-la-lecture-et-non-lécriture). Comme Pretty Printer d'ABAP ne les couvre pas, certaines d'entre elles produisent du travail manuel supplémentaire de nouvelle mise en forme d'instructions lorsque les longueurs des noms etc. changent ; si vous voulez éviter cela, pensez à abandonner des règles telles que [Alignez les affectations sur le même objet, et non sur des objets différents](#alignez-les-affectations-sur-le-même-objet-et-non-sur-des-objets-différents).
 
-### Be consistent
+### Soyez cohérent
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#be-consistent)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#soyez-cohérent)
 
-Format all code of a project in the same way.
-Let all team members use the same formatting style.
+Mettez en forme tout le code d'un projet de la même manière. Faites en sorte que tous les membres de l'équipe utilisent le même style de mise en forme.
 
-If you edit foreign code, adhere to that project's formatting style
-instead of insisting on your personal style.
+Si vous traitez du code externe, conformez-vous au style de mise en forme de ce projet plutôt que de persister avec votre style personnel.
 
-If you change your formatting rules over time,
-use [refactoring best practices](#how-to-refactor-legacy-code)
-to update your code over time.
+Si vous modifier vos règles de mise en forme au cours du temps, utilisez les [bonnes pratiques de refactoring](#refactoriser-du-code-existant) pour mettre à jour votre code.
 
-### Optimize for reading, not for writing
+### Optimisez votre code pour la lecture, et non l'écriture
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#optimize-for-reading-not-for-writing)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#optimisez-votre-code-pour-la-lecture-et-non-lécriture)
 
-Developers spend most time _reading_ code.
-Actually _writing_ code takes up a way smaller portion of the day.
+Les développeurs passent beaucoup de temps à _lire_ du code. En réalité, _écrire_ du code occupe une plus petite partie de leur journée.
 
-As a consequence, you should optimize your code formatting for reading and debugging, not for writing.
+En conséquence, vous devez optimiser votre mise en forme du code pour la lecture et le débogage, et non pour l'écriture.
 
-For example, you should prefer
+Par exemple, vous devez préférer
 
 ```ABAP
 DATA:
@@ -3758,7 +3241,7 @@ DATA:
   e TYPE f.
 ```
 
-to hacks such as
+pour coder quelque chose comme
 
 ```ABAP
 " anti-pattern
@@ -3768,88 +3251,73 @@ DATA:
   ,e TYPE f.
 ```
 
-### Use the Pretty Printer before activating
+### Utilisez la fonction Pretty Printer avant l'activation
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#use-the-pretty-printer-before-activating)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#utilisez-la-fonction-pretty-printer-avant-lactivation)
 
-Apply the pretty printer - Shift+F1 in SE80, SE24, and ADT - before activating an object.
+Appliquez Pretty Printer - Maj+F1 dans SE80, SE24 et ADT - avant d'activer un objet.
 
-If you modify a larger unformatted legacy code base,
-you may want to apply the Pretty Printer only to selected lines
-to avoid huge change lists and transport dependencies.
-Consider pretty-printing the complete development object
-in a separate Transport Request or Note.
+Si vous modifiez une grosse base de code hérité non mis en forme, il se peut que vous souhaitiez appliquer Pretty Printer seulement pour des lignes sélectionnées, pour éviter d'énormes listes de modifications et dépendances de transport. Pensez à utiliser Pretty Printer sur l'objet de développement complet dans un ordre de transport ou une note distinct(e).
 
-> Read more in _Chapter 5: Formatting: Team Rules_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 5 : Mise en forme : règles d'une équipe_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Use your Pretty Printer team settings
+### Utilisez les options Pretty Printer paramétrées pour votre équipe
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#use-your-pretty-printer-team-settings)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#utilisez-les-options-pretty-printer-paramétrées-pour-votre-équipe)
 
-Always use your team settings.
-Specify them under
-_Menu_ > _Utilities_ > _Settings ..._ > _ABAP Editor_ > _Pretty Printer_.
+Utilisez toujours les options de votre équipe. Indiquez-les sous _Menu_ > _Utilitaires_ > _Options..._ > _Éditeur ABAP_ > _Pretty Printer_.
 
-Set _Indent_ and _Convert Uppercase/Lowercase_ > _Uppercase Keyword_
-as agreed in your team.
+Définissez _Retrait_ et _Convertir majuscules/minuscules_ > _Mot-clé en majuscules_ comme il est convenu dans votre équipe.
 
-> [Upper vs. Lower Case](sub-sections/UpperVsLowerCase.md) explains
-> why we do not give clear guidance for the type case of keywords.
->
-> Read more in _Chapter 5: Formatting: Team Rules_ of [Robert C. Martin's _Clean Code_].
+> [Majuscules vs minuscules](sub-sections/UpperVsLowerCase.md) explique pourquoi nous ne donnons pas de directive claire sur la casse des mots-clés.
+Pour en savoir plus, lisez _Chapitre 5 : Mise en forme : règles d'une équipe_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### No more than one statement per line
+### Pas plus d'une instruction par ligne
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#no-more-than-one-statement-per-line)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#pas-plus-dune-instruction-par-ligne)
 
 ```ABAP
 DATA do_this TYPE i.
 do_this = input + 3.
 ```
 
-Even if some occurrences may trick you into the misconception that this was readable:
+Même si certaines occurrences peuvent vous faire croire à tort que c'est lisible :
 
 ```ABAP
 " anti-pattern
 DATA do_this TYPE i. do_this = input + 3.
 ```
 
-### Stick to a reasonable line length
+### Gardez une longueur de ligne raisonnable
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#stick-to-a-reasonable-line-length)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#gardez-une-longueur-de-ligne-raisonnable)
 
-Adhere to a maximum line length of 120 characters.
+Conformez-vous à une longueur de ligne de 120 caractères maximum.
 
-The human eye reads text more comfortably if the lines are not too wide -
-ask a UI designer or eye movement researcher of your choice.
-You will also appreciate the narrower code when debugging or comparing two sources next to each other.
+L'œil humain lit un texte avec plus de confort si les lignes ne sont pas trop larges. Posez la question à un concepteur d'IU ou à un chercheur spécialiste en mouvements oculaires. Vous apprécierez aussi un code moins large lorsque vous effectuerez du débogage ou une comparaison de deux sources entre elles.
 
-The 80 or even 72 characters limit originating in the old terminal devices is a little too restrictive.
-While 100 characters are often recommended and a viable choice, 120 characters seem to work a little better for ABAP,
-maybe because of the general verbosity of the language.
+La limite de 80 ou même de 72 caractères, qui a pour origine les anciens terminaux, est un peu trop restrictive. 100 caractères sont souvent recommandés et constituent un choix viable, mais il semble qu'une limite de 120 caractères fonctionne un peu mieux pour ABAP, peut-être en raison de la verbosité générale du langage.
 
-> As a reminder you can configure in ADT the print margin to 120 characters,
-> which then is visualized in the code view as a vertical line.
-> Configure it under _Menu_ > _Window_ > _Preferences_ > _General_ > _Editors_ > _Text Editors_.
+> Comme rappel, vous pouvez configurer la marge d'impression dans ADT à 120 caractères, elle apparaît alors dans la vue de code comme une ligne verticale. Configurez cela sous _Menu_ > _Fenêtre_ > _Préférences_ > _Général_ > _Éditeurs_ > _Éditeurs de texte_.
 
-### Condense your code
+### Condensez votre code
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#condense-your-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#condensez-votre-code)
 
 ```ABAP
 DATA(result) = calculate( items ).
 ```
 
-instead of adding unneeded blanks
+au lieu d'ajouter des espaces superflus
 
 ```ABAP
 " anti-pattern
 DATA(result)        =      calculate(    items =   items )   .
 ```
 
-### Add a single blank line to separate things, but not more
+### Ajoutez juste une ligne vierge pour séparer les différentes parties, pas plus
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#add-a-single-blank-line-to-separate-things-but-not-more)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#ajoutez-juste-une-ligne-vierge-pour-séparer-les-différentes-parties-pas-plus)
 
 ```ABAP
 DATA(result) = do_something( ).
@@ -3857,7 +3325,7 @@ DATA(result) = do_something( ).
 DATA(else) = calculate_this( result ).
 ```
 
-to highlight that the two statements do different things. But there is no reason for
+pour mettre en évidence que les deux instructions font des choses différentes. Mais il n'y a aucune justification à
 
 ```ABAP
 " anti-pattern
@@ -3868,11 +3336,11 @@ DATA(result) = do_something( ).
 DATA(else) = calculate_this( result ).
 ```
 
-The urge to add separating blank lines may be an indicator that your method doesn't [do one thing](#do-one-thing-do-it-well-do-it-only).
+L'empressement à ajouter des lignes vierges peut être un signe indiquant que votre méthode [ne fait pas qu'une seule chose](#faites-une-chose-faites-la-bien-et-ne-faites-que-cela).
 
-### Don't obsess with separating blank lines
+### N'abusez pas des lignes vierges de séparation
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#dont-obsess-with-separating-blank-lines)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#nabusez-pas-des-lignes-vierges-de-séparation)
 
 ```ABAP
 METHOD do_something.
@@ -3881,7 +3349,7 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-No reason for the bad habit to tear your code apart with blank lines
+Aucune raison ne vient justifier la mauvaise habitude d'éparpiller votre code avec des lignes vierges
 
 ```ABAP
 " anti-pattern
@@ -3894,7 +3362,7 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-Blank lines actually only make sense if you have statements that span multiple lines
+En réalité, les lignes vierges ont un sens uniquement si vous avez des instructions qui s'étendent sur plusieurs lignes
 
 ```ABAP
 METHOD do_something.
@@ -3910,36 +3378,36 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-### Align assignments to the same object, but not to different ones
+### Alignez les affectations sur le même objet, et non sur des objets différents
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#align-assignments-to-the-same-object-but-not-to-different-ones)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#alignez-les-affectations-sur-le-même-objet-et-non-sur-des-objets-différents)
 
-To highlight that these things somehow belong together
+Pour mettre en évidence que ces éléments vont ensemble
 
 ```ABAP
 structure-type = 'A'.
 structure-id   = '4711'.
 ```
 
-or even better
+ou encore mieux
 
 ```ABAP
 structure = VALUE #( type = 'A'
                      id   = '4711' ).
 ```
 
-But leave things ragged that have nothing to do with each other:
+Mais laissez dépareillés les éléments qui n'ont rien à voir entre eux :
 
 ```ABAP
 customizing_reader = fra_cust_obj_model_reader=>s_get_instance( ).
 hdb_access = fra_hdbr_access=>s_get_instance( ).
 ```
 
-> Read more in _Chapter 5: Formatting: Horizontal Alignment_ of [Robert C. Martin's _Clean Code_].
+> Pour en savoir plus, lisez _Chapitre 5 : Mise en forme : alignement horizontal_ dans le livre de [Robert C. Martin _Coder proprement_].
 
-### Close brackets at line end
+### Fermez les guillemets à la fin de la ligne
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#close-brackets-at-line-end)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#fermez-les-guillemets-à-la-fin-de-la-ligne)
 
 ```ABAP
 modify->update( node           = if_fra_alert_c=>node-item
@@ -3948,7 +3416,7 @@ modify->update( node           = if_fra_alert_c=>node-item
                 changed_fields = changed_fields ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -3959,16 +3427,16 @@ modify->update( node           = if_fra_alert_c=>node-item
 ).
 ```
 
-### Keep single parameter calls on one line
+### Faites en sorte que les appels de paramètre unique soient sur une seule ligne
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#keep-single-parameter-calls-on-one-line)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#faites-en-sorte-que-les-appels-de-paramètre-unique-soient-sur-une-seule-ligne)
 
 ```ABAP
 DATA(unique_list) = remove_duplicates( list ).
 remove_duplicates( CHANGING list = list ).
 ```
 
-instead of the needlessly longer
+au lieu de la version inutilement plus longue
 
 ```ABAP
 " anti-pattern
@@ -3979,34 +3447,34 @@ DATA(unique_list) = remove_duplicates(
                            list = list ).
 ```
 
-### Keep parameters behind the call
+### Faites en sorte que les paramètres apparaissent derrière l'appel
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#keep-parameters-behind-the-call)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#faites-en-sorte-que-les-paramètres-apparaissent-derrière-lappel)
 
 ```ABAP
 DATA(sum) = add_two_numbers( value_1 = 5
                              value_2 = 6 ).
 ```
 
-When this makes the lines very long, you can break the parameters into the next line:
+Lorsque cela rend les lignes très longues, vous pouvez revenir à la ligne pour les paramètres :
 
 ```ABAP
 DATA(sum) = add_two_numbers(
-                value_1 = round_up( input DIV 7 ) * 42 + round_down( 19 * step_size )
-                value_2 = VALUE #( ( `Calculation failed with a very weird result` ) ) ).
+                   value_1 = round_up( input DIV 7 ) * 42 + round_down( 19 * step_size )
+                   value_2 = VALUE #( ( `Calculation failed with a very weird result` ) ) ).
 ```
 
-### If you break, indent parameters under the call
+### Si vous revenez à la ligne, mettez les paramètres en retrait sous l'appel
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#if-you-break-indent-parameters-under-the-call)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#si-vous-revenez-à-la-ligne-mettez-les-paramètres-en-retrait-sous-lappel)
 
 ```ABAP
 DATA(sum) = add_two_numbers(
-                value_1 = 5
-                value_2 = 6 ).
+                   value_1 = 5
+                   value_2 = 6 ).
 ```
 
-Aligning the parameters elsewhere makes it hard to spot what they belong to:
+Il est plus difficile d'identifier ce à quoi ils appartiennent lorsque les paramètres sont alignés ailleurs.
 
 ```ABAP
 DATA(sum) = add_two_numbers(
@@ -4014,28 +3482,27 @@ DATA(sum) = add_two_numbers(
     value_2 = 6 ).
 ```
 
-However, this is the best pattern if you want to avoid the formatting to be broken by a name length change.
+Cependant, il s'agit du meilleur modèle pour éviter que la mise en forme soit affectée par une variation de longueur du nom.
 
-### Line-break multiple parameters
+### En cas de multiples paramètres, revenez à la ligne
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#line-break-multiple-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#en-cas-de-multiples-paramètres-revenez-à-la-ligne)
 
 ```ABAP
 DATA(sum) = add_two_numbers( value_1 = 5
                              value_2 = 6 ).
 ```
 
-Yes, this wastes space.
-However, otherwise, it's hard to spot where one parameter ends and the next starts:
+Oui, ça prend beaucoup de place. Cependant, il est difficile sinon de repérer où un paramètre finit et où le suivant commence :
 
 ```ABAP
 " anti-pattern
 DATA(sum) = add_two_numbers( value_1 = 5 value_2 = 6 ).
 ```
 
-### Align parameters
+### Alignez les paramètres
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#align-parameters)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#alignez-les-paramètres)
 
 ```ABAP
 modify->update( node           = if_fra_alert_c=>node-item
@@ -4044,7 +3511,7 @@ modify->update( node           = if_fra_alert_c=>node-item
                 changed_fields = changed_fields ).
 ```
 
-Ragged margins make it hard to see where the parameter ends and its value begins:
+Avec des marges dépareillées, il est difficile de repérer où le paramètre finit et où sa valeur commence :
 
 ```ABAP
 " anti-pattern
@@ -4054,11 +3521,11 @@ modify->update( node = if_fra_alert_c=>node-item
                 changed_fields = changed_fields ).
 ```
 
-> This is on the other side the best pattern if you want to avoid the formatting to be broken by a name length change.
+> D'un autre côté, il s'agit du meilleur modèle pour éviter que la mise en forme soit affectée par une variation de longueur du nom.
 
-### Break the call to a new line if the line gets too long
+### Mettez l'appel sur deux lignes si la ligne initiale est trop longue
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#break-the-call-to-a-new-line-if-the-line-gets-too-long)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#mettez-lappel-sur-deux-lignes-si-la-ligne-initiale-est-trop-longue)
 
 ```ABAP
 DATA(some_super_long_param_name) =
@@ -4067,11 +3534,11 @@ DATA(some_super_long_param_name) =
       value_2 = 6 ).
 ```
 
-### Indent and snap to tab
+### Ajoutez un retrait et passez-le en tabulation
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#indent-and-snap-to-tab)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#ajoutez-un-retrait-et-passez-le-en-tabulation)
 
-Indent parameter keywords by 2 spaces and parameters by 4 spaces:
+Mettez en retrait les mots-clés de paramètres de 2 espaces et les paramètres de 4 espaces :
 
 ```ABAP
 DATA(sum) = add_two_numbers(
@@ -4082,7 +3549,7 @@ DATA(sum) = add_two_numbers(
                 errors  = errors ).
 ```
 
-If you have no keywords, indent the parameters by 4 spaces.
+Si vous n'avez pas de mot-clé, mettez en retrait les paramètres de 4 espaces.
 
 ```ABAP
 DATA(sum) = add_two_numbers(
@@ -4090,14 +3557,13 @@ DATA(sum) = add_two_numbers(
                 value_2 = 6 ).
 ```
 
-Use the Tab key to indent. It's okay if this adds one more space than needed.
-(This happens if the `DATA(sum) =` part at the left has an uneven number of characters.)
+Utilisez la touche de tabulation pour la mise en retrait. Ce n'est pas un problème si cela ajoute un espace de plus que nécessaire. (Cela arrive si la partie `DATA(sum) =` à gauche a un nombre impair de caractères.)
 
-### Indent in-line declarations like method calls
+### Mettez les déclarations en ligne en retrait comme les appels de méthode
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#indent-in-line-declarations-like-method-calls)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#mettez-les-déclarations-en-ligne-en-retrait-comme-les-appels-de-méthode)
 
-Indent in-line declarations with VALUE or NEW as if they were method calls:
+Mettez en retrait les déclarations en ligne avec VALUE ou NEW comme s'il s'agissait d'appels de méthode :
 
 ```ABAP
 DATA(result) = merge_structures( a = VALUE #( field_1 = 'X'
@@ -4106,18 +3572,16 @@ DATA(result) = merge_structures( a = VALUE #( field_1 = 'X'
                                                                 field_4 = 'D' ) ).
 ```
 
-### Don't align type clauses
+### N'alignez pas les clauses type
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#dont-align-type-clauses)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Mise en forme](#mise-en-forme) > [Cette section](#nalignez-pas-les-clauses-type)
 
 ```ABAP
 DATA name TYPE seoclsname.
 DATA reader TYPE REF TO /clean/reader.
 ```
 
-A variable and its type belong together and should therefore be visually grouped in close proximity.
-Aligning the `TYPE` clauses draws attention away from that and suggests that the variables form one vertical group, and their types another one.
-Alignment also produces needless editing overhead, requiring you to adjust all indentations when the length of the longest variable name changes.
+Une variable et son type vont ensemble et doivent donc apparaître groupés l'une à côté de l'autre. Aligner les clauses `TYPE` détourne l'attention et suggère que les variables forment un groupe vertical, et leurs types un autre. L'alignement produit également une charge de traitement inutile, car il vous demande d'ajuster tous les retraits lorsque la longueur de la plus longue variable change.
 
 ```ABAP
 " anti-pattern
@@ -4125,139 +3589,85 @@ DATA name   TYPE seoclsname.
 DATA reader TYPE REF TO /clean/reader.
 ```
 
-### Don't chain assignments
+## Test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Formatting](#formatting) > [This section](#dont-chain-assignments)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Cette section](#test)
 
-```abap
-var2 = var3.
-var1 = var3.
-```
+### Principes
 
-```abap
-var1 = xsdbool( var2 = var3 ).
-```
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#principes)
 
-Chained assignments usually confuse the reader. Besides, the inline declaration doesn't work in any position of a multiple assignment.
+#### Écrivez des codes testables
 
-```abap
-" anti-pattern
-var1 = var2 = var3.
-```
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#écrivez-des-codes-testables)
 
-## Testing
+Écrivez tout le code d'une manière qui vous permette de le tester de façon automatique.
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [This section](#testing)
+Si cela requiert de refactoriser votre code, faites-le. Faites-le d'abord, avant de commencer à ajouter de nouvelles fonctionnalités.
 
-### Principles
+Si vous effectuez des ajouts à du code hérité qui est trop mal structuré pour être testé, refactorisez-le au moins de manière à pouvoir tester vos ajouts.
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#principles)
+#### Laissez les autres faire des simulations de votre code
 
-#### Write testable code
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#laissez-les-autres-faire-des-simulations-de-votre-code)
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#write-testable-code)
+Si vous écrivez du code utilisé par d'autres, permettez-leur d'écrire des tests de modules pour leur propre code, par exemple en ajoutant des interfaces à tous les endroits ouverts sur l'extérieur, en fournissant des simulations de test utiles qui facilitent les tests d'intégration ou en appliquant l'inversion des dépendances pour leur permettre de substituer la configuration productive avec une configuration test.
 
-Write all code in a way that allows you to test it in an automatic fashion.
+#### Règles relatives à la lisibilité
 
-If this requires refactoring your code, do it.
-Do that first, before you start adding other features.
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#règles-relatives-à-la-lisibilité)
 
-If you add to legacy code that is too badly structured to be tested,
-refactor it at least to the extent that you can test your additions.
+Rendez votre code test encore plus lisible que votre code productif. Vous pouvez surmonter un code productif mauvais avec de bons tests, mais si vous n'obtenez même pas les tests, vous êtes perdu.
 
-#### Enable others to mock you
+Gardez votre code test assez simple et bête pour pouvoir encore le comprendre dans un an.
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#enable-others-to-mock-you)
+Tenez-vous en à des standard et à des modèles, afin de permettre à vos collègues de rentrer rapidement dans le code.
 
-If you write code to be consumed by others, enable them to write unit tests for their own code,
-for example by adding interfaces in all outward-facing places,
-providing helpful test doubles that facilitate integration tests,
-or applying dependency inversion to enable them to substitute the productive configuration with a test config.
+#### Ne faites pas de copies et n'écrivez pas de programmes de test
 
-#### Readability rules
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#ne-faites-pas-de-copies-et-nécrivez-pas-de-programmes-de-test)
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#readability-rules)
+Ne commencez pas à travailler sur un poste de consignation en effectuant une copie `$TMP` d'un objet de développement et à jongler avec. Les autres ne remarqueront pas ces objets et ne connaitront donc pas le statut de votre travail. Vous allez probablement gaspiller beaucoup de temps à faire des copies de travail en premier lieu. Vous allez aussi oublier de supprimer les copies après coup, polluant votre système et leurs dépendances. (Vous n'y croyez pas ? Allez dans votre système de développement et contrôlez vos `$TMP` tout de suite.)
 
-Make your test code even more readable than your productive code.
-You can tackle bad productive code with good tests, but if you don't even get the tests, you're lost.
+Ne commencez pas non plus par écrire un programme de test qui appelle quelque chose d'une certaine manière, et le répète pour vérifier que les choses fonctionnent encore lorsque vous travaillez dessus. C'est le test du pauvre : répéter un rapport de test à la main et vérifier de visu si tout va toujours bien. Passez à l'étape suivante et automatisez ce programme dans un test de module, avec une assertion automatique qui vous indique si le code est toujours correct. Premièrement, vous vous épargnerez l'effort d'écrire les tests de module après coup. Deuxièmement, vous ne perdrez pas de temps avec des répétitions manuelles, en plus d'éviter l'ennui et la fatigue.
 
-Keep your test code so simple and stupid that you will still understand it in a year from now.
+#### Testez les parties publiques, et non les parties internes privées
 
-Stick to standards and patterns, to enable your co-workers to quickly get into the code.
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#testez-les-parties-publiques-et-non-les-parties-internes-privées)
 
-#### Don't make copies or write test reports
+Les parties publiques des classes, en particulier les interfaces qu'elles implémentent, sont plutôt stables et ont peu de probabilités de changer. Faites en sorte que vos tests de module valident seulement les parties publiques pour les rendre fiables et pour minimiser l'effort que vous aurez à fournir lors du refactoring de la classe. Les parties internes protégées et privées, à l'inverse, peuvent changer très rapidement via le refactoring, de telle sorte que vos tests ne fonctionneront plus à chaque refactoring.
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#dont-make-copies-or-write-test-reports)
+Un besoin urgent de tester des méthodes privées ou protégées peut être une alerte précoce de plusieurs sortes de failles de conception. Posez-vous la question :
 
-Don't start working on a backlog item by making a `$TMP` copy of a development object and playing around with it.
-Others won't notice these objects and therefore won't know the status of your work.
-You will probably waste a lot of time by making the working copy in the first place.
-You will also forget to delete the copy afterwards, spamming your system and dependencies.
-(Don't believe this? Go to your development system and check your `$TMP` right now.)
+- Avez-vous accidentellement enterré dans votre classe un concept qui veut apparaître dans sa propre classe, avec sa propre suite de tests dédiée ?
 
-Also, don't start by writing a test report that calls something in a specific way,
-and repeat that to verify that things are still working when you're working on it.
-This is poor man's testing: repeating a test report by hand and verifying by eye whether everything is still fine.
-Take the next step and automate this report in a unit test,
-with an automatic assertion that tells you whether the code is still okay.
-First, you will spare yourself the effort of having to write the unit tests afterwards.
-Second, you will save a lot of time for the manual repetitions, plus avoid getting bored and tired over it.
+- Avez-vous oublié de séparer la logique de domaine du code de liaison ? Par exemple, implémenter la logique de domaine directement dans la classe qui est raccordée dans BOPF comme une action, une détermination ou une validation, ou qui a été générée par la passerelle SAP comme fournisseur de données `*_DPC_EXT`, n'est peut-être pas la meilleure idée.
 
-#### Test publics, not private internals
+- Vos interfaces sont-elles trop compliquées et demandent-elles trop de données qui ne sont pas pertinentes ou qui ne peuvent pas être simulées aisément ?
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#test-publics-not-private-internals)
+#### Ne soyez pas obsédé par la couverture du code
 
-Public parts of classes, especially the interfaces they implement, are rather stable and unlikely to change.
-Let your unit tests validate only the publics to make them robust
-and minimize the effort you have to spend when you refactor the class.
-Protected and private internals, in contrast, may change very quickly through refactoring,
-such that each refactoring would needlessly break your tests.
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Principes](#principes) > [Cette section](#ne-soyez-pas-obsédé-par-la-couverture-du-code)
 
-An urgent need to test private or protected methods may be an early warning sign for several kinds of design flaws.
-Ask yourself:
+La couverture du code est là pour vous aider à rechercher du code que vous avez oublié de tester, pas pour satisfaire de quelconques KPI :
 
-- Did you accidentally bury a concept in your class that wants to come out into its own class,
-with its own dedicated suite of tests?
+N'inventez pas des tests avec ou sans asserts fictifs juste pour une meilleure couverture du code. Il vaut mieux laisser des choses non testées pour montrer de manière transparente que vous ne pouvez pas les refactoriser sans risque. Vous pouvez avoir une couverture inférieure à 100 % et avoir quand même des tests parfaits. Il y a des cas (comme des IF dans le constructeur pour insérer des simulations de test) qui rendent impossible en pratique l'atteinte des 100 %. De bons tests tendent à couvrir la même instruction plusieurs fois, pour différents branchements et différentes conditions. Ils ont en fait une couverture du code théoriquement supérieure à 100 %.
 
-- Did you forget to separate the domain logic from the glue code?
-For example, implementing the domain logic directly in the class that is plugged into BOPF as an action,
-determination, or validation, or that was generated by SAP Gateway as a `*_DPC_EXT` data provider, may not the best idea.
+### Classes de test
 
-- Are your interfaces too complicated and request too much data that is irrelevant or that cannot be mocked easily?
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#classes-de-test)
 
-#### Don't obsess about coverage
+#### Appelez les classes de test locales en fonction de leur objectif
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Principles](#principles) > [This section](#dont-obsess-about-coverage)
-
-Code coverage is there to help you find code you forgot to test, not to meet some random KPI:
-
-Don't make up tests without or with dummy asserts just to reach the coverage.
-Better leave things untested to make transparent that you cannot safely refactor them.
-You can have < 100% coverage and still have perfect tests.
-There are cases - such as IFs in the constructor to insert test doubles -
-that may make it unpractical to reach 100%.
-Good tests tend to cover the same statement multiple times, for different branches and conditions.
-They will in fact have imaginary > 100% coverage.
-
-### Test Classes
-
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#test-classes)
-
-#### Call local test classes by their purpose
-
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Classes](#test-classes) > [This section](#call-local-test-classes-by-their-purpose)
-
-Name local test classes either by the "when" part of the story
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Classes de test](#classes-de-test) > [Cette section](#appelez-les-classes-de-test-locales-en-fonction-de-leur-objectif)
 
 ```ABAP
-CLASS ltc_<public method name> DEFINITION FOR TESTING ... ."
+CLASS ltc_unit_tests DEFINITION FOR TESTING ... .
+CLASS ltc_integration_tests DEFINITION FOR TESTING ... .
+CLASS ltc_unit_tests_with_mocks DEFINITION FOR TESTING ... .
 ```
 
-or the "given" part of the story
-
-```ABAP
-CLASS ltc_<common setup semantics> DEFINITION FOR TESTING ... .
-```
+Les noms appropriés révèlent le niveau des tests et ce qui est commun à leur configuration.
 
 ```ABAP
 " anti-patterns
@@ -4265,27 +3675,15 @@ CLASS ltc_fra_online_detection_api DEFINITION FOR TESTING ... . " We know that's
 CLASS ltc_test DEFINITION FOR TESTING ....                      " Of course it's a test, what else should it be?
 ```
 
-#### Put tests in local classes
+#### Mettez les tests dans les classes locales
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Classes](#test-classes) > [This section](#put-tests-in-local-classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Classes de test](#classes-de-test) > [Cette section](#mettez-les-tests-dans-les-classes-locales)
 
-Put unit tests into the local test include of the class under test.
-This ensures that people find these tests when refactoring the class
-and allows them to run all associated tests with a single key press,
-as described in [How to execute test classes](#how-to-execute-test-classes).
+Mettez les tests de module dans l'include de test local de la classe testée. Ainsi, les collaborateurs peuvent retrouver ces tests lors du refactoring de la classe, ce qui leur permet d'exécuter tous les tests associés en appuyant sur une touche seulement, tel que décrit dans [Comment exécuter des classes de test](#comment-exécuter-des-classes-de-test).
 
-Put component-, integration- and system tests into the local test include of a separate global class.
-They do not directly relate to a single class under test, therefore they should not arbitrarily be
-placed in one of the involved classes, but in a separate one.  
-Mark this global test class as `FOR TESTING` and `ABSTRACT`
-to avoid that it is accidentally referenced in production code.  
-Putting tests into other classes has the danger that people overlook them
-and forget to run them when refactoring the involved classes.
+Mettez les tests de composant, d'intégration et de système dans l'include de test local d'une classe globale distincte. Ils ne font pas directement référence à une classe individuelle testée. Par conséquent, ils ne doivent pas être placés arbitrairement dans une des classes concernées, mais dans une classe distincte. Marquez cette classe de test globale comme `FOR TESTING` et `ABSTRACT` afin d'éviter qu'elle soit accidentellement référencée dans le code productif. Si les tests sont mis dans d'autres classes, les collaborateurs risquent de les négliger et d'oublier de les exécuter lors du refactoring des classes concernées.
 
-Therefore it is beneficial to use *test relations* to document which objects
-are tested by the test.  
-With the example below the test class `hiring_test`
-could be executed while being in the class `recruting` or `candidate` via the shrotcut `Shift-Crtl-F12` (Windows) or `Cmd-Shift-F12` (macOS).
+Par conséquent, il est bénéfique d'utiliser des *relations de test* pour documenter tous les objets ayant passé le test. Dans l'exemple ci-dessous, la classe de test `hiring_test` pourrait être exécutée bien qu'elle soit dans la classe `recruting` ou `candidate` via le raccourci `Shift-Crtl-F12` (Windows) ou `Cmd-Shift-F12` (macOS).
 
 ```abap
 "! @testing recruting
@@ -4297,17 +3695,18 @@ class hiring_test definition
 endclass.
 ```
 
-#### Put help methods in help classes
+#### Mettez les méthodes d'aide dans les classes d'aide
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Classes](#test-classes) > [This section](#put-help-methods-in-help-classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Classes de test](#classes-de-test) > [Cette section](#mettez-les-méthodes-daide-dans-les-classes-daide)
 
-Put help methods used by several test classes in a help class. Make the help methods available through 
-inheritance (is-a relationship) or delegation (has-a relationship).
+Mettez les méthodes d'aide utilisées par plusieurs classes de test dans une classe d'aide. Garantissez la disponibilité des méthodes d'aide via l'héritage (relation is-a) ou la délégation (relation has-a).
 
 ```abap
 " inheritance example
 
-CLASS lth_unit_tests DEFINITION ABSTRACT.
+CLASS lth_unit_tests DEFINITION ABSTRACT FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS.
 
   PROTECTED SECTION.
     CLASS-METHODS assert_activity_entity
@@ -4332,38 +3731,36 @@ CLASS ltc_unit_tests DEFINITION INHERITING FROM lth_unit_tests FINAL FOR TESTING
 ENDCLASS.
 ```
 
-#### How to execute test classes
+#### Comment exécuter des classes de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Classes](#test-classes) > [This section](#how-to-execute-test-classes)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Classes de test](#classes-de-test) > [Cette section](#comment-exécuter-des-classes-de-test)
 
-In the ABAP Development Tools, press Ctrl+Shift+F10 to run all tests in a class.
-Press Ctrl+Shift+F11 to include coverage measurements.
-Press Ctrl+Shift+F12 to also run tests in other classes that are maintained as test relations.
+Dans ABAP Development Tools, appuyez sur Ctrl+Shift+F10 pour exécuter tous les tests dans une classe. Appuyez sur Ctrl+Shift+F11 pour inclure les mesures de couverture du code. Appuyez sur Ctrl+Shift+F12 pour exécuter également les tests figurant dans d'autres classes gérées en tant que relations de test.
 
-> On macOS, use `Cmd` instead of `Ctrl`.
+> Sur macOS, utilisez `Cmd` au lieu de `Ctrl`.
 
-### Code Under Test
+### Membre testé
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#code-under-test)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#membre-testé)
 
-#### Name the code under test meaningfully, or default to CUT
+#### Donnez un nom explicite au membre testé ou dénommez-le CUT par défaut
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Code Under Test](#code-under-test) > [This section](#name-the-code-under-test-meaningfully-or-default-to-cut)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Membre testé](#membre-testé) > [Cette section](#donnez-un-nom-explicite-au-membre-testé-ou-dénommez-le-cut-par-défaut)
 
-Give the variable that represents the code under test a meaningful name:
+Donnez un nom explicite à la variable qui représente le membre testé :
 
 ```ABAP
 DATA blog_post TYPE REF TO ...
 ```
 
-Don't just repeat the class name with all its non-valuable namespaces and prefixes:
+Ne vous contentez pas de répéter simplement le nom de classe avec tous ses espaces noms et ses préfixes :
 
 ```ABAP
 " anti-pattern
 DATA clean_fra_blog_post TYPE REF TO ...
 ```
 
-If you have different test setups, it can be helpful to describe the object's varying state:
+Si vous avez plusieurs configurations de test, il peut être utile de décrire le statut changeant de l'objet :
 
 ```ABAP
 DATA empty_blog_post TYPE REF TO ...
@@ -4371,41 +3768,36 @@ DATA simple_blog_post TYPE REF TO ...
 DATA very_long_blog_post TYPE REF TO ...
 ```
 
-If you have problems finding a meaningful name, resort to `cut` as a default.
-The abbreviation stands for "code under test".
+Si vous peinez à trouver un nom explicite, recourez à `cut` comme valeur par défaut. Cette abréviation signifie "membre testé" (pour "code under test" en anglais).
 
 ```ABAP
 DATA cut TYPE REF TO ...
 ```
 
-Especially in unclean and confusing tests, calling the variable `cut`
-can temporarily help the reader see what's actually tested.
-However, tidying up the tests is the actual way to go for the long run.
+Dans les tests non propres et déroutants en particulier, l'appel de la variable `cut` peut temporairement aider le lecteur à voir ce qui est réellement testé. Cependant, nettoyer les tests s'avère la méthode à suivre sur le long terme.
 
-#### Test against interfaces, not implementations
+#### Testez des interfaces, pas des classes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Code Under Test](#code-under-test) > [This section](#test-against-interfaces-not-implementations)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Membre testé](#membre-testé) > [Cette section](#testez-des-interfaces-pas-des-classes)
 
-A practical consequence of the [_Test publics, not private internals_](#test-publics-not-private-internals),
-type your code under test with an _interface_
+Conséquence pratique de la règle [_Testez les parties publiques, et non les parties internes privées_](#testez-les-parties-publiques-et-non-les-parties-internes-privées), vous devez typer votre membre testé avec une _interface_
 
 ```ABAP
 DATA code_under_test TYPE REF TO some_interface.
 ```
 
-rather than a _class_
+plutôt qu'avec une _classe_
 
 ```ABAP
 " anti-pattern
 DATA code_under_test TYPE REF TO some_class.
 ```
 
-#### Extract the call to the code under test to its own method
+#### Extrayez l'appel au membre testé dans sa propre méthode
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Code Under Test](#code-under-test) > [This section](#extract-the-call-to-the-code-under-test-to-its-own-method)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Membre testé](#membre-testé) > [Cette section](#extrayez-lappel-au-membre-testé-dans-sa-propre-méthode)
 
-If the method to be tested requires a lot of parameters or prepared data,
-it can help to extract the call to it to a helper method of its own that defaults the uninteresting parameters:
+Si la méthode à tester requiert un grand nombre de paramètres ou des données préparées, cette règle peut vous aider à extraire l'appel au membre testé dans une méthode du composant d'aide lui étant propre qui définit par défaut les paramètres inintéressants :
 
 ```ABAP
 METHODS map_xml_to_itab
@@ -4423,7 +3815,7 @@ ENDMETHOD.
 DATA(itab) = map_xml_to_itab( '<xml></xml>' ).
 ```
 
-Calling the original method directly can swamp your test with a lot of meaningless details:
+En appelant directement la méthode d'origine, vous risquez de "noyer" votre test dans une masse de détails insignifiants :
 
 ```ABAP
 " anti-pattern
@@ -4434,13 +3826,13 @@ DATA(itab) = cut->map_xml_to_itab( xml_string = '<xml></xml>'
 
 ### Injection
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#injection)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#injection)
 
-#### Use dependency inversion to inject test doubles
+#### Utilisez l'inversion des dépendances pour injecter des simulations test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#use-dependency-inversion-to-inject-test-doubles)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#utilisez-linversion-des-dépendances-pour-injecter-des-simulations-test)
 
-Dependency inversion means that you hand over all dependencies to the constructor:
+L'inversion des dépendances signifie le transfert de toutes les dépendances vers le constructeur :
 
 ```ABAP
 METHODS constructor
@@ -4452,8 +3844,7 @@ METHOD constructor.
 ENDMETHOD.
 ```
 
-Don't use setter injection.
-It enables using the productive code in ways that are not intended:
+N'utilisez pas l'injection setter. Elle permet l'utilisation du code productif de façons non prévues :
 
 ```ABAP
 " anti-pattern
@@ -4467,10 +3858,7 @@ METHOD do_something.
 ENDMETHOD.
 ```
 
-Don't use FRIENDS injection.
-It will initialize productive dependencies before they are replaced, with probably unexpected consequences.
-It will break as soon as you rename the internals.
-It also circumvents initializations in the constructor.
+N'utilisez pas l'injection FRIENDS. Elle initialisera les dépendances productives avant qu'elles ne soient remplacées, entraînant potentiellement des conséquences inattendues. Elle ne fonctionnera plus dès que vous renommerez les parties internes. Elle contourne également les initialisations dans le constructeur.
 
 ```ABAP
 " anti-pattern
@@ -4485,9 +3873,9 @@ METHOD constructor.
 ENDMETHOD.
 ```
 
-#### Consider to use the tool ABAP test double
+#### Pensez à utiliser l'outil simulation test ABAP
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#consider-to-use-the-tool-abap-test-double)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#pensez-à-utiliser-loutil-simulation-test-abap)
 
 ```ABAP
 DATA(customizing_reader) = CAST /clean/customizing_reader( cl_abap_testdouble=>create( '/clean/default_custom_reader' ) ).
@@ -4495,7 +3883,7 @@ cl_abap_testdouble=>configure_call( customizing_reader )->returning( sub_claim_c
 customizing_reader->read( 'SOME_ID' ).
 ```
 
-Shorter and easier to understand than custom test doubles:
+est plus court et plus facile à comprendre que les simulations test personnalisées :
 
 ```ABAP
 " anti-pattern
@@ -4517,41 +3905,29 @@ METHOD test_something.
 ENDMETHOD.
 ```
 
-#### Exploit the test tools
+#### Exploitez les outils de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#exploit-the-test-tools)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#exploitez-les-outils-de-test)
 
-In general, a clean programming style
-will let you do much of the work
-with standard ABAP unit tests and test doubles.
-However, there are tools that will allow you
-to tackle trickier cases in elegant ways:
+En général, pour un style de programmation propre, vous effectuerez la plupart du travail avec les tests de modules et les simulations test ABAP standard. Cependant, il existe des outils qui vous permettront d'aborder des cas plus ardus, tout en faisant preuve d'élégance :
 
-- Use the `CL_OSQL_REPLACE` service
-to test complex OpenSQL statements
-by redirecting them to a test data bin
-that can be filled with test data
-without interfering with the rest of the system.
+- Utilisez le service `CL_OSQL_REPLACE` pour tester les instructions OpenSQL complexes en les redirigeant vers une corbeille de données de test qui peut être remplie par des données de test sans interférer avec le reste du système.
 
-- Use the CDS test framework to test your CDS views.
+- Utilisez le framework de test CDS pour tester vos vues CDS.
 
-#### Use test seams as temporary workaround
+#### Utilisez les test seams comme solution de contournement temporaire
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#use-test-seams-as-temporary-workaround)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#utilisez-les-test-seams-comme-solution-de-contournement-temporaire)
 
-If all other techniques fail, or when in dangerous shallow waters of legacy code,
-refrain to [test seams](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abaptest-seam.htm)
-to make things testable.
+Si toutes les autres techniques échouent ou si vous jouez sur le terrain glissant du code existant, évitez les [test seams](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/index.htm?file=abendyn_access_data_obj_guidl.htm) pour rendre les éléments testables.
 
-Although they look comfortable at first sight, test seams are invasive and tend to get entangled
-in private dependencies, such that they are hard to keep alive and stable in the long run.
+Les test seams ont l'air pratiques à première vue, mais ils sont envahissants et tendent à créer un méli-mélo dans les dépendances privées. Il est donc difficile de les maintenir actives et stables sur le long terme.
 
-We therefore recommend to refrain to test seams only as a temporary workaround
-to allow you refactoring the code into a more testable form.
+C'est pourquoi nous vous recommandons de recourir aux test seams uniquement comme solution de contournement temporaire, pour que vous puissiez refactoriser le code en un format plus testable.
 
-#### Use LOCAL FRIENDS to access the dependency-inverting constructor
+#### Utilisez LOCAL FRIENDS pour accéder au constructeur d'inversion des dépendances
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#use-local-friends-to-access-the-dependency-inverting-constructor)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#utilisez-local-friends-pour-accéder-au-constructeur-dinversion-des-dépendances)
 
 ```ABAP
 CLASS /clean/unit_tests DEFINITION.
@@ -4572,12 +3948,11 @@ CLASS unit_tests IMPLEMENTATION.
 ENDCLASS.
 ```
 
-#### Don't misuse LOCAL FRIENDS to invade the tested code
+#### N'utilisez pas LOCAL FRIENDS à mauvais escient pour envahir le code testé
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#dont-misuse-local-friends-to-invade-the-tested-code)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#nutilisez-pas-local-friends-à-mauvais-escient-pour-envahir-le-code-testé)
 
-Unit tests that access private and protected members to insert mock data are fragile:
-they break when the internal structure of the tested code changes.
+Les tests de module qui accèdent aux membres privés et protégés pour insérer des données de simulation sont fragiles : ils ne fonctionnent plus lorsque la structure interne du code testé évolue.
 
 ```ABAP
 " anti-pattern
@@ -4589,23 +3964,20 @@ CLASS unit_tests IMPLEMENTATION.
 ENDCLASS.
 ```
 
-#### Don't change the productive code to make the code testable
+#### Ne modifiez pas le code productif pour rendre le code testable
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#dont-change-the-productive-code-to-make-the-code-testable)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#ne-modifiez-pas-le-code-productif-pour-rendre-le-code-testable)
 
 ```ABAP
 " anti-pattern
 IF me->in_test_mode = abap_true.
 ```
 
-#### Don't sub-class to mock methods
+#### Ne créez pas des sous-classes pour simuler des méthodes
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#dont-sub-class-to-mock-methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#ne-créez-pas-des-sous-classes-pour-simuler-des-méthodes)
 
-Don't sub-class and overwrite methods to mock them in your unit tests.
-Although this works, it is fragile because the tests break easily when refactoring the code.
-It also enables real consumers to inherit your class,
-which [may hit you unprepared when not explicitly designing for it](#final-if-not-designed-for-inheritance).
+Ne placez pas les méthodes dans des sous-classes et n'écrasez pas les méthodes pour les simuler dans vos tests de module. Bien que cette solution fonctionne, elle est fragile, car souvent, les tests ne fonctionnent plus suite au refactoring du code. De plus, elle permet aux consommateurs réels d'hériter de votre classe, ce [qui peut être source de mauvaises surprises si vous ne la concevez pas explicitement pour l'héritage](#final-si-non-conçue-pour-lhéritage).
 
 ```ABAP
 " anti-pattern
@@ -4614,22 +3986,15 @@ CLASS unit_tests DEFINITION INHERITING FROM /dirty/real_class FOR TESTING [...].
     METHODS needs_to_be_mocked REDEFINITION.
 ```
 
-To get legacy code under test,
-[resort to test seams instead](#use-test-seams-as-temporary-workaround).
-They are just as fragile but still the cleaner way because they at least don't change the class's productive behavior,
-as would happen when enabling inheritance by removing a previous `FINAL` flag or by changing method scope from `PRIVATE` to `PROTECTED`.
+Pour tester le code existant, [recourez plutôt aux test seams](#utilisez-les-test-seams-comme-solution-de-contournement-temporaire). Ils sont tout aussi fragiles, mais demeurent la solution la plus propre, car ils ont l'avantage de ne pas modifier le comportement productif de la classe, contrairement à l'activation de l'héritage via le retrait d'un indicateur `FINAL` précédent ou la modification de la portée de la méthode de `PRIVATE` en `PROTECTED`.
 
-When writing new code, take this testability issue into account directly when designing the class,
-and find a different, better way.
-Common best practices include [resorting to other test tools](#exploit-the-test-tools)
-and extracting the problem method to a separate class with its own interface.
+Lorsque vous écrivez du nouveau code, tenez compte des problèmes de testabilité directement lors de la conception de la classe et trouvez une autre solution qui s'avèrera meilleure. Le [recours à d'autres outils de test](#exploitez-les-outils-de-test) et l'extraction de la méthode du problème dans une classe distincte avec sa propre interface figurent parmi les meilleures pratiques les plus courantes.
 
-> A more specific variant of
-> [Don't change the productive code to make the code testable](#dont-change-the-productive-code-to-make-the-code-testable).
+> Une variante plus spécifique par rapport à [Ne modifiez pas le code productif pour rendre le code testable](#ne-modifiez-pas-le-code-productif-pour-rendre-le-code-testable)
 
-#### Don't mock stuff that's not needed
+#### Ne simulez pas ce dont vous n'avez pas besoin
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#dont-mock-stuff-thats-not-needed)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#ne-simulez-pas-ce-dont-vous-navez-pas-besoin)
 
 ```ABAP
 cut = NEW /clean/class_under_test( db_reader = db_reader
@@ -4637,9 +4002,7 @@ cut = NEW /clean/class_under_test( db_reader = db_reader
                                    writer    = VALUE #( ) ).
 ```
 
-Define your givens as precisely as possible: don't set data that your test doesn't need,
-and don't mock objects that are never called.
-These things distract the reader from what's really going on.
+Définissez vos "given" aussi précisément que possible : ne définissez pas des données dont votre test n'a pas besoin et ne simulez pas les objets qui ne sont jamais appelé. Ces éléments ont pour effet de détourner l'attention du lecteur de ce qu'il se passe réellement.
 
 ```ABAP
 " anti-pattern
@@ -4648,23 +4011,19 @@ cut = NEW /dirty/class_under_test( db_reader = db_reader
                                    writer    = writer ).
 ```
 
-There are also cases where it's not necessary to mock something at all -
-this is usually the case with data structures and data containers.
-For example, your unit tests may well work with the productive version of a `transient_log`
-because it only stores data without any side effects.
+Dans certains cas, il n'est même pas nécessaire de simuler quoi que ce soit. Cela arrive souvent avec les structures de données et les conteneurs de données. Par exemple, vos tests de module peuvent très bien fonctionner avec la version productive d'un `transient_log`, car celui-ci ne stocke que des données sans effets secondaires.
 
-#### Don't build test frameworks
+#### Ne créez pas de framework de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Injection](#injection) > [This section](#dont-build-test-frameworks)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Injection](#injection) > [Cette section](#ne-créez-pas-de-framework-de-test)
 
-Unit tests - in contrast to integration tests - should be data-in-data-out, with all test data being defined on the fly as needed.
+Les tests de module, contrairement aux tests d'intégration, doivent être de type data-in-data-out (données entrantes, données sortantes), avec toutes les données de test définies à la volée, au besoin.
 
 ```ABAP
 cl_abap_testdouble=>configure_call( test_double )->returning( data ).
 ```
 
-Don't start building frameworks that distinguish "*test case IDs*" to decide what data to provide.
-The resulting code will be so long and tangled that you won't be able to keep these tests alive in the long term.
+Ne commencez pas à créer des frameworks qui distinguent les "*ID de scénarios de test*" pour décider les données à fournir. Le code qui en résultera sera si long et confus que vous ne serez pas en mesure de maintenir ces tests actifs sur le long terme.
 
 ```ABAP
 " anti-pattern
@@ -4677,15 +4036,15 @@ CASE me->test_case.
 ENDCASE.
 ```
 
-### Test Methods
+### Méthodes de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#test-methods)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#méthodes-de-test)
 
-#### Test method names: reflect what's given and expected
+#### Noms de méthode de test : reflètent ce qui est donné et attendu
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Methods](#test-methods) > [This section](#test-method-names-reflect-whats-given-and-expected)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Méthodes de test](#méthodes-de-test) > [Cette section](#noms-de-méthode-de-test--reflètent-ce-qui-est-donné-et-attendu)
 
-Good names reflect the given and then of the test:
+Les noms appropriés reflètent les "given" et "then" du test :
 
 ```ABAP
 METHOD reads_existing_entry.
@@ -4693,7 +4052,7 @@ METHOD throws_on_invalid_key.
 METHOD detects_invalid_input.
 ```
 
-Bad names reflect the when, repeat meaningless facts, or are cryptic:
+Les noms appropriés reflètent le "when", répètent des faits insignifiants ou sont énigmatiques :
 
 ```ABAP
 " anti-patterns
@@ -4711,34 +4070,23 @@ METHOD parameterized_test.
 METHOD get_attributes_wo_w.
 ```
 
-As ABAP allows only 30 characters in method names, it's fair to add an explanatory comment
-if the name is too short to convey enough meaning.
-ABAP Doc or the first line in the test method may be an appropriate choice for the comment.
+Comme ABAP n'autorise que 30 caractères pour les noms de méthode, il est légitime d'ajouter un commentaire explicatif si le nom est trop court pour véhiculer assez de sens. Il peut être approprié de choisir ABAP Doc ou la première ligne dans la méthode de test comme commentaire.
 
-Having lots of test methods whose names are too long may be an indicator
-that you should split your single test class into several ones
-and express the differences in the givens in the class's names.
+Si vous avez de nombreuses méthodes de test aux noms trop longs, c'est peut-être un signe indiquant que vous devez fractionner votre classe de test individuelle en plusieurs et exprimer les différences au travers des "given" dans les noms de classe.
 
-#### Use given-when-then
+#### Utilisez le format given-when-then
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Methods](#test-methods) > [This section](#use-given-when-then)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Méthodes de test](#méthodes-de-test) > [Cette section](#utilisez-le-format-given-when-then)
 
-Organize your test code along the given-when-then paradigm:
-First, initialize stuff in a given section ("given"),
-second call the actual tested thing ("when"),
-third validate the outcome ("then").
+Organisez votre code test selon le paradigme given-when-then : premièrement, initialisez les éléments dans une section donnée ("given") ; deuxièmement, appelez l'élément réellement testé ("when") ; troisièmement, validez le résultat ("then").
 
-If the given or then sections get so long
-that you cannot visually separate the three sections anymore, extract sub-methods.
-Blank lines or comments as separators may look good at first glance
-but don't really reduce the visual clutter.
-Still they are helpful for the reader and the novice test writer to separate the sections.
+Si les sections "given" ou "then" deviennent si longues que vous ne pouvez plus séparer visuellement les trois sections, extrayez des sous-méthodes. Les lignes vierges ou les commentaires utilisés comme séparateurs font bon effet au premier abord, mais ne corrigent pas vraiment l'aspect fouillis au niveau visuel. Néanmoins, ceux-ci sont utiles du point de vue du lecteur et du rédacteur de test novice pour séparer les sections.
 
-#### "When" is exactly one call
+#### "When" est un appel et un seul
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Methods](#test-methods) > [This section](#when-is-exactly-one-call)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Méthodes de test](#méthodes-de-test) > [Cette section](#when-est-un-appel-et-un-seul)
 
-Make sure that the "when" section of your test method contains exactly one call to the class under test:
+Veillez à ce que la section "when" de votre méthode de test contienne un appel et un seul à la classe testée :
 
 ```ABAP
 METHOD rejects_invalid_input.
@@ -4749,32 +4097,25 @@ METHOD rejects_invalid_input.
 ENDMETHOD.
 ```
 
-Calling multiple things indicates that the method has no clear focus and tests too much.
-This makes it harder to find the cause when the test fails:
-was it the first, second, or third call that caused the failure?
-It also confuses the reader because he is not sure what the exact feature under test is.
+L'appel de plusieurs éléments indique que la méthode n'a pas une cible précise et teste trop d'éléments. Dans ce contexte, il est plus difficile de trouver la cause de l'échec du test : est-ce le premier, le deuxième ou le troisième appel qui a causé l'échec ? Le lecteur est également dérouté, car il ne sait pas exactement quelle est la fonctionnalité testée.
 
-#### Don't add a TEARDOWN unless you really need it
+#### N'ajoutez pas un TEARDOWN à moins d'en avoir vraiment besoin
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Methods](#test-methods) > [This section](#dont-add-a-teardown-unless-you-really-need-it)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Méthodes de test](#méthodes-de-test) > [Cette section](#najoutez-pas-un-teardown-à-moins-den-avoir-vraiment-besoin)
 
-`teardown` methods are usually only needed to clear up database entries
-or other external resources in integration tests.
+Les méthodes `teardown` sont généralement nécessaires uniquement pour nettoyer les entrées dans la base de données ou d'autres ressources externes dans les tests d'intégration.
 
-Resetting members of the test class, esp. `cut` and the used test doubles, is superfluous;
-they are overwritten by the `setup` method before the next test method is started.
+La redéfinition des membres de la classe de test, en particulier `cut` et les simulations test utilisées, est superflue ; ils sont écrasés par la méthode `setup` avant le lancement de la méthode de test suivante.
 
-### Test Data
+### Données de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#test-data)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#données-de-test)
 
-#### Make it easy to spot meaning
+#### Facilitez la lecture et la compréhension
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Data](#test-data) > [This section](#make-it-easy-to-spot-meaning)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Données de test](#données-de-test) > [Cette section](#facilitez-la-lecture-et-la-compréhension)
 
-In unit tests, you want to be able to quickly tell which data and doubles are important,
-and which ones are only there to keep the code from crashing.
-Support this by giving things that have no meaning obvious names and values, for example:
+Dans les tests de module, vous souhaitez pouvoir repérer rapidement les données et simulations qui sont importantes, et celles qui sont là uniquement pour éviter le plantage du code. Pour faciliter la lecture, donnez des noms et valeurs clairs aux éléments dépourvus de signification, par exemple :
 
 ```ABAP
 DATA(alert_id) = '42'.                             " well-known meaningless numbers
@@ -4782,7 +4123,7 @@ DATA(detection_object_type) = '?=/"&'.             " 'keyboard accidents'
 CONSTANTS some_random_number TYPE i VALUE 782346.  " revealing variable names
 ```
 
-Don't trick people into believing something connects to real objects or real customizing if it doesn't:
+Ne piégez pas les collaborateurs en leur faisant croire que quelque chose est en lien avec des objets réels ou personnalisations réelles si ce n'est pas le cas :
 
 ```ABAP
 " anti-pattern
@@ -4791,20 +4132,20 @@ DATA(detection_object_type) = 'FRA_SCLAIM'.  " this detection object type, too
 CONSTANTS memory_limit TYPE i VALUE 4096.    " this number looks carefully chosen
 ```
 
-#### Make it easy to spot differences
+#### Faites ressortir les différences
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Data](#test-data) > [This section](#make-it-easy-to-spot-differences)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Données de test](#données-de-test) > [Cette section](#faites-ressortir-les-différences)
 
 ```ABAP
 exp_parameter_in = VALUE #( ( parameter_name = '45678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789END1' )
                             ( parameter_name = '45678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789END2' ) ).
 ```
 
-Don't force readers to compare long meaningless strings to spot tiny differences.
+Ne forcez pas les lecteurs à comparer de longues chaînes de caractères insignifiantes pour détecter de minuscules différences.
 
-#### Use constants to describe purpose and importance of test data
+#### Utilisez des constantes pour décrire l'objectif et l'importance des données de test
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Test Data](#test-data) > [This section](#use-constants-to-describe-purpose-and-importance-of-test-data)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Données de test](#données-de-test) > [Cette section](#utilisez-des-constantes-pour-décrire-lobjectif-et-limportance-des-données-de-test)
 
 ```ABAP
 CONSTANTS some_nonsense_key TYPE char8 VALUE 'ABCDEFGH'.
@@ -4822,13 +4163,13 @@ ENDMETHOD.
 
 ### Assertions
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [This section](#assertions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Cette section](#assertions)
 
-#### Few, focused assertions
+#### Des assertions en faible nombre, ciblées
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#few-focused-assertions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#des-assertions-en-faible-nombre-ciblées)
 
-Assert only exactly what the test method is about, and this with a small number of assertions.
+Utilisez des assertions uniquement pour ce à quoi la méthode de test fait référence et limitez-les à un petit nombre.
 
 ```ABAP
 METHOD rejects_invalid_input.
@@ -4839,11 +4180,7 @@ METHOD rejects_invalid_input.
 ENDMETHOD.
 ```
 
-Asserting too much is an indicator that the method has no clear focus.
-This couples productive and test code in too many places: changing a feature
-will require rewriting a large number of tests although they are not really involved with the changed feature.
-It also confuses the reader with a large variety of assertions,
-obscuring the one important, distinguishing assertion among them.
+L'utilisation excessive d'assertions est un signe indiquant que la méthode n'a pas de cible précise. Cela couple le code productif et le code test dans trop d'emplacements : toute modification d'une fonctionnalité nécessitera alors de réécrire un grand nombre de tests, même s'ils ne sont pas vraiment concernés par cette fonctionnalité modifiée. En outre, le lecteur est dérouté par cette grande variété d'assertions, l'unique assertion importante et distinctive étant "noyée" parmi les autres.
 
 ```ABAP
 " anti-pattern
@@ -4858,37 +4195,32 @@ METHOD rejects_invalid_input.
 ENDMETHOD.
 ```
 
-#### Use the right assert type
+#### Utilisez le bon type d'assert
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#use-the-right-assert-type)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#utilisez-le-bon-type-dassert)
 
 ```ABAP
 cl_abap_unit_assert=>assert_equals( act = table
                                     exp = test_data ).
 ```
 
-Asserts often do more than meets the eye, for example `assert_equals`
-includes type matching and providing precise descriptions if values differ.
-Using the wrong, too-common asserts will force you into the debugger immediately
-instead of allowing you to see what is wrong right from the error message.
+Souvent, les asserts sont bien plus utiles qu'il n'y paraît. Par exemple, `assert_equals` inclut la concordance de types et l'indication de descriptions précises si les valeurs diffèrent. L'utilisation d'asserts inappropriés, trop communs, vous entraînera immédiatement de force dans le débogueur, au lieu de vous donner les moyens de voir ce qui est bon/mauvais d'après le message d'erreur.
 
 ```ABAP
 " anti-pattern
 cl_abap_unit_assert=>assert_true( xsdbool( act = exp ) ).
 ```
 
-#### Assert content, not quantity
+#### Utilisez les asserts pour du contenu, pas pour de la quantité
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#assert-content-not-quantity)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#utilisez-les-asserts-pour-du-contenu-pas-pour-de-la-quantité)
 
 ```ABAP
 assert_contains_exactly( actual   = table
                          expected = VALUE string_table( ( `ABC` ) ( `DEF` ) ( `GHI` ) ) ).
 ```
 
-Don't write magic-number-quantity assertions if you can express the actual content you expect.
-Numbers may vary although the expectations are still met.
-In reverse, the numbers may match although the content is something completely unexpected.
+N'écrivez pas des assertions de quantité en nombres magiques si vous pouvez exprimer le contenu réel attendu. Les nombres peuvent varier, même si les attentes sont réalisées. À l'inverse, les nombres peuvent correspondre, même si le contenu est complètement inattendu.
 
 ```ABAP
 " anti-pattern
@@ -4896,21 +4228,18 @@ assert_equals( act = lines( log_messages )
                exp = 3 ).
 ```
 
-#### Assert quality, not content
+#### Utilisez les asserts pour de la qualité, pas pour du contenu
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#assert-quality-not-content)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#utilisez-les-asserts-pour-de-la-qualité-pas-pour-du-contenu)
 
-If you are interested in a meta quality of the result,
-but not in the actual content itself, express that with a suitable assert:
+Si vous vous intéressez à la métaqualité du résultat, et non au contenu réel lui-même, exprimez cela avec un assert adapté :
 
 ```ABAP
 assert_all_lines_shorter_than( actual_lines        = table
                                expected_max_length = 80 ).
 ```
 
-Asserting the precise content obscures what you actually want to test.
-It is also fragile because refactoring may produce a different
-but perfectly acceptable result although it breaks all your too-precise unit tests.
+Utiliser des asserts pour le contenu précis a pour effet de masquer ce que vous voulez réellement tester. Cette solution est aussi fragile, car le refactoring peut produire un résultat différent, mais parfaitement acceptable, même si tous vos tests de module trop précis ne fonctionnent plus.
 
 ```ABAP
 " anti-pattern
@@ -4918,9 +4247,9 @@ assert_equals( act = table
                exp = VALUE string_table( ( `ABC` ) ( `DEF` ) ( `GHI` ) ) ).
 ```
 
-#### Use FAIL to check for expected exceptions
+#### Utilisez FAIL pour rechercher les exceptions attendues
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#use-fail-to-check-for-expected-exceptions)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#utilisez-fail-pour-rechercher-les-exceptions-attendues)
 
 ```ABAP
 METHOD throws_on_empty_input.
@@ -4934,9 +4263,9 @@ METHOD throws_on_empty_input.
 ENDMETHOD.
 ```
 
-#### Forward unexpected exceptions instead of catching and failing
+#### Transmettez les exceptions inattendues au lieu d'utiliser catch et fail
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#forward-unexpected-exceptions-instead-of-catching-and-failing)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#transmettez-les-exceptions-inattendues-au-lieu-dutiliser-catch-et-fail)
 
 ```ABAP
 METHODS reads_entry FOR TESTING RAISING /clean/some_exception.
@@ -4949,7 +4278,7 @@ METHOD reads_entry.
 ENDMETHOD.
 ```
 
-Your test code remains focused on the happy path and is therefore much easier to read and understand, as compared to:
+Votre code test reste axé sur les cas d'utilisation correcte et est, par conséquent, plus facile à lire et à comprendre, comparé à :
 
 ```ABAP
 " anti-pattern
@@ -4963,9 +4292,9 @@ METHOD reads_entry.
 ENDMETHOD.
 ```
 
-#### Write custom asserts to shorten code and avoid duplication
+#### Écrivez des asserts personnalisés pour raccourcir le code et éviter la double saisie
 
-> [Clean ABAP](#clean-abap) > [Content](#content) > [Testing](#testing) > [Assertions](#assertions) > [This section](#write-custom-asserts-to-shorten-code-and-avoid-duplication)
+> [Coder proprement avec ABAP](#coder-proprement-avec-abap) > [Table des matières](#table-des-matières) > [Test](#test) > [Assertions](#assertions) > [Cette section](#écrivez-des-asserts-personnalisés-pour-raccourcir-le-code-et-éviter-la-double-saisie)
 
 ```ABAP
 METHODS assert_contains
@@ -4982,4 +4311,4 @@ METHOD assert_contains.
 ENDMETHOD.
 ```
 
-Instead of copy-pasting this over and over again.
+au lieu de copier-coller une partie à répétition.
